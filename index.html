@@ -63,6 +63,9 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .top > * { min-width: 0; }
 .ghost { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 7px 12px; font-weight: 700; font-size: 0.88rem; }
+.close-x { flex: none; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; color: var(--muted); }
+.close-x:hover { color: var(--ink); border-color: #4a5390; }
+.close-x svg { width: 18px; height: 18px; }
 .ghost .count { display: inline-block; min-width: 1.4em; padding: 0 5px; margin-left: 4px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.78rem; text-align: center; font-variant-numeric: tabular-nums; }
 
 /* Stage */
@@ -430,7 +433,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <h2 id="journalTitle" data-t="journalTitle">Your journal</h2>
         <p class="sub" data-t="journalSub">Notes in your own words about what each plant does. The science underneath appears when you finish a chapter.</p>
       </div>
-      <button class="ghost" id="journalClose" type="button" data-t="close">Close</button>
+      <button class="ghost close-x" id="journalClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
     </div>
     <div class="pages" id="pages"></div>
   </div>
@@ -529,7 +532,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <h2 id="bookTitle" data-t="bookTitle">The Lantern's story</h2>
         <p class="sub" data-t="bookSub"></p>
       </div>
-      <button class="ghost" id="bookClose" type="button" data-t="close">Close</button>
+      <button class="ghost close-x" id="bookClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
     </div>
     <p class="mystery" data-t="mystery"></p>
     <div class="book" id="book"></div>
@@ -2265,6 +2268,7 @@ function applyLang() {
   document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
   document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === P.lang)));
   $('keeperName').placeholder = t('namePh');
+  document.querySelectorAll('.close-x').forEach(b => { b.setAttribute('aria-label', t('close')); b.title = t('close'); });
   canvas.setAttribute('aria-label', t('canvasLabel'));
   $('soundBtn').textContent = t(soundOn ? 'soundOn' : 'soundOff');
   $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow');
