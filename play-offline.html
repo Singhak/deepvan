@@ -263,7 +263,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .hero-btn canvas { width: 48px; height: 48px; }
 .hero-sheet { width: min(420px, 100%); justify-items: center; text-align: center; }
 @media (max-width: 520px) { .hero-btn canvas { width: 36px; height: 36px; } .quest { gap: 10px; } }
-.story-beat { margin: 0; font-family: var(--font-display); font-size: 1.15rem; line-height: 1.5; color: var(--ink); max-width: 60ch; }
+/* Story paragraphs read in the open body face; the display serif stays for titles and one-line beats */
+.story-beat { margin: 0; font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; line-height: 1.6; color: var(--ink); max-width: 55ch; text-align: left; }
 .rank-badge { display: inline-block; padding: 3px 12px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-weight: 800; font-size: 0.85rem; justify-self: start; }
 @media (max-width: 520px) { .quest-lantern { width: 48px; height: 58px; } .story-line { font-size: 1.15rem; } }
 .lang-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 99px; background: #161b38; border: 1px solid var(--line); }
@@ -275,7 +276,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .story-link .new { margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .page-note { background: #2a2440; border-color: #5b4a7a; }
 .page-note button { border: 0; background: var(--amber); color: var(--amber-ink); border-radius: 10px; padding: 7px 12px; font-weight: 800; }
-.mystery { margin: 0; padding: 12px 14px; border-radius: 12px; background: #2a2440; border: 1px solid #5b4a7a; font-family: var(--font-display); font-size: 1.15rem; }
+.mystery { margin: 0; padding: 12px 14px; border-radius: 12px; background: #2a2440; border: 1px solid #5b4a7a; font-weight: 600; font-size: 1.05rem; line-height: 1.55; }
 .book { display: grid; gap: 10px; }
 .book-page { padding: 14px; border-radius: 14px; background: #20274b; display: grid; gap: 6px; }
 .book-page h3 { margin: 0; font-size: 1.05rem; }
@@ -901,22 +902,22 @@ const HI = {
   levels: {
     '1-1': { name: 'Garam kona',
       intro: 'Ek patanga garam jagah dhoondh raha hai. Surajmukhi ko kisi bhi khaali dibbe par lagao, phir "Raat hone do" dabao.',
-      hints: ['Raat hone par Surajmukhi ke aas-paas kaun se dibbe chamke?', 'Patange ko chhoone wale dibbe dekho. Kya Surajmukhi unmein se kisi par lag sakti hai?'],
+      hints: ['Raat hone par Surajmukhi ke aas-paas kaun se dibbe chamke?', 'Patange ko chhoone wale dibbe dekho. Kya Surajmukhi unmein se kisi par lag sakta hai?'],
       success: 'Patanga pankh mod kar baith gaya. Dekha, roshni kahan tak pahunchi?' },
     '1-2': { name: 'Mendhak ke liye chhaaya',
       intro: 'Patanga wapas aaya hai, aur saath mein ek mendhak bhi. Mendhak ko thandak aur andhera pasand hai. Kya aap ek ko roshni de sakte ho, bina doosre ko pareshaan kiye?',
       hints: ['Kya roshni har disha mein failti hai, ya sirf kuch mein?', 'Tirchhe (corner wale) dibbon tak roshni kabhi nahi jaati. Aisi jagah dhoondho jo patange ko chhoye par mendhak ko nahi.'],
       success: 'Dono khush hain. Roshni kuch padosiyon tak gayi, kuch tak nahi. Kaun se?' },
     '1-3': { name: 'Roshni aage badhao',
-      intro: 'Yeh purani Surajmukhi saalon se yahin hai aur hilegi nahi. Patanga bahut door hai. Aapke paas do Narkat hain.',
+      intro: 'Yeh purana Surajmukhi saalon se yahin hai aur hilega nahi. Patanga bahut door hai. Aapke paas do Narkat hain.',
       hints: ['Ek Narkat Surajmukhi ke bilkul bagal mein lagao. Raat mein uske saath kya hota hai?', 'Agar Narkat chamak sakta hai, toh kya woh apni chamak agle Narkat ko de sakta hai?'],
       success: 'Roshni poora raasta paar kar gayi. Har Narkat ne kya kiya?' },
     '1-4': { name: 'Pattharon ke aas-paas',
-      intro: 'Do patange alag-alag jagah intezaar kar rahe hain, aur paas mein mendhak so raha hai. Chaar Narkat, ek purani Surajmukhi.',
+      intro: 'Do patange alag-alag jagah intezaar kar rahe hain, aur paas mein mendhak so raha hai. Chaar Narkat, ek purana Surajmukhi.',
       hints: ['Kis patange tak pahunchna zyada mushkil hai? Wahin se shuru karo.', 'Narkaton ka raasta do hisson mein bant sakta hai. Shaakha kahan se nikal sakti hai?'],
       success: 'Aapne ek roshni ko do raaston mein baant diya, aur mendhak ko jagaya bhi nahi.' },
     '2-1': { name: 'Judwa Kamal',
-      intro: 'Ek naya beej gira hai: Judwa Kamal, ek dandi par do phool. Patanga do purani Surajmukhiyon ke paas intezaar kar raha hai.',
+      intro: 'Ek naya beej gira hai: Judwa Kamal, ek dandi par do phool. Patanga do purane Surajmukhiyon ke paas intezaar kar raha hai.',
       hints: ['Judwa Kamal ko sirf ek Surajmukhi ke bagal mein lagao. Kya woh chamakta hai?', 'Kya koi aisi jagah hai jo dono Surajmukhiyon ko ek saath chhooti ho?'],
       success: 'Judwa Kamal khil gaya. Sirf ek roshni ke paas woh band raha tha. Aisa kyun?' },
     '2-2': { name: 'Ghonge ki Raat Rani',
@@ -968,15 +969,15 @@ const HI = {
       next: 'Pinku ne meenar par ek parchhai dekhi. Par us raat koi aur bhi jaag raha tha: boodha Mendhu mendhak, jo koi awaaz kabhi nahi bhoolta.' },
     '1-2': { goal: "Mendhu ko thanda-andhera do, aur Pinku ko garmi.", reward: "Mendhu batayega awaaz ne kya kaha, aur kahan kuch chhoda gaya tha.", intro: 'Jis raat Lantern bujha, Mendhu mendhak ne ek awaaz suni thi. Par woh sirf thandi, andheri jagah par hi baat karega. Pinku bhi wapas aaya hai, kaanpta hua. Kya aap dono ki madad kar sakte ho?',
       next: 'Awaaz ne kaha tha "Koi naya aayega." Kya woh Purane Rakshak the? Mendhu bagiche ke us paar ishaara karta hai: "Wahan dekho jahan roshni nahi pahunchti. Wahan kuch chhoda gaya tha."' },
-    '1-3': { goal: "Roshni ko door wale patange tak pahunchao.", reward: "Chhupa hua panna, jiski likhawat ullu pehchaanta hai.", intro: 'Purani Surajmukhi se bahut door, Narkaton ke paas ek patanga intezaar kar raha hai. Dandiyon ke beech kuch chhupa hai, par itna andhera hai ki dikhta nahi. Roshni ko wahan tak pahunchao.',
+    '1-3': { goal: "Roshni ko door wale patange tak pahunchao.", reward: "Chhupa hua panna, jiski likhawat ullu pehchaanta hai.", intro: 'Purane Surajmukhi se bahut door, Narkaton ke paas ek patanga intezaar kar raha hai. Dandiyon ke beech kuch chhupa hai, par itna andhera hai ki dikhta nahi. Roshni ko wahan tak pahunchao.',
       next: 'Panne par Lantern ka nishaan hai. Use dekhte hi ullu bilkul chup ho jaata hai. "Main yeh likhawat pehchaanta hoon," woh kehta hai, aur pattharon ki taraf ud jaata hai.' },
     '1-4': { goal: "Ullu ke liye pattharon ko roshan karo.", reward: "Ullu ka raaz: gehre bagiche ka naksha (Chapter 2).", intro: 'Ullu pattharon ke beech baitha hai, uske paas do patange so rahe hain aur Mendhu oongh raha hai. "Mere liye yeh jagah roshan karo," woh kehta hai, "aur main aapko woh raaz bataunga jo maine poore saal chhupa kar rakha."',
       next: 'Lantern ke sheeshe par bana naksha gehre bagiche ki taraf ishaara karta hai, jahan phool khud faisla karte hain. Purane Rakshak ne wahan kya chhupaya tha?' },
-    '2-1': { goal: "Judwa Kamal ke beej se patange tak roshni pahunchao.", reward: "Phool batayenge ki ek ghonga kaunsa raaz chhupa kar baitha hai.", intro: 'Gehra bagicha andhera aur ajeeb hai. Raaste par Judwa Kamal ka ek akela beej pada hai, jaise kisi ne aapke liye chhoda ho. Do purani Surajmukhiyon ke beech ek patanga baitha dekh raha hai ki aap kya karoge.',
+    '2-1': { goal: "Judwa Kamal ke beej se patange tak roshni pahunchao.", reward: "Phool batayenge ki ek ghonga kaunsa raaz chhupa kar baitha hai.", intro: 'Gehra bagicha andhera aur ajeeb hai. Raaste par Judwa Kamal ka ek akela beej pada hai, jaise kisi ne aapke liye chhoda ho. Do purane Surajmukhiyon ke beech ek patanga baitha dekh raha hai ki aap kya karoge.',
       next: 'Judwa Kamal fusfusaate hain ki ek ghonga poore saal se Raat Rani ke neeche kuch chhupa kar baitha hai. Woh sirf use dikhayega jo Raat Rani ko khila de.' },
     '2-2': { goal: "Dheeru ke liye Raat Rani khilao.", reward: "Purane Rakshak ki chhodi hui cheez: chaandi ki chaabi.", intro: 'Jis raat Lantern bujha, tab se Dheeru ghonga Raat Rani ke neeche intezaar kar raha hai. "Jab yeh khilegi," Dheeru dheere se kehta hai, "tab main aapko woh dunga jo Purane Rakshak mere paas chhod gaye the."',
       next: 'Ek chhoti si chaandi ki chaabi. Par chaabi ko taala chahiye. Do roshniyon ke beech kahin ek aur panna intezaar kar raha hai.' },
-    '2-3': { goal: "Patange ko roshni do, par dono mendhak sote rahein.", reward: "Purane Rakshak ka panna, aur chaabi kahan lagegi.", intro: 'Do purani Surajmukhiyon ke beech ek patanga ek mude hue panne ki hifaazat kar raha hai, aur uske dono taraf ek-ek mendhak so raha hai. Mendhak jaage toh panna ud jaayega. Roshni sirf patange tak pahunchao.',
+    '2-3': { goal: "Patange ko roshni do, par dono mendhak sote rahein.", reward: "Purane Rakshak ka panna, aur chaabi kahan lagegi.", intro: 'Do purane Surajmukhiyon ke beech ek patanga ek mude hue panne ki hifaazat kar raha hai, aur uske dono taraf ek-ek mendhak so raha hai. Mendhak jaage toh panna ud jaayega. Roshni sirf patange tak pahunchao.',
       next: '"Maine Lantern ko toda nahi." Toh phir woh bujha kyun? Raat ke bagiche ke us paar, kaai se dhaka ek darwaaza chaandi ki chaabi ka intezaar kar raha hai.' },
     '2-4': { goal: "Darwaaze par khade sab mehmaanon ko khush karo.", reward: "Chaabi sabse purane kone ka darwaaza kholegi (Chapter 3).", intro: 'Darwaaza raat ke bagiche ke us paar hai, aur use khulta dekhne sab aaye hain: Dheeru, do patange aur ek bahut oonghta mendhak. Sabko khush karo, toh darwaaze tak ka raasta roshan ho jaayega.',
       next: 'Chaabi ghoomti hai. Darwaaze ke peeche bagiche ka sabse purana kona hai, jahan kaai har Rakshak ko yaad rakhti hai. Purane Rakshak ko bhi.' },
