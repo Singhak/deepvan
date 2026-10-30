@@ -1,0 +1,2367 @@
+<title>Deepvan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Young+Serif&display=swap">
+<style>
+/* Layout: the grove board is the stage; a slim side column holds the visitor's voice, the seed pouch and the actions. One dusk world, dark by design. */
+:root {
+  --night: #11152b;
+  --panel: #1b2142;
+  --panel-2: #242b52;
+  --line: #353d6b;
+  --ink: #f1ead9;
+  --muted: #a9a5c9;
+  --amber: #ffc45e;
+  --amber-ink: #2a1a00;
+  --reed: #a6d77c;
+  --lily: #f5a6c8;
+  --fern: #62d4c6;
+  --moss: #8bc862;
+  --font-display: "Young Serif", Georgia, "Times New Roman", serif;
+  --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body {
+  background: radial-gradient(1200px 600px at 70% -10%, #252c5a 0%, transparent 60%), var(--night);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+.app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-block: 18px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 18px;
+}
+
+/* Header */
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+.brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; margin: 0; letter-spacing: 0.01em; }
+.brand h1 .h1-tag { font-family: var(--font-body, inherit); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-left: 6px; vertical-align: 3px; white-space: nowrap; }
+.brand p { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.lantern { width: 34px; height: 40px; flex: none; }
+.chapters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  border: 1px solid var(--line); background: transparent; border-radius: 999px;
+  padding: 6px 13px; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.chip[aria-current="true"] { background: var(--panel-2); color: var(--ink); border-color: #4a5390; }
+.chip:disabled { opacity: 0.45; cursor: default; }
+.chip .n { font-variant-numeric: tabular-nums; color: var(--amber); font-weight: 800; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.top > * { min-width: 0; }
+.ghost { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 7px 12px; font-weight: 700; font-size: 0.88rem; }
+.ghost .count { display: inline-block; min-width: 1.4em; padding: 0 5px; margin-left: 4px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.78rem; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* Stage */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
+@media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.board-col { min-width: 0; display: grid; gap: 12px; }
+.level-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 6px 16px; }
+.eyebrow { margin: 0 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+.level-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.55rem; line-height: 1.15; text-wrap: balance; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #59609a; background: transparent; padding: 0; }
+.dot.done { background: var(--amber); border-color: var(--amber); }
+.dot[aria-current="true"] { box-shadow: 0 0 0 3px rgba(255, 196, 94, 0.3); border-color: var(--amber); }
+.board-wrap { position: relative; width: 100%; max-width: 640px; }
+#board { display: block; width: 100%; height: auto; border-radius: 20px; touch-action: manipulation; cursor: pointer; }
+.night-count {
+  position: absolute; top: 12px; right: 12px; padding: 4px 11px; border-radius: 99px;
+  background: rgba(10, 13, 30, 0.75); font-weight: 800; font-size: 0.82rem; font-variant-numeric: tabular-nums;
+}
+.wishes { display: flex; flex-wrap: wrap; gap: 6px; max-width: 640px; }
+.wish {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 7px; border-radius: 99px;
+  background: var(--panel); border: 1px solid var(--line); font-size: 0.84rem; color: var(--muted);
+}
+.wish i { width: 10px; height: 10px; border-radius: 50%; background: #4b5285; flex: none; }
+.wish.on i { background: var(--amber); }
+.wish.off i { background: var(--fern); }
+.wish.happy { color: var(--ink); border-color: #5c6aa8; }
+.wish.happy::after { content: "settled"; font-size: 0.72rem; font-weight: 800; color: var(--reed); letter-spacing: 0.05em; text-transform: uppercase; }
+.wish.sad::after { content: "waiting"; font-size: 0.72rem; font-weight: 800; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Side column */
+.side { display: grid; gap: 14px; min-width: 0; }
+.voice { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; min-height: 108px; }
+.speaker { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
+.voice p { margin: 4px 0 0; font-size: 1rem; line-height: 1.55; }
+.voice.owl .speaker { color: var(--fern); }
+.pouch h3, .side h3 { margin: 0 0 8px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.seeds { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
+.seed {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border-radius: 12px;
+  background: var(--panel); border: 1.5px solid var(--line); text-align: left;
+}
+.seed canvas { width: 38px; height: 38px; flex: none; border-radius: 9px; background: #2a305a; }
+.seed b { display: block; font-size: 0.92rem; line-height: 1.2; }
+.seed span { font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.seed[aria-pressed="true"] { border-color: var(--amber); background: var(--panel-2); }
+.seed.empty { opacity: 0.5; }
+.small { margin: 8px 0 0; font-size: 0.8rem; color: var(--muted); }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.actions > :only-child, .actions .wide { grid-column: 1 / -1; }
+.primary, .secondary { border-radius: 12px; padding: 11px 14px; font-weight: 800; font-size: 0.98rem; border: 1.5px solid transparent; }
+.primary { background: var(--amber); color: var(--amber-ink); }
+.primary:hover { filter: brightness(1.06); }
+.primary:disabled { opacity: 0.5; cursor: default; }
+.secondary { background: transparent; border-color: var(--line); color: var(--ink); }
+.next { background: var(--reed); color: #142200; }
+.owl {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: 14px;
+  border: 1px dashed #4a5390; background: transparent; color: var(--muted); font-weight: 700; text-align: left;
+}
+.owl svg { width: 38px; height: 38px; flex: none; }
+.owl.nudge { border-style: solid; border-color: var(--fern); color: var(--ink); }
+.owl.nudge svg { animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-3px); } }
+.discover { background: #1d3340; border: 1px solid #2f6a6a; border-radius: 14px; padding: 12px 14px; }
+.discover p { margin: 0 0 8px; }
+.discover button { border: 0; background: var(--fern); color: #032622; border-radius: 10px; padding: 7px 12px; font-weight: 800; }
+
+/* Footer + designer view */
+.foot { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 14px; }
+.linkish { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: 0.82rem; }
+.designer { background: #0c1022; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; font-size: 0.85rem; display: grid; gap: 10px; }
+.designer h3 { margin: 0; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--fern); }
+.designer dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 16px; margin: 0; }
+.designer dt { color: var(--muted); font-size: 0.75rem; }
+.designer dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; }
+.designer .log { max-height: 140px; overflow: auto; font-family: ui-monospace, Consolas, monospace; font-size: 0.78rem; color: var(--muted); white-space: pre-wrap; }
+
+/* Overlays */
+.overlay {
+  position: fixed; inset: 0; z-index: 20; background: rgba(6, 8, 20, 0.72);
+  display: grid; place-items: center; grid-template-columns: minmax(0, 1fr);
+  padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.sheet {
+  box-sizing: border-box; width: min(720px, 100%); max-height: 100%; overflow: auto; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 20px; padding: 22px; display: grid; gap: 16px;
+}
+.sheet-head { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.sheet h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; line-height: 1.15; }
+.sheet .sub { margin: 4px 0 0; color: var(--muted); }
+.pages { display: grid; gap: 12px; }
+.page { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; padding: 14px; border-radius: 14px; background: #20274b; }
+.page canvas { width: 56px; height: 56px; border-radius: 12px; background: #2a305a; }
+.page h3 { margin: 0; font-size: 1.05rem; }
+.page label { display: block; font-size: 0.8rem; color: var(--muted); margin: 6px 0 4px; }
+.page textarea {
+  width: 100%; box-sizing: border-box; min-height: 58px; resize: vertical; border-radius: 10px; border: 1px solid var(--line);
+  background: #161b38; color: var(--ink); padding: 8px 10px; font: inherit; font-size: 0.92rem;
+}
+.science { margin-top: 10px; padding: 10px 12px; border-radius: 10px; border-left: 3px solid var(--fern); background: #182f3c; font-size: 0.9rem; }
+.science b { display: block; color: var(--fern); font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 2px; }
+.science.locked { border-left-color: #4a5390; background: #1a2045; color: var(--muted); }
+.empty-journal { color: var(--muted); margin: 0; }
+.reveal-list { display: grid; gap: 10px; }
+.reveal-item { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 12px; align-items: start; }
+.reveal-item canvas { width: 48px; height: 48px; border-radius: 10px; background: #2a305a; }
+.reveal-item h3 { margin: 0; font-size: 1rem; }
+.reveal-item p { margin: 2px 0 0; color: var(--ink); font-size: 0.93rem; }
+.kicker { margin: 0; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fern); }
+.lede { margin: 0; font-size: 1.02rem; max-width: 62ch; }
+
+.goal-label { margin: 0; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: step; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 12px; border-radius: 12px; background: #20274b; font-size: 1rem; }
+.steps li::before { content: counter(step); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--amber); color: var(--amber-ink); font-weight: 800; }
+.legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.legend > div { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: #20274b; }
+.legend canvas { width: 44px; height: 44px; flex: none; border-radius: 10px; background: #1b1f3d; }
+.legend b { display: block; }
+.legend span { font-size: 0.86rem; color: var(--muted); }
+.note { margin: 0; color: var(--muted); }
+.note b { color: var(--ink); }
+.step-now { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; vertical-align: 2px; }
+.pulse { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 196, 94, 0.55); } 50% { box-shadow: 0 0 0 7px rgba(255, 196, 94, 0); } }
+.quest {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center;
+  padding: 12px 18px 12px 12px; border-radius: 18px; border: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(255, 196, 94, 0.09), transparent 60%), var(--panel);
+}
+.quest-lantern { width: 64px; height: 76px; }
+.quest h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; line-height: 1.2; }
+.quest .eyebrow { color: var(--amber); }
+.sparks { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0 5px; }
+.spark { width: 13px; height: 13px; transform: rotate(45deg); border-radius: 3px; border: 1.5px solid #59609a; }
+.spark.lit { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 8px rgba(255, 196, 94, 0.7); }
+.spark.new { animation: sparkIn 1.4s ease-out 2; }
+@keyframes sparkIn { 0% { transform: rotate(45deg) scale(2.2); } 100% { transform: rotate(45deg) scale(1); } }
+.quest .small { margin: 0; }
+.story-sheet { text-align: center; justify-items: center; }
+.story-sheet .story-art { width: 120px; height: 140px; }
+.story-line { margin: 0; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.45; max-width: 34ch; text-wrap: balance; }
+.story-dots { display: flex; gap: 6px; }
+.story-dots i { width: 8px; height: 8px; border-radius: 50%; background: #4a5390; }
+.story-dots i.on { background: var(--amber); }
+.name-field { display: grid; gap: 6px; width: min(320px, 100%); text-align: left; }
+.name-field label { font-size: 0.85rem; color: var(--muted); }
+.name-field input { border-radius: 12px; border: 1px solid var(--line); background: #161b38; color: var(--ink); padding: 11px 12px; font: inherit; font-size: 1rem; }
+.name-field input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.story-sheet .actions { width: min(320px, 100%); }
+.story-sheet #storySkip { border: 0; background: none; color: var(--muted); text-decoration: underline; padding: 6px 12px; }
+/* Celebration after a win */
+.win-sheet { position: relative; width: min(460px, 100%); text-align: center; justify-items: center; overflow-x: hidden; }
+.win-sheet #winHero { width: 96px; height: 96px; animation: hop 0.6s ease-in-out 5 alternate; }
+@keyframes hop { from { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-4px) scale(1.04, 0.96); } to { transform: translateY(-22px) scale(0.97, 1.03); } }
+.win-sheet h2 { font-size: 2rem; color: var(--amber); }
+.win-meter { width: 100%; display: grid; gap: 6px; }
+.win-meter p { margin: 0; font-weight: 700; }
+.win-meter .plus { display: inline-block; margin-left: 6px; padding: 1px 9px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.8rem; animation: pop 0.5s 0.6s both; }
+@keyframes pop { from { transform: scale(0); } 70% { transform: scale(1.25); } to { transform: scale(1); } }
+.win-bar { height: 12px; border-radius: 99px; background: #161b38; border: 1px solid var(--line); overflow: hidden; }
+.win-bar span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ff9e3d, var(--amber)); box-shadow: 0 0 12px rgba(255, 196, 94, 0.8); transition: width 1.2s 0.4s ease-out; }
+.win-box { width: 100%; box-sizing: border-box; text-align: left; padding: 10px 14px; border-radius: 12px; background: #20274b; line-height: 1.5; }
+.win-box p { margin: 0; }
+.win-box b { display: block; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: #b9a6dd; }
+.win-target { background: #2b2a3f; border: 1.5px solid var(--amber); animation: glow 1.4s ease-in-out infinite alternate; }
+.win-target b { color: var(--amber); }
+.win-target h3 { margin: 2px 0; font-family: var(--font-display); font-weight: 400; font-size: 1.2rem; }
+.win-target .unlock { display: inline-block; margin-top: 6px; font-size: 0.85rem; font-weight: 800; color: var(--amber); }
+@keyframes glow { from { box-shadow: 0 0 0 rgba(255, 196, 94, 0); } to { box-shadow: 0 0 18px rgba(255, 196, 94, 0.45); } }
+.win-sheet .actions { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.win-sheet #winNext { order: -2; }
+.win-sheet #winShare { order: -1; width: 100%; }
+.win-sheet #winNext { width: 100%; }
+.win-sheet #winStay { border: 0; background: none; color: var(--muted); text-decoration: underline; padding: 6px 12px; }
+.confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.confetti i { position: absolute; top: -12px; width: 8px; height: 13px; border-radius: 2px; opacity: 0; animation: fall 2.6s ease-in both; }
+@keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(560px) rotate(var(--r)); } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .win-sheet #winHero, .win-target, .win-meter .plus { animation: none; } .win-bar span { transition: none; } }
+@media (max-width: 480px) { .win-sheet { gap: 12px; padding: 18px; } .win-sheet #winHero { width: 72px; height: 72px; } .win-sheet h2 { font-size: 1.7rem; } }
+/* Hero: a look only, no powers */
+.hero-field { display: grid; gap: 6px; width: min(340px, 100%); text-align: left; }
+.hero-field > span { font-size: 0.85rem; color: var(--muted); }
+.hero-pick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.hero-pick button { display: grid; justify-items: center; gap: 2px; padding: 6px 2px 8px; border-radius: 14px; border: 1.5px solid var(--line); background: #161b38; color: var(--muted); font: inherit; font-size: 0.8rem; cursor: pointer; }
+.hero-pick button canvas { width: 56px; height: 56px; }
+.hero-pick button[aria-pressed="true"] { border-color: var(--amber); color: var(--ink); background: #2b2a3f; }
+.hero-pick button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.hero-btn { align-self: center; display: grid; justify-items: center; gap: 2px; padding: 4px; border-radius: 14px; border: 1px solid var(--line); background: #161b38; color: var(--muted); font: inherit; font-size: 0.72rem; cursor: pointer; }
+.hero-btn canvas { width: 48px; height: 48px; }
+.hero-sheet { width: min(420px, 100%); justify-items: center; text-align: center; }
+@media (max-width: 520px) { .hero-btn canvas { width: 36px; height: 36px; } .quest { gap: 10px; } }
+.story-beat { margin: 0; font-family: var(--font-display); font-size: 1.15rem; line-height: 1.5; color: var(--ink); max-width: 60ch; }
+.rank-badge { display: inline-block; padding: 3px 12px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-weight: 800; font-size: 0.85rem; justify-self: start; }
+@media (max-width: 520px) { .quest-lantern { width: 48px; height: 58px; } .story-line { font-size: 1.15rem; } }
+.lang-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 99px; background: #161b38; border: 1px solid var(--line); }
+.lang-switch button { border: 0; background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-size: 0.86rem; }
+.lang-switch button[aria-pressed="true"] { background: var(--amber); color: var(--amber-ink); }
+/* Story book */
+.story-link { margin-top: 8px; border: 1px solid var(--amber); background: rgba(255, 196, 94, 0.1); color: var(--ink); border-radius: 99px; padding: 6px 14px; font-weight: 800; font-size: 0.88rem; }
+.story-link:hover { background: rgba(255, 196, 94, 0.2); }
+.story-link .new { margin-left: 8px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.page-note { background: #2a2440; border-color: #5b4a7a; }
+.page-note button { border: 0; background: var(--amber); color: var(--amber-ink); border-radius: 10px; padding: 7px 12px; font-weight: 800; }
+.mystery { margin: 0; padding: 12px 14px; border-radius: 12px; background: #2a2440; border: 1px solid #5b4a7a; font-family: var(--font-display); font-size: 1.15rem; }
+.book { display: grid; gap: 10px; }
+.book-page { padding: 14px; border-radius: 14px; background: #20274b; display: grid; gap: 6px; }
+.book-page h3 { margin: 0; font-size: 1.05rem; }
+.book-page p { margin: 0; line-height: 1.55; }
+.book-page .num { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+.book-page.locked { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+.book-page.locked .num { color: var(--muted); }
+.book-page.latest { outline: 2px solid var(--amber); }
+/* Level story card */
+.ls-btn { margin-top: 6px; padding: 4px 12px; font-size: 0.82rem; }
+.level-sheet { width: min(540px, 100%); text-align: center; justify-items: center; }
+.level-sheet #lsArt { width: 160px; height: 96px; border-radius: 22px; background: #2a305a; }
+.level-sheet .kicker { color: var(--amber); }
+.ls-prev { box-sizing: border-box; width: 100%; text-align: left; padding: 10px 14px; border-radius: 12px; background: #20274b; border-left: 3px solid #5b4a7a; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
+.ls-prev b { display: block; color: #b9a6dd; font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.page-note .teaser { margin: 10px 0 0; }
+.ls-goal { width: 100%; box-sizing: border-box; text-align: left; padding: 10px 14px; border-radius: 12px; background: #2b2a3f; border-left: 3px solid var(--amber); line-height: 1.5; }
+.ls-goal p { margin: 0; }
+.ls-goal p + p { margin-top: 6px; }
+.ls-goal b { color: var(--amber); }
+.level-sheet .actions { justify-content: center; position: sticky; bottom: -22px; width: 100%; padding: 12px 0 22px; margin-bottom: -22px; background: var(--panel); }
+@media (max-width: 480px) {
+  .level-sheet { gap: 12px; padding: 18px; }
+  .level-sheet #lsArt { width: 107px; height: 64px; border-radius: 16px; }
+  .level-sheet .story-beat { font-size: 1.02rem; }
+  .level-sheet .actions { bottom: -18px; padding-bottom: 18px; margin-bottom: -18px; }
+}
+.goal-line { margin: 4px 0 0; font-size: 0.92rem; color: var(--muted); }
+.goal-line b { color: var(--amber); }
+.page-note .next-ch { margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed #5b4a7a; }
+.page-note .teaser b { display: block; color: var(--amber); }
+/* Guided tour: dim everything except one part of the screen */
+.tour { position: fixed; inset: 0; z-index: 30; }
+.tour-spot { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(6, 8, 20, 0.8); outline: 2.5px solid var(--amber); outline-offset: 3px; pointer-events: none; transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease; }
+.tour-tip { position: fixed; box-sizing: border-box; width: min(340px, calc(100vw - 32px)); background: var(--panel); border: 1.5px solid var(--amber); border-radius: 16px; padding: 16px; display: grid; gap: 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45); transition: left 0.3s ease, top 0.3s ease; }
+.tour-count { margin: 0; font-size: 0.76rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+.tour-text { margin: 0; font-size: 1.02rem; line-height: 1.5; }
+.tour-text b { color: var(--amber); }
+.tour-actions { display: flex; align-items: center; gap: 8px; }
+.tour-actions .spacer { flex: 1; }
+@media (prefers-reduced-motion: reduce) { .tour-spot, .tour-tip { transition: none; } }
+.sheet-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+@media (prefers-reduced-motion: reduce) {
+  .owl.nudge svg, .pulse, .spark.new { animation: none; }
+}
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <svg class="lantern" viewBox="0 0 34 40" aria-hidden="true">
+        <defs><radialGradient id="lg" cx="50%" cy="58%" r="55%"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.55" stop-color="#ffc45e"/><stop offset="1" stop-color="#ff9e3d" stop-opacity="0"/></radialGradient></defs>
+        <circle cx="17" cy="23" r="16" fill="url(#lg)" opacity="0.55"/>
+        <path d="M11 9h12l3 5v14l-4 5H12l-4-5V14z" fill="#3a2f22" stroke="#e7b862" stroke-width="1.5"/>
+        <path d="M12.5 15h9v12h-9z" fill="#ffd77a"/>
+        <path d="M13 4h8M17 4v5" stroke="#e7b862" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Deepvan <span class="h1-tag">Roshni ka Raaz</span></h1>
+        <p data-t="tagline">Every plant follows a hidden rule. Watch, guess, try again.</p>
+      </div>
+    </div>
+    <nav class="chapters" id="chapters" aria-label="Chapters"></nav>
+    <div class="top-actions">
+      <div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div>
+      <button class="ghost" id="helpBtn" type="button" data-t="helpBtn">How to play</button>
+      <button class="ghost" id="journalBtn" type="button"><span data-t="journal">Journal</span><span class="count" id="journalCount">0</span></button>
+      <button class="ghost" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    </div>
+  </header>
+
+  <section class="quest" aria-label="Your quest">
+      <svg class="quest-lantern" viewBox="0 0 64 76" aria-hidden="true">
+        <defs><radialGradient id="qlG" cx="50%" cy="56%" r="50%"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.5" stop-color="#ffc45e"/><stop offset="1" stop-color="#ff9e3d" stop-opacity="0"/></radialGradient></defs>
+        <circle id="qlGlow" cx="32" cy="44" r="31" fill="url(#qlG)" opacity="0.1"/>
+        <path d="M20 18h24l6 9v26l-8 9H22l-8-9V27z" fill="#2c2433" stroke="#c99a52" stroke-width="2.2"/>
+        <path id="qlPane" d="M22 29h20v22H22z" fill="#ffd77a" opacity="0.12"/>
+        <path d="M22 29h20v22H22zM32 29v22M22 40h20" fill="none" stroke="#6d5634" stroke-width="1.4"/>
+        <path d="M25 8h14M32 8v10" stroke="#c99a52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    <div>
+      <p class="eyebrow" id="rank"></p>
+      <h3 id="questTitle">Relight the Great Lantern</h3>
+      <div class="sparks" id="sparks"></div>
+      <p class="small" id="questText"></p>
+      <button class="story-link" id="bookBtn" type="button"></button>
+    </div>
+    <button class="hero-btn" id="heroBtn" type="button"><canvas id="heroAv" aria-hidden="true"></canvas><span data-t="heroChange">Change</span></button>
+  </section>
+
+  <main class="stage">
+    <section class="board-col">
+      <div class="level-head">
+        <div>
+          <p class="eyebrow" id="eyebrow"></p>
+          <h2 id="levelName"></h2>
+          <p class="goal-line" id="goalLine" hidden></p>
+          <button class="story-link ls-btn" id="lsBtn" type="button"></button>
+        </div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <div class="board-wrap" id="boardWrap">
+        <canvas id="board" tabindex="0" aria-label="The grove. Use arrow keys to move, Enter to plant or pick up, number keys to choose a seed, D to let dusk fall."></canvas>
+        <div class="night-count" id="nightCount" hidden></div>
+      </div>
+      <p class="goal-label" data-t="goal">Goal: make every visitor happy</p>
+      <div class="wishes" id="wishes" aria-live="polite"></div>
+    </section>
+
+    <aside class="side">
+      <div class="voice" id="voice" aria-live="polite">
+        <div class="speaker" id="speaker"></div>
+        <p id="voiceText"></p>
+      </div>
+      <div class="pouch">
+        <h3 data-t="pouch">Seed pouch</h3>
+        <div class="seeds" id="pouch"></div>
+        <p class="small" id="pouchTip">Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.</p>
+      </div>
+      <div class="actions" id="actions">
+        <button class="primary" id="duskBtn" type="button">Let dusk fall</button>
+        <button class="secondary" id="stepBtn" type="button" hidden>Watch one night</button>
+        <button class="secondary wide" id="dayBtn" type="button" hidden>Back to daylight</button>
+        <button class="primary next wide" id="nextBtn" type="button" hidden>Next grove</button>
+        <button class="secondary wide" id="shareBtn" type="button" hidden>Share this grove</button>
+      </div>
+      <button class="owl" id="owlBtn" type="button">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <ellipse cx="20" cy="23" rx="12" ry="14" fill="#6c5a8c"/>
+          <ellipse cx="20" cy="27" rx="7" ry="8" fill="#9a88b8"/>
+          <path d="M9 12l4 5M31 12l-4 5" stroke="#6c5a8c" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="15" cy="19" r="4.6" fill="#f1ead9"/><circle cx="25" cy="19" r="4.6" fill="#f1ead9"/>
+          <circle cx="15" cy="19" r="2.2" fill="#1b1730"/><circle cx="25" cy="19" r="2.2" fill="#1b1730"/>
+          <path d="M18.5 23l1.5 2.4 1.5-2.4z" fill="#ffc45e"/>
+        </svg>
+        <span id="owlText">Ask the owl a question</span>
+      </button>
+      <div class="discover" id="discover" hidden></div>
+      <div class="discover page-note" id="pageNote" hidden></div>
+    </aside>
+  </main>
+
+  <div class="designer" id="designer" hidden></div>
+
+  <footer class="foot">
+    <span data-t="proto">Prototype · no timers, no lives, no wrong answers</span>
+    <button class="linkish" id="designerBtn" type="button">Show designer view</button>
+    <button class="linkish" id="unlockBtn" type="button">Open all chapters (for playtesting)</button>
+    <button class="linkish" id="resetBtn" type="button" data-t="reset">Start over</button>
+  </footer>
+</div>
+
+<div class="overlay" id="journalOverlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="journalTitle">
+    <div class="sheet-head">
+      <div>
+        <h2 id="journalTitle" data-t="journalTitle">Your journal</h2>
+        <p class="sub" data-t="journalSub">Notes in your own words about what each plant does. The science underneath appears when you finish a chapter.</p>
+      </div>
+      <button class="ghost" id="journalClose" type="button" data-t="close">Close</button>
+    </div>
+    <div class="pages" id="pages"></div>
+  </div>
+</div>
+
+<div class="overlay" id="revealOverlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="revealTitle">
+    <span class="rank-badge" id="revealRank"></span>
+    <p class="story-beat" id="revealStory"></p>
+    <p class="kicker" data-t="sciHead">The science underneath</p>
+    <h2 id="revealTitle"></h2>
+    <p class="lede" id="revealLede"></p>
+    <div class="reveal-list" id="revealList"></div>
+    <div class="actions"><button class="primary wide" id="revealClose" type="button" data-t="keepExploring">Keep exploring</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="storyOverlay" hidden>
+  <div class="sheet story-sheet" role="dialog" aria-modal="true" aria-labelledby="storyLine">
+    <div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div>
+    <svg class="story-art" viewBox="0 0 64 76" aria-hidden="true">
+        <defs><radialGradient id="slG" cx="50%" cy="56%" r="50%"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.5" stop-color="#ffc45e"/><stop offset="1" stop-color="#ff9e3d" stop-opacity="0"/></radialGradient></defs>
+        <circle id="slGlow" cx="32" cy="44" r="31" fill="url(#slG)" opacity="0.1"/>
+        <path d="M20 18h24l6 9v26l-8 9H22l-8-9V27z" fill="#2c2433" stroke="#c99a52" stroke-width="2.2"/>
+        <path id="slPane" d="M22 29h20v22H22z" fill="#ffd77a" opacity="0.12"/>
+        <path d="M22 29h20v22H22zM32 29v22M22 40h20" fill="none" stroke="#6d5634" stroke-width="1.4"/>
+        <path d="M25 8h14M32 8v10" stroke="#c99a52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    <p class="story-line" id="storyLine"></p>
+    <div class="name-field" id="nameField" hidden>
+      <label for="keeperName" data-t="nameLabel">What should the grove call you?</label>
+      <input id="keeperName" type="text" maxlength="24" autocomplete="nickname" placeholder="Your name">
+    </div>
+    <div class="hero-field" id="heroField" hidden><span id="heroLbl" data-t="heroLbl">Pick your character</span><div class="hero-pick" id="heroPick" role="group" aria-labelledby="heroLbl"></div></div>
+    <div class="story-dots" id="storyDots"></div>
+    <div class="actions"><button class="primary wide" id="storyNext" type="button">Next</button><button class="wide" id="storySkip" type="button">Skip the story</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="helpOverlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="sheet-top">
+      <h2 id="helpTitle" data-t="helpTitle">How to play</h2>
+      <div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div>
+    </div>
+    <ol class="steps">
+      <li><span data-t="help1"><b>Pick a seed</b> from your seed pouch (beside the board, or below it on a phone).</span></li>
+      <li><span data-t="help2"><b>Tap an empty square</b> on the board to plant it. Tap it again to pick it back up.</span></li>
+      <li><span data-t="help3"><b>Press "Let dusk fall"</b> and watch what your plants do in the dark.</span></li>
+    </ol>
+    <p class="goal-label" data-t="goal">Goal: make every visitor happy</p>
+    <div class="legend" id="legend"></div>
+    <p class="note" data-t="helpNote"><b>Each plant follows a secret rule.</b> Nobody tells you the rules: working them out is the game. You can't lose, and you can try as many times as you like. Stuck? Ask the owl.</p>
+    <div class="actions"><button class="secondary" id="helpClose" type="button" data-t="helpStart">Just let me play</button><button class="primary" id="tourBtn" type="button" data-t="tourStart">Show me step by step</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="winOverlay" hidden>
+  <div class="sheet win-sheet" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+    <canvas id="winHero" aria-hidden="true"></canvas>
+    <p class="kicker" id="winKicker"></p>
+    <h2 id="winTitle"></h2>
+    <div class="win-meter"><p id="winMeterText"></p><div class="win-bar"><span id="winBar"></span></div></div>
+    <div class="win-box" id="winGot"></div>
+    <div class="win-box win-target" id="winTarget"></div>
+    <div class="actions"><button class="secondary" id="winStay" type="button"></button><button class="secondary" id="winShare" type="button" hidden></button><button class="primary wide" id="winNext" type="button"></button></div>
+  </div>
+</div>
+
+<div class="overlay" id="heroOverlay" hidden>
+  <div class="sheet hero-sheet" role="dialog" aria-modal="true" aria-labelledby="heroTitle">
+    <h2 id="heroTitle" data-t="heroLbl">Pick your character</h2>
+    <div class="hero-pick" id="heroPick2" role="group" aria-labelledby="heroTitle"></div>
+    <div class="actions"><button class="primary wide" id="heroDone" type="button" data-t="heroDone">Done</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="levelOverlay" hidden>
+  <div class="sheet level-sheet" role="dialog" aria-modal="true" aria-labelledby="lsTitle">
+    <canvas id="lsArt" aria-hidden="true"></canvas>
+    <p class="kicker" id="lsEyebrow"></p>
+    <h2 id="lsTitle"></h2>
+    <div class="ls-prev" id="lsPrev" hidden></div>
+    <p class="story-beat" id="lsText"></p>
+    <div class="ls-goal" id="lsGoal"></div>
+    <button class="story-link" id="lsCh" type="button"></button>
+    <div class="actions"><button class="primary wide" id="lsGo" type="button"></button></div>
+  </div>
+</div>
+
+<div class="overlay" id="bookOverlay" hidden>
+  <div class="sheet" id="bookSheet" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+    <div class="sheet-head">
+      <div>
+        <h2 id="bookTitle" data-t="bookTitle">The Lantern's story</h2>
+        <p class="sub" data-t="bookSub"></p>
+      </div>
+      <button class="ghost" id="bookClose" type="button" data-t="close">Close</button>
+    </div>
+    <p class="mystery" data-t="mystery"></p>
+    <div class="book" id="book"></div>
+  </div>
+</div>
+
+<div class="tour" id="tour" hidden>
+  <div class="tour-spot" id="tourSpot"></div>
+  <div class="tour-tip" id="tourTip" role="dialog" aria-modal="true" aria-labelledby="tourText">
+    <p class="tour-count" id="tourCount"></p>
+    <p class="tour-text" id="tourText"></p>
+    <div class="tour-actions">
+      <button class="linkish" id="tourSkip" type="button"></button>
+      <span class="spacer"></span>
+      <button class="secondary" id="tourBack" type="button"></button>
+      <button class="primary" id="tourNext" type="button"></button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="confirmOverlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <h2 id="confirmTitle" data-t="confirmTitle">Start the grove over?</h2>
+    <p class="lede" data-t="confirmLede">This clears your solved groves and journal notes on this device.</p>
+    <div class="actions"><button class="secondary" id="confirmNo" type="button" data-t="confirmNo">Keep my grove</button><button class="primary" id="confirmYes" type="button" data-t="reset">Start over</button></div>
+  </div>
+</div>
+
+<script>
+// ENGINE START
+// Rules (never shown to the player; they discover them):
+//  sun  : always glows.
+//  reed : glows if at least 1 neighbour (up/down/left/right) glows.      -> a wire / conductor
+//  lily : glows only if at least 2 neighbours glow.                       -> an AND gate
+//  fern : blooms only if NO neighbour glows. It makes shade, never light. -> a NOT gate
+//  moss : Conway's Game of Life (8 neighbours, born on 3, survives on 2-3) -> a cellular automaton
+const DIRS = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+const key = (r, c) => r + ',' + c;
+const unkey = k => k.split(',').map(Number);
+
+function baseTypes(lv) {
+  const t = [];
+  for (let r = 0; r < lv.rows; r++) t.push(new Array(lv.cols).fill(null));
+  (lv.rocks || []).forEach(([r, c]) => (t[r][c] = 'rock'));
+  (lv.fixed || []).forEach(([r, c, p]) => (t[r][c] = p));
+  return t;
+}
+function typesWith(lv, placed) {
+  const t = baseTypes(lv);
+  for (const k in placed) { const [r, c] = unkey(k); t[r][c] = placed[k]; }
+  return t;
+}
+function glowNeighbours(g, r, c) {
+  let n = 0;
+  for (const [dr, dc] of DIRS) {
+    const rr = r + dr, cc = c + dc;
+    if (rr >= 0 && rr < g.length && cc >= 0 && cc < g[0].length && g[rr][cc]) n++;
+  }
+  return n;
+}
+function simLight(lv, placed) {
+  const t = typesWith(lv, placed);
+  let g = t.map(row => row.map(p => p === 'sun'));
+  const frames = [g];
+  for (let i = 0; i < lv.rows * lv.cols + 1; i++) {
+    let changed = false;
+    const nx = t.map((row, r) => row.map((p, c) => {
+      if (p === 'sun') return true;
+      const n = glowNeighbours(g, r, c);
+      const v = (p === 'reed' && n >= 1) || (p === 'lily' && n >= 2);
+      if (v !== g[r][c]) changed = true;
+      return v;
+    }));
+    if (!changed) break;
+    g = nx;
+    frames.push(g);
+  }
+  const n = t.map((row, r) => row.map((p, c) => glowNeighbours(g, r, c)));
+  const on = (r, c) => {
+    const p = t[r][c];
+    if (p === 'rock') return false;
+    if (p === 'fern') return n[r][c] === 0;
+    if (p) return g[r][c];
+    return n[r][c] > 0;
+  };
+  return { kind: 'light', t, frames, glow: g, n, on };
+}
+function lifeStep(a, t) {
+  const R = a.length, C = a[0].length;
+  return a.map((row, r) => row.map((alive, c) => {
+    if (t[r][c] === 'rock') return false;
+    let n = 0;
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      if (!dr && !dc) continue;
+      const rr = r + dr, cc = c + dc;
+      if (rr >= 0 && rr < R && cc >= 0 && cc < C && a[rr][cc]) n++;
+    }
+    return alive ? n === 2 || n === 3 : n === 3;
+  }));
+}
+function simLife(lv, placed) {
+  const t = typesWith(lv, placed);
+  let a = t.map(row => row.map(p => p === 'moss'));
+  const frames = [a];
+  for (let i = 0; i < lv.nights; i++) { a = lifeStep(a, t); frames.push(a); }
+  return { kind: 'life', t, frames, alive: a, on: (r, c) => a[r][c] };
+}
+function simulate(lv, placed) { return lv.kind === 'life' ? simLife(lv, placed) : simLight(lv, placed); }
+function checkGoals(lv, res) { return lv.goals.map(([r, c, want]) => res.on(r, c) === (want === 'on')); }
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Builds a puzzle backwards: plant a random solution, see what it lights, turn that into wishes.
+function generateLevel(d, seed) {
+  const rnd = mulberry32(seed);
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  for (let tries = 0; tries < 500; tries++) {
+    const size = Math.min(6, 4 + Math.floor((d + 1) / 3));
+    const lv = { kind: 'light', rows: size, cols: size, rocks: [], fixed: [], goals: [], pouch: {}, generated: true };
+    const free = [];
+    for (let r = 0; r < size; r++) for (let c = 0; c < size; c++) free.push([r, c]);
+    shuffle(free);
+    const nRocks = Math.floor(rnd() * (1 + Math.floor(size * size / 9)));
+    for (let i = 0; i < nRocks; i++) lv.rocks.push(free.pop());
+    const nSun = 1 + (d >= 4 && rnd() < 0.5 ? 1 : 0);
+    for (let i = 0; i < nSun; i++) lv.fixed.push([...free.pop(), 'sun']);
+    let fern = null;
+    if (d >= 2 && rnd() < 0.5) { fern = free.pop(); lv.fixed.push([...fern, 'fern']); }
+
+    const pool = ['reed', 'reed', 'reed'];
+    if (d >= 2) pool.push('lily', 'lily');
+    if (d >= 3 && rnd() < 0.3) pool.push('sun');
+    const nPlants = Math.min(6, 1 + Math.ceil(d / 2));
+    const sol = {};
+    for (let i = 0; i < nPlants; i++) { const [r, c] = free.pop(); sol[key(r, c)] = pool[Math.floor(rnd() * pool.length)]; }
+
+    const s = simLight(lv, sol), e = simLight(lv, {});
+    if (fern && !s.on(fern[0], fern[1])) continue;
+    const diff = shuffle(free.filter(([r, c]) => s.on(r, c) && !e.on(r, c)));
+    if (!diff.length) continue;
+    const nOn = Math.min(diff.length, 1 + Math.floor(d / 2), 4);
+    diff.slice(0, nOn).forEach(([r, c]) => lv.goals.push([r, c, 'on', 'moth']));
+    const offs = shuffle(free.filter(([r, c]) => !s.on(r, c) && !lv.goals.some(g => g[0] === r && g[1] === c)));
+    const nOff = d >= 2 ? Math.min(offs.length, 1 + (d >= 5 ? 1 : 0)) : 0;
+    offs.slice(0, nOff).forEach(([r, c]) => lv.goals.push([r, c, 'off', 'toad']));
+    if (fern) lv.goals.push([fern[0], fern[1], 'on', 'snail']);
+
+    // Drop plants the wishes don't need; at higher difficulty keep one as a decoy.
+    let decoyKept = d < 5;
+    for (const k of Object.keys(sol)) {
+      const trial = { ...sol }; delete trial[k];
+      if (checkGoals(lv, simLight(lv, trial)).every(Boolean)) {
+        if (!decoyKept) { decoyKept = true; continue; }
+        delete sol[k];
+      }
+    }
+    if (checkGoals(lv, simLight(lv, {})).every(Boolean)) continue;
+    for (const k in sol) lv.pouch[sol[k]] = (lv.pouch[sol[k]] || 0) + 1;
+    lv.solution = Object.entries(sol).map(([k, p]) => [...unkey(k), p]);
+    return lv;
+  }
+  return null;
+}
+// ENGINE END
+
+// ---------- Content ----------
+const PLANTS = {
+  sun:  { name: 'Sunbell',   science: 'A source', explain: 'In a circuit this is the battery: the place where energy enters the system. Everything else depends on it.' },
+  reed: { name: 'Reed',      science: 'A conductor (a wire)', explain: 'A Reed passes light to its neighbours, the way a copper wire passes electric current or a chain of nerve cells passes a signal from your fingertip to your brain.' },
+  lily: { name: 'Twinlily',  science: 'An AND gate', explain: 'It only says "yes" (glows) when two inputs say "yes" at once. The processor in a phone uses billions of these every second.' },
+  fern: { name: 'Shadefern', science: 'A NOT gate (an inverter)', explain: 'It flips the answer: light in, no bloom; no light, bloom. With AND and NOT together you can build any calculation a computer can do.' },
+  moss: { name: 'Glowmoss',  science: "Conway's Game of Life", explain: 'Each moss looks at its 8 neighbours. With fewer than 2 it fades (lonely), with more than 3 it fades (crowded), and an empty spot with exactly 3 grows new moss. The still block, the blinker and the glider you found are their real scientific names.' },
+};
+const CHAPTERS = [
+  { id: 'c1', name: 'First light', plants: ['sun', 'reed'],
+    reveal: { title: "You've been building circuits", lede: 'The light in your grove behaves like electricity. A source pushes it out, and a path of conductors carries it to where it is needed. Engineers draw these paths every day.' } },
+  { id: 'c2', name: 'Flowers that decide', plants: ['lily', 'fern'],
+    reveal: { title: 'You built logic gates', lede: 'Twinlily and Shadefern make decisions about light. Computers are built from exactly these two decisions, repeated billions of times. You worked them out by watching flowers.' } },
+  { id: 'c3', name: 'Moss that remembers', plants: ['moss'],
+    reveal: { title: 'You found the Game of Life', lede: 'Mathematician John Conway invented these moss rules in 1970. Three tiny rules make shapes that stay still, blink and walk. Scientists use rules like these, called cellular automata, to model forest fires, crystal growth and patterns on seashells.' } },
+];
+// The hero's journey: a calm quest. Nothing is lost if you stop; the lantern waits for you.
+const SPARKS_TOTAL = 12;
+const PROLOGUE = [
+  'For a hundred years, the Great Lantern at the heart of Deepvan guided lost creatures home through the night.',
+  'Last winter, its light went out, and nobody knows why. Now moths, toads, snails and beetles wander in the dark, looking for somewhere to rest.',
+  'An old owl has been waiting for someone who notices things. Someone patient and curious. Someone like you.',
+];
+const STORY = [
+  { open: 'The owl leads you to the edge of the grove. "Every creature you help sends a spark to the Great Lantern," it says. "Start small."',
+    end: 'Four sparks glow inside the Great Lantern. The moths are telling everyone: a new keeper has come.' },
+  { open: 'Deeper in, the flowers seem to make up their own minds. "These ones are fussy," the owl whispers. "Watch them closely."',
+    end: 'Eight sparks. The lantern hums, and the deep garden wakes up. The flowers trust you now.' },
+  { open: 'In the oldest corner of the grove grows moss that remembers. "No keeper has understood this moss in a hundred years," says the owl.',
+    end: 'The twelfth spark catches. The Great Lantern blazes, and its light reaches every corner of the grove. Every lost creature can find its way home.' },
+];
+const RANKS = ['New Keeper', 'Apprentice Keeper', 'Lantern Keeper', 'Keeper of Deepvan'];
+// Each chapter's opening: the story so far, the new place, and the chapter's mission
+const CHAPTER_STORY = [{"recap":"","story":"The Great Lantern went dark last winter, and nobody knows why. The owl says the answer starts with the creatures who were awake that night. They will only talk once they feel safe.","goal":"Find out who was at the lantern that night. Help 4 witnesses and light 4 sparks."},{"recap":"The witnesses spoke: a shadow on the tower, a kind voice saying \"Someone new will come\", a page with a lantern mark, and a map in the lantern glass.","story":"The map leads to the deep garden, where the flowers make up their own minds. The Old Keeper hid something here before the light went out.","goal":"Find what the Old Keeper hid, and open the mossy gate. Help 4 more creatures and light 4 more sparks."},{"recap":"Dheeru gave you a silver key. A page said \"I did not break the lantern.\" The key opened the mossy gate.","story":"Behind the gate is the oldest corner of Deepvan. The moss here remembers every keeper who ever lived, even the Old Keeper. Wake its memory and follow where it leads.","goal":"Follow the Old Keeper's footprints to the last page, and light the Great Lantern again."}];
+// Each level's scene, and the cliffhanger that leads into the next level's scene
+const LEVEL_STORY = {
+  '1-1': { goal: "Warm Pinku the moth.", reward: "Pinku tells you what it saw that night, and who else was awake.", intro: 'Pinku the moth has flown all night looking for the Great Lantern. Its wings are cold and tired. "Just one warm spot," it whispers, "and I\'ll tell you what I saw the night the lantern went out."',
+    next: 'Pinku saw a shadow climb the lantern tower. But someone else was awake that night: old Mendhu the toad, who never forgets a sound.' },
+  '1-2': { goal: "Keep Mendhu cool and dark, and Pinku warm.", reward: "Mendhu tells you what the voice said, and where something was left behind.", intro: 'Mendhu the toad heard a voice on the night the lantern went out, but he will only talk somewhere cool and dark. Pinku has come back too, shivering. Can you help them both?',
+    next: 'The voice said "Someone new will come." Was it the Old Keeper? Mendhu points across the grove: "Look where the light can\'t reach. Something was left there."' },
+  '1-3': { goal: "Carry the light all the way to the far moth.", reward: "The hidden page, in a handwriting the owl knows.", intro: 'Far from the old Sunbell, a moth is waiting beside a patch of Reeds. Something is tucked between the stalks, but it is too dark to see. Carry the light all the way there.',
+    next: 'The page is signed with a lantern mark. The owl goes very quiet when it sees it. "I know this handwriting," it says, and flies off toward the stones.' },
+  '1-4': { goal: "Light up the stones for the owl.", reward: "The owl's secret: a map to the deep garden (Chapter 2).", intro: 'The owl waits among the stones, two moths asleep at its feet and Mendhu dozing nearby. "Light this place for me," it says, "and I will tell you a secret I have kept for a whole year."',
+    next: 'The map in the lantern glass points to the deep garden, where the flowers make up their own minds. What did the Old Keeper hide there?' },
+  '2-1': { goal: "Use the Twinlily seed to light the moth.", reward: "The flowers tell you about a snail guarding a secret.", intro: 'The deep garden is dark and strange. A single Twinlily seed lies on the path, as if someone left it for you. A moth sits between two old Sunbells, waiting to see what you will do.',
+    next: 'The Twinlilies whisper about a snail who has guarded something under a Shadefern for a whole year. It will only show it to whoever makes the fern bloom.' },
+  '2-2': { goal: "Make the Raat Rani bloom for Dheeru.", reward: "What the Old Keeper left with Dheeru: a silver key.", intro: 'Dheeru the snail has waited under the Shadefern since the night the lantern went out. "When it blooms," Dheeru says slowly, "I will give you what the Old Keeper left with me."',
+    next: 'A tiny silver key. But a key needs a lock. Somewhere between two lights, another page is waiting.' },
+  '2-3': { goal: "Light the moth, but keep both toads asleep.", reward: "The Old Keeper's page, and where the key fits.", intro: 'Between two old Sunbells, a moth guards a folded page, and a toad sleeps on each side of it. Wake the toads and the page blows away. Light only the moth.',
+    next: '"I did not break the lantern." Then why did it go dark? Beyond the night garden, a gate covered in moss is waiting for a silver key.' },
+  '2-4': { goal: "Settle everyone waiting at the gate.", reward: "The key opens the gate to the oldest corner (Chapter 3).", intro: 'The gate is at the far side of the night garden, and everyone has come to watch you open it: Dheeru, two moths and a very sleepy toad. Settle them all and the path to the gate will light up.',
+    next: 'The key turns. Behind the gate is the oldest corner of the grove, where the moss remembers every keeper who ever lived. Even the Old Keeper.' },
+  '3-1': { goal: "Grow moss on the bare ground.", reward: "The moss starts to remember, and shows old footprints.", intro: 'In the oldest corner, Bholu the beetle waits on a bare patch of ground. "Moss used to grow here," Bholu says. "Make it grow again and it will start to remember."',
+    next: 'The moss shivers and shows a pattern: footprints. Old ones. But they keep fading. Can you grow moss that stays?' },
+  '3-2': { goal: "Grow moss that never fades.", reward: "The footprints stay, and one of them starts blinking.", intro: 'Four beetles want to keep the footprints safe. They need moss that does not fade, not tonight and not in four nights.',
+    next: 'Now the moss remembers clearly. One footprint keeps blinking, like a signal. Is someone trying to say something?' },
+  '3-3': { goal: "Make the blinker stand upright after the third night.", reward: "It points the way to the last page.", intro: 'The blinking footprint is trying to point somewhere. The beetles want it standing up when the third night ends, so they can see which way it points.',
+    next: 'It points to a footprint that is walking. Walking all by itself, toward a flat stone with the lantern mark. The last page must be there.' },
+  '3-4': { goal: "Send your moss walking to the flat stone.", reward: "The last page, and the Great Lantern lights up again.", intro: 'This is it. Five beetles wait at the flat stone. Send your moss walking across the grove to reach them, and the last page will be yours.',
+    next: 'The lantern is lit. But visitors keep arriving from far away, each with a story of their own. Deepvan will always need a keeper.' },
+};
+// The mystery of the dark lantern: one page opens with each spark
+const PAGES = [
+  ['The moth remembers', 'The moth you helped tells you something strange. On the night the lantern went out, it saw a shadow climb the lantern tower, carrying a small light of its own.'],
+  ['A voice in the dark', 'The toad heard a voice that night, soft and kind: "Rest now. Someone new will come." The toad is sure it was the Old Keeper, who looked after this grove before you.'],
+  ['A page among the reeds', 'Between the Reeds you find a torn page in old handwriting: "Light that is passed on never grows less." Below it is a little drawing of a lantern.'],
+  ["The owl's secret", 'At last the owl speaks: "The Old Keeper was my dearest friend. One winter night they walked into the oldest corner of the grove and never came back." The lantern glows a little, and you notice a map scratched inside its glass.'],
+  ['Flowers that were taught', 'The map leads into the deep garden. The Twinlilies whisper that the Old Keeper planted them long ago, "so the grove could learn to make decisions".'],
+  ["The snail's key", 'When the Shadefern blooms, the snail shows you what it has guarded all year: a tiny silver key, hidden under the leaves.'],
+  ['The second page', 'Another page, in the same handwriting: "I did not break the lantern. I let it rest, so that someone new could learn how to light it again."'],
+  ['The old gate', 'Eight sparks light a path to a gate covered in moss. The silver key fits. Behind it lies the oldest corner of the grove, where the moss is said to remember everything.'],
+  ['What the moss remembers', 'The beetles say the moss keeps the footprints of every keeper who ever lived here. Some patterns stay still. Some blink. One of them seems to be walking somewhere.'],
+  ['Footsteps in the moss', 'You follow the walking pattern across the grove. It leads to a flat stone with the lantern mark on it, and the last page lies on top.'],
+  ['The last page', '"If you are reading this, you already know everything I knew. The lantern was never broken. It was waiting for you."'],
+  ['The new Keeper', 'The twelfth spark catches and the Great Lantern blazes. In its light the owl smiles: "The Old Keeper would be proud. This grove is yours to look after now, until one day you teach someone new."'],
+];
+function keeperName() { return (P.name || '').trim(); }
+function rankIndex() { let i = 0; while (i < 3 && chapterDone(i)) i++; return i; }
+function sparkCount() { return LEVELS.filter(l => P.solved[l.id]).length; }
+
+const LEVELS = [
+  { id: '1-1', ch: 0, name: 'A warm corner', kind: 'light', rows: 4, cols: 4, pouch: { sun: 1 },
+    goals: [[1, 2, 'on', 'moth']], solution: [[1, 1, 'sun']],
+    intro: 'A moth is circling the grove, looking for somewhere warm to rest. Plant the Sunbell on any patch of soil, then let dusk fall.',
+    hints: ['When dusk fell, which patches of soil lit up around the Sunbell?', 'Look at the tiles that touch the moth. Could the Sunbell stand on one of them?'],
+    success: 'The moth folds its wings and settles. Did you see where the light reached?' },
+  { id: '1-2', ch: 0, name: 'Shade for the toad', kind: 'light', rows: 5, cols: 5, pouch: { sun: 1 },
+    goals: [[0, 0, 'on', 'moth'], [0, 2, 'off', 'toad']], solution: [[1, 0, 'sun']],
+    intro: 'The moth is back, and a toad has come along. Toads like it cool and dim. Can you warm one without bothering the other?',
+    hints: ['Does the light spread in every direction, or only some?', 'Corners never seem to get light. Find a spot that touches the moth but not the toad.'],
+    success: 'Both are happy. The light reached some neighbours but not others. Which ones?' },
+  { id: '1-3', ch: 0, name: 'Carry the light', kind: 'light', rows: 5, cols: 5, fixed: [[2, 0, 'sun']], pouch: { reed: 2 },
+    goals: [[2, 3, 'on', 'moth']], solution: [[2, 1, 'reed'], [2, 2, 'reed']],
+    intro: "This old Sunbell has grown here for years and won't move. The moth is waiting too far away. You have two Reeds.",
+    hints: ['Plant one Reed right next to the Sunbell. What happens to it at dusk?', 'If a Reed can glow, can it share that glow with the next Reed?'],
+    success: 'The light travelled all the way across. What did each Reed do?' },
+  { id: '1-4', ch: 0, name: 'Around the stones', kind: 'light', rows: 5, cols: 5, fixed: [[0, 0, 'sun']], rocks: [[1, 1], [3, 2]], pouch: { reed: 4 },
+    goals: [[0, 4, 'on', 'moth'], [2, 2, 'on', 'moth'], [2, 0, 'off', 'toad']], solution: [[0, 1, 'reed'], [0, 2, 'reed'], [0, 3, 'reed'], [1, 2, 'reed']],
+    intro: 'Two moths are waiting in different places, and the toad is dozing nearby. Four Reeds, one old Sunbell.',
+    hints: ['Which moth is harder to reach? Start there.', 'A path of Reeds can branch. Where could a branch leave the main path?'],
+    success: 'You split one light into two paths without waking the toad.' },
+  { id: '2-1', ch: 1, name: 'Twinlily', kind: 'light', rows: 5, cols: 5, fixed: [[1, 0, 'sun'], [3, 0, 'sun']], pouch: { lily: 1 },
+    goals: [[2, 1, 'on', 'moth']], solution: [[2, 0, 'lily']],
+    intro: 'A new seed has fallen: Twinlily, two flowers sharing one stem. The moth is waiting near two old Sunbells.',
+    hints: ['Try the Twinlily next to just one Sunbell. Does it glow?', 'Is there a spot that touches both Sunbells at once?'],
+    success: 'The Twinlily opened. Next to only one light it stayed shut. Why might that be?' },
+  { id: '2-2', ch: 1, name: "The snail's fern", kind: 'light', rows: 5, cols: 5, fixed: [[0, 2, 'sun'], [2, 2, 'fern']], pouch: { reed: 1 },
+    goals: [[2, 2, 'on', 'snail'], [1, 3, 'on', 'moth']], solution: [[0, 3, 'reed']],
+    intro: 'A snail lives under this Shadefern and is waiting for it to flower tonight. The moth would like some warmth nearby.',
+    hints: ['Put the Reed right beside the fern and let dusk fall. What does the fern do?', "Can the light reach the moth by a path that doesn't touch the fern?"],
+    success: 'The fern flowered in the shade, and the moth is warm. Now light and shade both matter.' },
+  { id: '2-3', ch: 1, name: 'Between two lights', kind: 'light', rows: 5, cols: 5, fixed: [[0, 1, 'sun'], [0, 3, 'sun']], pouch: { lily: 2, reed: 1 },
+    goals: [[2, 2, 'on', 'moth'], [2, 0, 'off', 'toad'], [2, 4, 'off', 'toad']], solution: [[0, 2, 'lily'], [1, 2, 'reed']],
+    intro: 'The moth is deep in the grove, with a toad dozing on each side. You have Twinlilies and one Reed.',
+    hints: ['Where could a Twinlily stand to feel two lights at once?', 'Once a Twinlily glows, could it help something next to it glow?'],
+    success: 'The Twinlily caught light from both Sunbells and passed it on.' },
+  { id: '2-4', ch: 1, name: 'Night garden', kind: 'light', rows: 5, cols: 5, fixed: [[4, 4, 'sun'], [3, 3, 'sun'], [0, 3, 'fern']], pouch: { lily: 2, reed: 2 },
+    goals: [[0, 3, 'on', 'snail'], [0, 4, 'on', 'moth'], [2, 2, 'on', 'moth'], [1, 2, 'off', 'toad']], solution: [[3, 4, 'lily'], [2, 4, 'reed'], [2, 3, 'lily'], [1, 4, 'reed']],
+    intro: "Two Sunbells in one corner, a snail under its fern, two moths and a sleepy toad. Use everything you've learned.",
+    hints: ['A Twinlily needs two glowing neighbours. Which spots near the Sunbells could give it that?', 'Which plants have to keep away from the fern?'],
+    success: 'Every visitor in the night garden is settled. You know every flower in the grove now.' },
+  { id: '3-1', ch: 2, name: 'Moss needs company', kind: 'life', rows: 6, cols: 6, nights: 1, pouch: { moss: 3 },
+    goals: [[2, 2, 'on', 'beetle']], solution: [[1, 1, 'moss'], [1, 3, 'moss'], [3, 2, 'moss']],
+    intro: 'Glowmoss changes night after night. A beetle wants moss on its spot by morning. Plant moss anywhere, even on the beetle, and watch a night pass.',
+    hints: ['Plant one moss by itself and watch a night. What happens to it?', 'Moss counts all eight neighbours, corners too. What if an empty spot had three moss around it?'],
+    success: 'Moss grew where there was none. How many neighbours did that spot have?' },
+  { id: '3-2', ch: 2, name: 'Moss that stays', kind: 'life', rows: 6, cols: 6, nights: 4, pouch: { moss: 4 },
+    goals: [[2, 2, 'on', 'beetle'], [2, 3, 'on', 'beetle'], [3, 2, 'on', 'beetle'], [3, 3, 'on', 'beetle']], solution: [[2, 2, 'moss'], [2, 3, 'moss'], [3, 2, 'moss'], [3, 3, 'moss']],
+    intro: "These beetles want a patch of moss that's still there after four nights.",
+    hints: ['Watch one night at a time. Which moss fade, and how many neighbours did they have?', 'Try a shape where every moss touches exactly three others.'],
+    success: 'A shape that never changes. Every moss has just the right number of neighbours.' },
+  { id: '3-3', ch: 2, name: 'Moss that blinks', kind: 'life', rows: 5, cols: 5, nights: 3, pouch: { moss: 3 },
+    goals: [[1, 2, 'on', 'beetle'], [2, 2, 'on', 'beetle'], [3, 2, 'on', 'beetle'], [2, 1, 'off', 'toad'], [2, 3, 'off', 'toad']], solution: [[2, 1, 'moss'], [2, 2, 'moss'], [2, 3, 'moss']],
+    intro: 'The beetles want a standing line of moss after three nights, and the toads want the spots beside it left clear.',
+    hints: ['Plant a standing line and watch one night. What shape does it become?', 'If a line keeps flipping, which way should it start so it ends up standing after three nights?'],
+    success: 'Your line flipped every night: lying, standing, lying, standing. Some shapes pulse like a heartbeat.' },
+  { id: '3-4', ch: 2, name: 'Moss that walks', kind: 'life', rows: 8, cols: 8, nights: 4, pouch: { moss: 5 },
+    goals: [[2, 3, 'on', 'beetle'], [3, 4, 'on', 'beetle'], [4, 2, 'on', 'beetle'], [4, 3, 'on', 'beetle'], [4, 4, 'on', 'beetle']], solution: [[1, 2, 'moss'], [2, 3, 'moss'], [3, 1, 'moss'], [3, 2, 'moss'], [3, 3, 'moss']],
+    intro: 'The beetles have moved camp. They want five moss in exactly this shape after four nights. Your moss will have to travel to get there.',
+    hints: ["Plant the beetles' exact shape and watch night by night. Does it stay put?", 'Try the same shape one step up and one step to the left of the beetles.'],
+    success: 'Your moss walked across the grove by itself. Five moss and three simple rules made something that moves.' },
+];
+const WANDER_INTROS = [
+  'A few visitors drifted in on the evening breeze.',
+  'Someone new is waiting at the edge of the grove.',
+  'The wind changed, and new visitors followed it.',
+  'Fireflies led a few travellers here tonight.',
+];
+const WANDER_SUCCESS = ['Everyone is settled for the night.', 'The grove hums quietly. Another visitor will come soon.', 'All of them are resting now.'];
+const WANDER_HINTS = ['Which visitor is hardest to please? Start with that one.', 'Look at the four tiles touching each moth. What could glow there?'];
+const WHO = {
+  moth:   { label: 'Moth', want: 'wants warm light' },
+  toad:   { label: 'Toad', want: 'wants shade' },
+  snail:  { label: 'Snail', want: 'waiting for its fern to flower' },
+  beetle: { label: 'Beetle', want: 'wants moss here at dawn' },
+};
+
+// ---------- Hinglish: same game, everyday words ----------
+const HI = {
+  plants: {
+    sun:  { name: 'Surajmukhi', science: 'Battery (energy ka source)', explain: 'Circuit mein yeh battery hai: yahin se energy system mein aati hai. Baaki sab isi par tika hai.' },
+    reed: { name: 'Narkat', science: 'Taar (wire / conductor)', explain: 'Narkat roshni ko apne padosi tak pahunchata hai, jaise taambe ka taar bijli pahunchata hai, ya nasein (nerves) ungli se dimaag tak signal le jaati hain.' },
+    lily: { name: 'Judwa Kamal', science: 'AND gate', explain: 'Yeh tabhi "haan" kehta hai (chamakta hai) jab do input ek saath "haan" kahein. Phone ka processor har second aise arabon gates use karta hai.' },
+    fern: { name: 'Raat Rani', science: 'NOT gate (ulta karne wala)', explain: 'Yeh jawaab ulta kar deti hai: roshni mili toh phool nahi; roshni nahi mili toh phool khila. AND aur NOT milakar computer ka har hisaab banaya ja sakta hai.' },
+    moss: { name: 'Jaadui Kaai', science: 'Conway ka Game of Life', explain: 'Har kaai apne 8 padosi dekhti hai. 2 se kam hon toh akelepan se murjha jaati hai, 3 se zyada hon toh bheed se murjha jaati hai, aur jis khaali jagah ke paas theek 3 kaai hon wahan nayi kaai ugti hai. Aapne jo ruki hui shape, blinker aur glider banaye, unke asli scientific naam yahi hain.' },
+  },
+  chapters: [
+    { name: 'Pehli roshni', title: 'Aap circuit bana rahe the', lede: 'Aapke bagiche ki roshni bijli ki tarah chalti hai. Source use bahar bhejta hai, aur conductors ka raasta use wahan tak le jaata hai jahan zaroorat hai. Engineers roz aise raaste banate hain.' },
+    { name: 'Faisla karne wale phool', title: 'Aapne logic gates banaye', lede: 'Judwa Kamal aur Raat Rani roshni ke baare mein faisla karte hain. Computer bilkul inhi do faislon se bane hain, arabon baar dohraaye hue. Aapne yeh sirf phool dekh kar samajh liya.' },
+    { name: 'Yaad rakhne wali kaai', title: 'Aapne Game of Life dhoondh liya', lede: 'Ganitagya John Conway ne 1970 mein kaai ke yeh niyam banaye the. Teen chhote niyam aisi shapes banate hain jo ruki rehti hain, jhapakti hain aur chalti hain. Scientist aise niyamon (cellular automata) se jungle ki aag, crystal ka badhna aur seepiyon ke design samajhte hain.' },
+  ],
+  prologue: [
+    'Sau saal tak, Deepvan ke beech jalta Bada Lantern raat mein bhatke hue jaanwaron ko ghar ka raasta dikhata tha.',
+    'Pichhli sardi uski roshni bujh gayi, aur kisi ko nahi pata kyun. Ab patange, mendhak, ghonge aur beetle andhere mein bhatak rahe hain, aaram ki jagah dhoondh rahe hain.',
+    'Ek boodha ullu kisi aise insaan ka intezaar kar raha tha jo cheezon par dhyaan deta ho. Sabr wala aur jigyaasu. Aap jaisa koi.',
+  ],
+  story: [
+    { open: 'Ullu aapko bagiche ke kinaare le jaata hai. "Har jaanwar jiski aap madad karoge, Bade Lantern tak ek chingaari bhejega," woh kehta hai. "Chhote se shuru karo."',
+      end: 'Bade Lantern mein chaar chingaariyan chamak rahi hain. Patange sabko bata rahe hain: naya rakshak aa gaya hai.' },
+    { open: 'Aage jaakar phool khud faisla karte lagte hain. "Yeh thode nakhre wale hain," ullu dheere se kehta hai. "Dhyaan se dekhna."',
+      end: 'Aath chingaariyan. Lantern gungunaane laga, aur gehra bagicha jaag utha. Phool ab aap par bharosa karte hain.' },
+    { open: 'Bagiche ke sabse purane kone mein yaad rakhne wali kaai ugti hai. "Sau saal mein koi rakshak is kaai ko nahi samajh paaya," ullu kehta hai.',
+      end: 'Baarahvi chingaari jal uthi. Bada Lantern tez roshni se chamak utha, aur uski roshni bagiche ke har kone tak pahunch gayi. Har bhatka jaanwar ab ghar ka raasta dhoondh sakta hai.' },
+  ],
+  ranks: ['Naya Rakshak', 'Sikhta hua Rakshak', 'Lantern Rakshak', 'Deepvan ka Rakshak'],
+  who: {
+    moth:   { label: 'Patanga', want: 'roshni chahta hai' },
+    toad:   { label: 'Mendhak', want: 'andhera chahta hai' },
+    snail:  { label: 'Ghonga', want: 'apni Raat Rani ke khilne ka intezaar' },
+    beetle: { label: 'Beetle', want: 'subah yahan kaai chahta hai' },
+  },
+  levels: {
+    '1-1': { name: 'Garam kona',
+      intro: 'Ek patanga garam jagah dhoondh raha hai. Surajmukhi ko kisi bhi khaali dibbe par lagao, phir "Raat hone do" dabao.',
+      hints: ['Raat hone par Surajmukhi ke aas-paas kaun se dibbe chamke?', 'Patange ko chhoone wale dibbe dekho. Kya Surajmukhi unmein se kisi par lag sakti hai?'],
+      success: 'Patanga pankh mod kar baith gaya. Dekha, roshni kahan tak pahunchi?' },
+    '1-2': { name: 'Mendhak ke liye chhaaya',
+      intro: 'Patanga wapas aaya hai, aur saath mein ek mendhak bhi. Mendhak ko thandak aur andhera pasand hai. Kya aap ek ko roshni de sakte ho, bina doosre ko pareshaan kiye?',
+      hints: ['Kya roshni har disha mein failti hai, ya sirf kuch mein?', 'Tirchhe (corner wale) dibbon tak roshni kabhi nahi jaati. Aisi jagah dhoondho jo patange ko chhoye par mendhak ko nahi.'],
+      success: 'Dono khush hain. Roshni kuch padosiyon tak gayi, kuch tak nahi. Kaun se?' },
+    '1-3': { name: 'Roshni aage badhao',
+      intro: 'Yeh purani Surajmukhi saalon se yahin hai aur hilegi nahi. Patanga bahut door hai. Aapke paas do Narkat hain.',
+      hints: ['Ek Narkat Surajmukhi ke bilkul bagal mein lagao. Raat mein uske saath kya hota hai?', 'Agar Narkat chamak sakta hai, toh kya woh apni chamak agle Narkat ko de sakta hai?'],
+      success: 'Roshni poora raasta paar kar gayi. Har Narkat ne kya kiya?' },
+    '1-4': { name: 'Pattharon ke aas-paas',
+      intro: 'Do patange alag-alag jagah intezaar kar rahe hain, aur paas mein mendhak so raha hai. Chaar Narkat, ek purani Surajmukhi.',
+      hints: ['Kis patange tak pahunchna zyada mushkil hai? Wahin se shuru karo.', 'Narkaton ka raasta do hisson mein bant sakta hai. Shaakha kahan se nikal sakti hai?'],
+      success: 'Aapne ek roshni ko do raaston mein baant diya, aur mendhak ko jagaya bhi nahi.' },
+    '2-1': { name: 'Judwa Kamal',
+      intro: 'Ek naya beej gira hai: Judwa Kamal, ek dandi par do phool. Patanga do purani Surajmukhiyon ke paas intezaar kar raha hai.',
+      hints: ['Judwa Kamal ko sirf ek Surajmukhi ke bagal mein lagao. Kya woh chamakta hai?', 'Kya koi aisi jagah hai jo dono Surajmukhiyon ko ek saath chhooti ho?'],
+      success: 'Judwa Kamal khil gaya. Sirf ek roshni ke paas woh band raha tha. Aisa kyun?' },
+    '2-2': { name: 'Ghonge ki Raat Rani',
+      intro: 'Is Raat Rani ke neeche ek ghonga rehta hai aur aaj raat iske khilne ka intezaar kar raha hai. Paas mein patange ko thodi garmi chahiye.',
+      hints: ['Narkat ko Raat Rani ke bilkul bagal mein lagao aur raat hone do. Raat Rani kya karti hai?', 'Kya roshni patange tak aise raaste se pahunch sakti hai jo Raat Rani ko na chhoye?'],
+      success: 'Raat Rani chhaaya mein khil gayi, aur patange ko garmi mil gayi. Ab roshni aur chhaaya dono zaroori hain.' },
+    '2-3': { name: 'Do roshniyon ke beech',
+      intro: 'Patanga bagiche ke andar hai, aur uske dono taraf ek-ek mendhak so raha hai. Aapke paas Judwa Kamal aur ek Narkat hai.',
+      hints: ['Judwa Kamal kahan khada ho ki use ek saath do roshniyan milein?', 'Jab Judwa Kamal chamakne lage, kya woh apne bagal wale ko chamkane mein madad kar sakta hai?'],
+      success: 'Judwa Kamal ne dono Surajmukhiyon se roshni pakdi aur aage pahuncha di.' },
+    '2-4': { name: 'Raat ka bagicha',
+      intro: 'Ek kone mein do Surajmukhi, apni Raat Rani ke neeche ghonga, do patange aur ek oonghta mendhak. Ab tak jo seekha, sab use karo.',
+      hints: ['Judwa Kamal ko do chamakte padosi chahiye. Surajmukhiyon ke paas kaun si jagah yeh de sakti hai?', 'Kaun se paudhe Raat Rani se door rehne chahiye?'],
+      success: 'Raat ke bagiche mein har mehmaan khush hai. Ab aap bagiche ka har phool jaante ho.' },
+    '3-1': { name: 'Kaai ko saathi chahiye',
+      intro: 'Jaadui Kaai har raat badalti hai. Beetle subah tak apni jagah par kaai chahta hai. Kaai kahin bhi lagao, beetle ke upar bhi, aur ek raat guzarne do.',
+      hints: ['Ek kaai akeli lagao aur ek raat dekho. Uske saath kya hota hai?', 'Kaai apne aathon padosi ginti hai, corner wale bhi. Agar kisi khaali jagah ke paas teen kaai hon toh?'],
+      success: 'Jahan kaai nahi thi, wahan kaai ug aayi. Us jagah ke kitne padosi the?' },
+    '3-2': { name: 'Tiki rehne wali kaai',
+      intro: 'In beetles ko kaai ka aisa tukda chahiye jo chaar raat baad bhi wahin ho.',
+      hints: ['Ek-ek raat dekho. Kaun si kaai murjhaati hai, aur uske kitne padosi the?', 'Aisi shape try karo jismein har kaai theek teen doosri kaai ko chhooye.'],
+      success: 'Ek shape jo kabhi nahi badalti. Har kaai ke paas bilkul sahi ginti ke padosi hain.' },
+    '3-3': { name: 'Jhapakne wali kaai',
+      intro: 'Beetles ko teen raat baad kaai ki khadi line chahiye, aur mendhak chahte hain ki line ke bagal ki jagah khaali rahe.',
+      hints: ['Ek khadi line lagao aur ek raat dekho. Woh kis shape mein badalti hai?', 'Agar line har raat palatti hai, toh shuru mein use kaise lagao ki teen raat baad khadi ho?'],
+      success: 'Aapki line har raat palti: leti, khadi, leti, khadi. Kuch shapes dil ki dhadkan ki tarah dhadakti hain.' },
+    '3-4': { name: 'Chalne wali kaai',
+      intro: 'Beetles ne apna dera badal liya hai. Unhe chaar raat baad bilkul isi shape mein paanch kaai chahiye. Aapki kaai ko chal kar wahan pahunchna hoga.',
+      hints: ['Beetles wali shape hi lagao aur raat-dar-raat dekho. Kya woh wahin rehti hai?', 'Wahi shape beetles se ek dibba upar aur ek dibba left mein lagao.'],
+      success: 'Aapki kaai khud chal kar bagiche ke paar chali gayi. Paanch kaai aur teen aasaan niyamon ne kuch aisa banaya jo chalta hai.' },
+  },
+  pages: [
+    ['Patange ko yaad hai', 'Jis patange ki aapne madad ki, woh ek ajeeb baat batata hai. Jis raat Lantern bujha, usne ek parchhai ko Lantern ki meenar par chadhte dekha tha, haath mein apni ek chhoti si roshni liye.'],
+    ['Andhere mein ek awaaz', 'Mendhak ne us raat ek naram, pyaari awaaz suni thi: "Ab aaram karo. Koi naya aayega." Mendhak ko pakka yakeen hai ki woh Purane Rakshak the, jo aapse pehle is bagiche ki dekhbhaal karte the.'],
+    ['Narkaton ke beech ek panna', 'Narkaton ke beech aapko purani likhawat wala ek phata panna milta hai: "Jo roshni aage baanti jaaye, woh kabhi kam nahi hoti." Neeche ek chhote Lantern ka nishaan bana hai.'],
+    ['Ullu ka raaz', 'Aakhir ullu bolta hai: "Purane Rakshak mere sabse achhe dost the. Ek sardi ki raat woh bagiche ke sabse purane kone ki taraf gaye aur kabhi wapas nahi aaye." Lantern thoda sa chamakta hai, aur aapko uske sheeshe ke andar khurcha hua ek naksha dikhta hai.'],
+    ['Sikhaaye hue phool', 'Naksha gehre bagiche ki taraf le jaata hai. Judwa Kamal fusfusaate hain ki Purane Rakshak ne unhe bahut pehle lagaya tha, "taaki bagicha faisle lena seekh sake".'],
+    ['Ghonge ki chaabi', 'Jab Raat Rani khilti hai, ghonga aapko woh cheez dikhata hai jiski woh poore saal se hifaazat kar raha tha: patton ke neeche chhupi ek chhoti si chaandi ki chaabi.'],
+    ['Doosra panna', 'Usi likhawat mein ek aur panna: "Maine Lantern ko toda nahi. Maine use aaram karne diya, taaki koi naya use dobara jalaana seekh sake."'],
+    ['Purana darwaaza', 'Aath chingaariyan kaai se dhake ek darwaaze tak raasta roshan karti hain. Chaandi ki chaabi bilkul fit hoti hai. Uske peeche bagiche ka sabse purana kona hai, jahan kehte hain kaai sab kuch yaad rakhti hai.'],
+    ['Kaai ko kya yaad hai', 'Beetles kehte hain ki yeh kaai har us Rakshak ke kadmon ke nishaan sambhaal kar rakhti hai jo kabhi yahan raha. Kuch nishaan ruke hue hain. Kuch jhapakte hain. Aur ek kahin chalta hua lagta hai.'],
+    ['Kaai mein kadam', 'Aap us chalte hue nishaan ke peechhe-peechhe bagiche ke paar jaate ho. Woh ek chapte patthar tak le jaata hai, jis par Lantern ka nishaan bana hai, aur uske upar aakhri panna rakha hai.'],
+    ['Aakhri panna', '"Agar aap yeh padh rahe ho, toh mera saara gyaan ab aapke paas hai. Lantern kabhi toota hi nahi tha. Woh aapka intezaar kar raha tha."'],
+    ['Naya Rakshak', 'Baarahvi chingaari jalti hai aur Bada Lantern jagmaga uthta hai. Uski roshni mein ullu muskurata hai: "Purane Rakshak ko aap par garv hota. Ab yeh bagicha aapka hai, jab tak ek din aap kisi naye ko sikha na do."'],
+  ],
+  chapterStory: [{"recap":"","story":"Pichhli sardi Bada Lantern bujh gaya, aur kisi ko nahi pata kyun. Ullu kehta hai ki jawaab un jaanwaron se shuru hota hai jo us raat jaag rahe the. Par woh tabhi bolenge jab unhe aaram milega.","goal":"Pata lagao us raat Lantern ke paas kaun tha. 4 gawahon ki madad karo aur 4 chingaariyan jalao."},{"recap":"Gawahon ne bataya: meenar par ek parchhai, ek pyaari awaaz \"Koi naya aayega\", Lantern ke nishaan wala panna, aur Lantern ke sheeshe par ek naksha.","story":"Naksha gehre bagiche tak le jaata hai, jahan phool khud faisla karte hain. Roshni bujhne se pehle Purane Rakshak ne yahan kuch chhupaya tha.","goal":"Purane Rakshak ki chhupayi cheez dhoondho aur kaai wala darwaaza kholo. 4 aur jaanwaron ki madad karo, 4 aur chingaariyan jalao."},{"recap":"Dheeru ne aapko chaandi ki chaabi di. Ek panne par likha tha \"Maine Lantern ko toda nahi.\" Chaabi se kaai wala darwaaza khul gaya.","story":"Darwaaze ke peeche Deepvan ka sabse purana kona hai. Yahan ki kaai har Rakshak ko yaad rakhti hai, Purane Rakshak ko bhi. Uski yaad jagao aur jahan woh le jaaye, wahan chalo.","goal":"Purane Rakshak ke kadmon ke peechhe chal kar aakhri panna paao, aur Bada Lantern phir se jalao."}],
+  levelStory: {
+    '1-1': { goal: "Pinku patange ko garmi do.", reward: "Pinku batayega usne us raat kya dekha, aur kaun aur jaag raha tha.", intro: 'Pinku patanga poori raat Bade Lantern ko dhoondhta raha. Uske pankh thande aur thake hue hain. "Bas ek garam jagah de do," woh dheere se kehta hai, "phir main bataunga ki jis raat Lantern bujha, maine kya dekha."',
+      next: 'Pinku ne meenar par ek parchhai dekhi. Par us raat koi aur bhi jaag raha tha: boodha Mendhu mendhak, jo koi awaaz kabhi nahi bhoolta.' },
+    '1-2': { goal: "Mendhu ko thanda-andhera do, aur Pinku ko garmi.", reward: "Mendhu batayega awaaz ne kya kaha, aur kahan kuch chhoda gaya tha.", intro: 'Jis raat Lantern bujha, Mendhu mendhak ne ek awaaz suni thi. Par woh sirf thandi, andheri jagah par hi baat karega. Pinku bhi wapas aaya hai, kaanpta hua. Kya aap dono ki madad kar sakte ho?',
+      next: 'Awaaz ne kaha tha "Koi naya aayega." Kya woh Purane Rakshak the? Mendhu bagiche ke us paar ishaara karta hai: "Wahan dekho jahan roshni nahi pahunchti. Wahan kuch chhoda gaya tha."' },
+    '1-3': { goal: "Roshni ko door wale patange tak pahunchao.", reward: "Chhupa hua panna, jiski likhawat ullu pehchaanta hai.", intro: 'Purani Surajmukhi se bahut door, Narkaton ke paas ek patanga intezaar kar raha hai. Dandiyon ke beech kuch chhupa hai, par itna andhera hai ki dikhta nahi. Roshni ko wahan tak pahunchao.',
+      next: 'Panne par Lantern ka nishaan hai. Use dekhte hi ullu bilkul chup ho jaata hai. "Main yeh likhawat pehchaanta hoon," woh kehta hai, aur pattharon ki taraf ud jaata hai.' },
+    '1-4': { goal: "Ullu ke liye pattharon ko roshan karo.", reward: "Ullu ka raaz: gehre bagiche ka naksha (Adhyay 2).", intro: 'Ullu pattharon ke beech baitha hai, uske paas do patange so rahe hain aur Mendhu oongh raha hai. "Mere liye yeh jagah roshan karo," woh kehta hai, "aur main aapko woh raaz bataunga jo maine poore saal chhupa kar rakha."',
+      next: 'Lantern ke sheeshe par bana naksha gehre bagiche ki taraf ishaara karta hai, jahan phool khud faisla karte hain. Purane Rakshak ne wahan kya chhupaya tha?' },
+    '2-1': { goal: "Judwa Kamal ke beej se patange tak roshni pahunchao.", reward: "Phool batayenge ki ek ghonga kaunsa raaz chhupa kar baitha hai.", intro: 'Gehra bagicha andhera aur ajeeb hai. Raaste par Judwa Kamal ka ek akela beej pada hai, jaise kisi ne aapke liye chhoda ho. Do purani Surajmukhiyon ke beech ek patanga baitha dekh raha hai ki aap kya karoge.',
+      next: 'Judwa Kamal fusfusaate hain ki ek ghonga poore saal se Raat Rani ke neeche kuch chhupa kar baitha hai. Woh sirf use dikhayega jo Raat Rani ko khila de.' },
+    '2-2': { goal: "Dheeru ke liye Raat Rani khilao.", reward: "Purane Rakshak ki chhodi hui cheez: chaandi ki chaabi.", intro: 'Jis raat Lantern bujha, tab se Dheeru ghonga Raat Rani ke neeche intezaar kar raha hai. "Jab yeh khilegi," Dheeru dheere se kehta hai, "tab main aapko woh dunga jo Purane Rakshak mere paas chhod gaye the."',
+      next: 'Ek chhoti si chaandi ki chaabi. Par chaabi ko taala chahiye. Do roshniyon ke beech kahin ek aur panna intezaar kar raha hai.' },
+    '2-3': { goal: "Patange ko roshni do, par dono mendhak sote rahein.", reward: "Purane Rakshak ka panna, aur chaabi kahan lagegi.", intro: 'Do purani Surajmukhiyon ke beech ek patanga ek mude hue panne ki hifaazat kar raha hai, aur uske dono taraf ek-ek mendhak so raha hai. Mendhak jaage toh panna ud jaayega. Roshni sirf patange tak pahunchao.',
+      next: '"Maine Lantern ko toda nahi." Toh phir woh bujha kyun? Raat ke bagiche ke us paar, kaai se dhaka ek darwaaza chaandi ki chaabi ka intezaar kar raha hai.' },
+    '2-4': { goal: "Darwaaze par khade sab mehmaanon ko khush karo.", reward: "Chaabi sabse purane kone ka darwaaza kholegi (Adhyay 3).", intro: 'Darwaaza raat ke bagiche ke us paar hai, aur use khulta dekhne sab aaye hain: Dheeru, do patange aur ek bahut oonghta mendhak. Sabko khush karo, toh darwaaze tak ka raasta roshan ho jaayega.',
+      next: 'Chaabi ghoomti hai. Darwaaze ke peeche bagiche ka sabse purana kona hai, jahan kaai har Rakshak ko yaad rakhti hai. Purane Rakshak ko bhi.' },
+    '3-1': { goal: "Khaali zameen par kaai ugao.", reward: "Kaai yaad karna shuru karegi aur purane kadmon ke nishaan dikhayegi.", intro: 'Sabse purane kone mein Bholu beetle ek khaali zameen par intezaar kar raha hai. "Yahan kabhi kaai ugti thi," Bholu kehta hai. "Use phir se ugao, toh woh yaad karna shuru karegi."',
+      next: 'Kaai kaanpti hai aur ek nishaan dikhati hai: kadmon ke nishaan. Purane. Par woh mit-te ja rahe hain. Kya aap aisi kaai uga sakte ho jo tiki rahe?' },
+    '3-2': { goal: "Aisi kaai ugao jo kabhi na mite.", reward: "Nishaan tik jaayenge, aur ek nishaan jhapakne lagega.", intro: 'Chaar beetles in kadmon ke nishaanon ko bachana chahte hain. Unhe aisi kaai chahiye jo na aaj mite, na chaar raat baad.',
+      next: 'Ab kaai saaf-saaf yaad rakhti hai. Ek nishaan baar-baar jhapak raha hai, jaise koi ishaara. Kya koi kuch kehna chahta hai?' },
+    '3-3': { goal: "Teesri raat ke baad jhapakte nishaan ko khada rakho.", reward: "Woh aakhri panne ka raasta dikhayega.", intro: 'Jhapakta hua nishaan kahin ishaara karna chahta hai. Beetles chahte hain ki teesri raat ke baad woh khada ho, taaki dikhe ki woh kis taraf ishaara karta hai.',
+      next: 'Woh ek aise nishaan ki taraf ishaara karta hai jo chal raha hai. Apne aap chalta hua, Lantern ke nishaan wale ek chapte patthar ki taraf. Aakhri panna wahin hoga.' },
+    '3-4': { goal: "Apni kaai ko chala kar chapte patthar tak bhejo.", reward: "Aakhri panna, aur Bada Lantern phir se jal uthega.", intro: 'Yahi hai woh pal. Paanch beetles chapte patthar ke paas intezaar kar rahe hain. Apni kaai ko bagiche ke paar chala kar unke paas pahunchao, aur aakhri panna aapka hoga.',
+      next: 'Lantern jal gaya. Par door-door se mehmaan aate rehte hain, har ek ki apni kahani ke saath. Deepvan ko hamesha ek Rakshak ki zaroorat rahegi.' },
+  },
+  wanderIntros: ['Shaam ki hawa ke saath kuch mehmaan aa gaye.', 'Bagiche ke kinaare koi naya intezaar kar raha hai.', 'Hawa badli, aur naye mehmaan uske peechhe aa gaye.', 'Aaj raat jugnu kuch musafiron ko yahan le aaye.'],
+  wanderSuccess: ['Sab raat ke liye aaram se baith gaye.', 'Bagicha dheere se gungunata hai. Jald hi koi aur mehmaan aayega.', 'Ab sab aaram kar rahe hain.'],
+  wanderHints: ['Kis mehmaan ko khush karna sabse mushkil hai? Usi se shuru karo.', 'Har patange ko chhoone wale chaar dibbe dekho. Wahan kya chamak sakta hai?'],
+};
+
+// Interface words in both languages
+const UI = {
+  en: {
+    tagline: 'Every plant follows a hidden rule. Watch, guess, try again.',
+    helpBtn: 'How to play', journal: 'Journal', soundOn: 'Sound on', soundOff: 'Sound off',
+    yourQuest: 'Your quest', questTitle: 'Relight the Great Lantern', questDone: 'The Great Lantern is lit',
+    questText: (n, total) => `${n} of ${total} sparks. Each visitor you settle sends one spark to the lantern.`,
+    questDoneText: w => `Wandering visitors still find their way here. You have helped ${w} of them so far.`,
+    goal: 'Goal: make every visitor happy', pouch: 'Seed pouch',
+    tipLight: "Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.",
+    tipLife: 'Tap soil to plant moss, even on a beetle. Tap moss to pick it back up.',
+    dusk: 'Let dusk fall', duskLife: n => `Let ${n} ${n === 1 ? 'night' : 'nights'} pass`, watchRest: 'Watch the rest', step: 'Watch one night',
+    back: 'Back to daylight', replant: 'Replant this grove', nextGrove: 'Next grove', nextVisitor: 'Next visitor',
+    owlAsk: 'Ask the owl a question', owlShow: 'Ask the owl to show you a spot', owl: 'Owl', grove: 'The grove',
+    wanderName: 'Wandering visitors', eyebrowWander: n => `Endless grove · visitor ${n}`,
+    storySkip: 'Skip the story', dailyName: "Today's grove", linkName: "A friend's grove",
+    eyebrowDaily: d => `Daily grove · ${d} · the same puzzle for everyone today`, eyebrowLink: 'Shared grove · the same puzzle your friend played',
+    dailyIntro: "Today's grove is the same for everyone who plays it. Settle every visitor in as few dusks as you can, then share how you did.",
+    linkIntro: 'A friend sent you this grove. Plant seeds from your pouch, then let dusk fall and see who settles.',
+    shareBtn: 'Share this grove', shareWin: 'Share my progress', copied: 'Copied! Paste it to a friend.',
+    shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\nEvery visitor settled in ${n} ${n === 1 ? 'dusk' : 'dusks'}, ${h ? `${h} owl ${h === 1 ? 'hint' : 'hints'}` : 'no owl hints'}. Can you do it?`,
+    shareCh: (name, n, total) => `🏮 Lantern Grove · I finished "${name}" and lit ${n} of ${total} sparks in the Great Lantern.`,
+    shareLit: total => `🏮 Lantern Grove · I lit all ${total} sparks and the Great Lantern shines again. Can you find out why it went dark?`,
+    eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · grove ${pos} of ${total}`,
+    dotLabel: (id, name, done) => `Grove ${id}: ${name}${done ? ', settled' : ''}`,
+    chLocked: 'Finish the chapter before to open this one', wanderLocked: 'Opens after "Flowers that decide"',
+    clearSpot: 'wants this spot clear', seedLeft: (n, k) => `${n} left · key ${k}`,
+    coach1: '<span class="step-now">Step 1</span>A moth wants a warm place to rest. Your Sunbell seed is already picked. <b>Tap any empty square</b> on the board to plant it.',
+    coach2: '<span class="step-now">Step 2</span>Now press <b>Let dusk fall</b> and watch what happens in the dark.',
+    nightPassed: n => `Night ${n} has passed. Watch another, or go back to daylight to change your moss.`,
+    nightCount: (f, n) => `Night ${f} of ${n}`,
+    newSpark: ' A new spark flies up to the Great Lantern.', pressNext: ' Press Next grove when you are ready.',
+    failMoth: 'The moth is still waiting in the dark.', failSnail: "The snail's fern didn't flower tonight. Something near it was glowing.",
+    failToadLife: "Moss crept onto the toad's spot.", failToad: "The toad's spot got too bright. It likes shade.",
+    failBeetle: 'One beetle found no moss on its spot at dawn.',
+    tally: (h, n) => ` ${h} of ${n} visitors are settled.`, tryAgain: ' Change anything you like and try again.',
+    discover: name => `New journal page: <b>${name}</b>. How would you describe what it does?`, discoverBtn: 'Write it in your journal',
+    owlTap: name => `The owl hops onto one patch and taps it twice. A ${name} might like it here.`,
+    owlDone: 'The owl blinks slowly. You already have everything it would suggest. Try letting dusk fall.',
+    fixedPlant: 'This plant was here long before you. It stays where it is.',
+    resting: label => `The ${label.toLowerCase()} is resting on this spot.`,
+    pouchEmpty: 'Your pouch is empty. Tap a planted seed to pick it back up.',
+    dayAgainSolved: 'Daylight again. Try a different way if you like.', dayAgain: 'Daylight again. What will you change?',
+    journalTitle: 'Your journal', journalSub: 'Notes in your own words about what each plant does. The science underneath appears when you finish a chapter.',
+    close: 'Close', journalEmpty: 'Your journal is empty. Plant something, let dusk fall, and a page will appear for each plant you watch.',
+    noticed: 'What I noticed', notePh: 'In your own words: what does it do? When does it glow, bloom or fade?',
+    sciHead: 'The science underneath', sciLocked: ch => `Finish "${ch}" to see what this plant really is.`,
+    revealItem: (name, sci) => `${name} is ${sci.replace(/^A /, 'a ').replace(/^An /, 'an ')}`,
+    keepExploring: 'Keep exploring', finale: who => (who ? ' ' + who + ', you' : ' You') + ' are the Keeper of Deepvan.',
+    storyNext: 'Next', storyBecome: 'Become the Lantern Keeper', heroLbl: 'Pick your character', cheers: ['Brilliant!', 'You did it!', 'Wonderful!', 'Amazing!'], winKicker: n => `Level ${n} complete`, chDone: name => `Chapter complete: ${name} 🏆`,
+    winMeter: (n, total) => `✨ ${n} / ${total} sparks in the Great Lantern`, plusSpark: '+1 spark!', gotLbl: '🎁 You got', newPage: title => `📜 New story page: ${title}`,
+    targetLbl: '🎯 Next target', lvUnlocked: '🔓 New level unlocked!', chUnlocked: '🔓 New chapter unlocked!', winNext: "Let's go! →", winStay: 'Stay here',
+    wanderTarget: ['Wandering visitors', 'New guests keep arriving from far away. Help as many as you like.'], lanternLit: 'The Great Lantern is shining again!', heroChange: 'Change', heroDone: 'Done', heroAria: name => `Your character: ${name}. Change it`, heroes: { firefly: 'Firefly', squirrel: 'Squirrel', fox: 'Fox', turtle: 'Turtle' }, nameLabel: 'What should the grove call you?', namePh: 'Your name',
+    helpTitle: 'How to play',
+    help1: '<b>Pick a seed</b> from your seed pouch (beside the board, or below it on a phone).',
+    help2: '<b>Tap an empty square</b> on the board to plant it. Tap it again to pick it back up.',
+    help3: '<b>Press "Let dusk fall"</b> and watch what your plants do in the dark.',
+    helpNote: "<b>Each plant follows a secret rule.</b> Nobody tells you the rules: working them out is the game. You can't lose, and you can try as many times as you like. Stuck? Ask the owl.",
+    helpStart: 'Just let me play', tourStart: 'Show me step by step',
+    tourCount: (i, n) => `Step ${i} of ${n}`, tourNext: 'Next', tourBack: 'Back', tourDone: 'Start playing', tourSkip: 'Skip',
+    tour1: '<b>This is your grove.</b> Each square is a patch of soil where you can plant a seed.',
+    tour2: '<b>These are your visitors</b> and what each one wants. Make every one of them happy to finish the level.',
+    tour3: '<b>Your seed pouch.</b> Tap a seed here to pick it. The number shows how many are left.',
+    tour4: '<b>Tap an empty square</b> to plant the seed you picked. Tap it again to pick it back up. Mistakes cost nothing.',
+    tour5: '<b>Then press this button.</b> Night falls, and you watch what each plant does in the dark. That is how you discover their secret rules.',
+    tour6: '<b>The grove talks to you here.</b> It tells you what happened and what to try next.',
+    tour7: '<b>Stuck? Ask the owl.</b> First it asks you a helpful question. Ask again and it points to a spot on the board.',
+    tour8: '<b>Your mission.</b> Every level you solve sends a spark to the Great Lantern. Collect all 12 to light it again.',
+    lsGo: "Let's help", chGo: 'Start the chapter', chBtn: '📜 Chapter story', chPrev: 'So far', chEyebrow: (n, total) => `Chapter ${n} of ${total}`, goalLbl: '🎯 Your goal', rewardLbl: '🎁 What you get', chGoalLbl: '🎯 Chapter mission', nextCh: name => `📜 Next chapter: <b>${name}</b>`, lsBtn: '📖 Level story', lsPrev: 'Last time', whatNext: 'What happens next?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
+    tourStory: '<b>The story.</b> Every level you solve opens a new page. Read on to find out why the lantern went out.',
+    bookTitle: "The Lantern's story", bookSub: 'Every level you solve opens a new page. Read on to find out why the lantern went out.',
+    mystery: '🔍 The mystery: why did the Great Lantern go out?', bookStart: 'How it began', pageNum: n => `Page ${n}`,
+    pageNext: 'Solve the next level to open this page.', pageLocked: 'Still hidden.',
+    bookBtn: (n, total) => `📜 Read the story · ${n} of ${total} pages`, newBadge: 'New',
+    pageNote: title => `📜 A new page of the story has opened: <b>${title}</b>`, pageNoteBtn: 'Read it',
+    tour9: '<b>Your journal.</b> Write down what you figure out about each plant, in your own words.',
+    tour10: '<b>Change the language any time:</b> English or Hinglish. Now try it yourself!',
+    legend: { moth: 'wants light on its square', toad: 'wants shade, no light', snail: 'wants its fern to flower', beetle: 'wants moss on its square' },
+    confirmTitle: 'Start the grove over?', confirmLede: 'This clears your solved groves and journal notes on this device.', confirmNo: 'Keep my grove', reset: 'Start over',
+    proto: 'Prototype · no timers, no lives, no wrong answers', designerShow: 'Show designer view', designerHide: 'Hide designer view',
+    unlock: 'Open all chapters (for playtesting)', unlocked: 'All chapters are open',
+    canvasLabel: 'The grove. Use arrow keys to move, Enter to plant or pick up, number keys to choose a seed, D to let dusk fall.',
+  },
+  hi: {
+    tagline: 'Har paudha ek chhupa hua niyam maanta hai. Dekho, socho, phir try karo.',
+    helpBtn: 'Kaise khelein', journal: 'Diary', soundOn: 'Awaaz on', soundOff: 'Awaaz off',
+    yourQuest: 'Aapka mission', questTitle: 'Bade Lantern ko phir se jalao', questDone: 'Bada Lantern jal utha',
+    questText: (n, total) => `${total} mein se ${n} chingaari. Har level jeetne par ek chingaari Lantern tak udti hai.`,
+    questDoneText: w => `Bhatakte mehmaan ab bhi yahan aate hain. Ab tak aapne ${w} ki madad ki hai.`,
+    goal: 'Lakshya: har jaanwar ko khush karo', pouch: 'Beej ki thaili',
+    tipLight: 'Khaali dibbe par tap karo, beej lag jaayega. Lage hue beej par tap karo, wapas uth jaayega. Saare beej lagana zaroori nahi.',
+    tipLife: 'Khaali dibbe par tap karke kaai lagao, beetle ke upar bhi. Kaai par tap karo toh wapas uth jaayegi.',
+    dusk: 'Raat hone do', duskLife: n => `${n} raat guzarne do`, watchRest: 'Baaki raatein dekho', step: 'Ek raat dekho',
+    back: 'Wapas din mein jao', replant: 'Is level ko dobara lagao', nextGrove: 'Agla level', nextVisitor: 'Agla mehmaan',
+    owlAsk: 'Ullu se hint lo', owlShow: 'Ullu se sahi jagah dikhwao', owl: 'Ullu', grove: 'Bagicha',
+    wanderName: 'Bhatakte mehmaan', eyebrowWander: n => `Kabhi na khatam hone wala bagicha · mehmaan ${n}`,
+    storySkip: 'Kahani chhodo', dailyName: 'Aaj ka bagicha', linkName: 'Dost ka bagicha',
+    eyebrowDaily: d => `Roz ka bagicha · ${d} · aaj sabke liye yahi puzzle`, eyebrowLink: 'Share kiya hua bagicha · wahi puzzle jo aapke dost ne khela',
+    dailyIntro: 'Aaj ka bagicha har khilaadi ke liye ek jaisa hai. Kam se kam raaton mein sab mehmaanon ko khush karo, phir dosto ko batao.',
+    linkIntro: 'Aapke dost ne yeh bagicha bheja hai. Thaili se beej lagao, phir raat hone do aur dekho kaun khush hota hai.',
+    shareBtn: 'Yeh bagicha share karo', shareWin: 'Apni progress share karo', copied: 'Copy ho gaya! Dost ko bhejo.',
+    shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\n${n} raat mein sab mehmaan khush, ${h ? `ullu ke ${h} hint` : 'bina ullu ki madad'}. Tum kar sakte ho?`,
+    shareCh: (name, n, total) => `🏮 Lantern Grove · Maine "${name}" poora kiya aur Bade Lantern mein ${total} mein se ${n} chingaariyan jalayi.`,
+    shareLit: total => `🏮 Lantern Grove · Maine saari ${total} chingaariyan jalayi aur Bada Lantern phir se roshan hai. Kya aap jaan paoge woh kyun bujha tha?`,
+    eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · level ${pos} / ${total}`,
+    dotLabel: (id, name, done) => `Level ${id}: ${name}${done ? ', poora hua' : ''}`,
+    chLocked: 'Pehle pichhla chapter poora karo', wanderLocked: 'Chapter 2 ("Faisla karne wale phool") ke baad khulega',
+    clearSpot: 'chahta hai yeh jagah khaali rahe', seedLeft: (n, k) => `${n} bache · key ${k}`,
+    coach1: '<span class="step-now">Step 1</span>Patange ko garmi (roshni) chahiye. Aapka Surajmukhi beej pehle se chuna hua hai. Board par <b>kisi bhi khaali dibbe par tap karo</b>, beej lag jaayega.',
+    coach2: '<span class="step-now">Step 2</span>Ab <b>Raat hone do</b> button dabao aur dekho andhere mein kya hota hai.',
+    nightPassed: n => `Raat ${n} guzar gayi. Ek aur raat dekho, ya kaai badalne ke liye wapas din mein jao.`,
+    nightCount: (f, n) => `Raat ${f} / ${n}`,
+    newSpark: ' Ek nayi chingaari ud kar Bade Lantern tak pahunchi.', pressNext: ' Taiyaar ho toh "Agla level" dabao.',
+    failMoth: 'Patanga abhi bhi andhere mein intezaar kar raha hai. Use roshni nahi mili.', failSnail: 'Ghonge ki Raat Rani aaj nahi khili. Uske paas kuch chamak raha tha.',
+    failToadLife: 'Mendhak ki jagah par kaai aa gayi.', failToad: 'Mendhak ki jagah par roshni pahunch gayi. Use andhera pasand hai.',
+    failBeetle: 'Ek beetle ko subah apni jagah par kaai nahi mili.',
+    tally: (h, n) => ` ${n} mein se ${h} jaanwar khush hain.`, tryAgain: ' Kuch bhi badlo aur phir try karo. Yahan haar nahi hoti.',
+    discover: name => `Diary mein naya page: <b>${name}</b>. Yeh paudha kya karta hai, apne shabdon mein likhoge?`, discoverBtn: 'Diary mein likho',
+    owlTap: name => `Ullu ek dibbe par kood kar use do baar thapthapata hai. Yahan ${name} lagana achha ho sakta hai.`,
+    owlDone: 'Ullu dheere se palak jhapkata hai. Uske saare sujhaav aapke paas pehle se hain. Ab raat hone do.',
+    fixedPlant: 'Yeh paudha aapse bahut pehle se yahan hai. Yeh apni jagah se nahi hilega.',
+    resting: label => `${label} is jagah par aaram kar raha hai. Yahan beej nahi lag sakta.`,
+    pouchEmpty: 'Thaili khaali hai. Laga hua beej wapas uthane ke liye us par tap karo.',
+    dayAgainSolved: 'Phir se din ho gaya. Chaho toh doosre tareeke se try karo.', dayAgain: 'Phir se din ho gaya. Ab kya badloge?',
+    journalTitle: 'Aapki diary', journalSub: 'Har paudhe ke baare mein apne shabdon mein likho. Chapter poora hone par iske peeche ki asli science dikhegi.',
+    close: 'Band karo', journalEmpty: 'Diary abhi khaali hai. Kuch lagao, raat hone do, aur har naye paudhe ka page yahan aa jaayega.',
+    noticed: 'Maine kya dekha', notePh: 'Apne shabdon mein: yeh kya karta hai? Kab chamakta, khilta ya murjhata hai?',
+    sciHead: 'Iske peeche ki science', sciLocked: ch => `"${ch}" chapter poora karo, phir pata chalega yeh paudha asal mein kya hai.`,
+    revealItem: (name, sci) => `${name} asal mein ${sci} hai`,
+    keepExploring: 'Aage khelo', finale: who => ' ' + (who ? who + ', ab aap' : 'Ab aap') + ' Deepvan ke Rakshak ho.',
+    storyNext: 'Aage', storyBecome: 'Lantern Rakshak bano', heroLbl: 'Apna character chuno', cheers: ['Shabaash!', 'Kamaal kar diya!', 'Wah, kya baat hai!', 'Zabardast!'], winKicker: n => `Level ${n} pura!`, chDone: name => `Adhyay pura: ${name} 🏆`,
+    winMeter: (n, total) => `✨ Bade Lantern mein ${n} / ${total} chingaariyan`, plusSpark: '+1 chingaari!', gotLbl: '🎁 Aapko mila', newPage: title => `📜 Kahani ka naya panna: ${title}`,
+    targetLbl: '🎯 Agla target', lvUnlocked: '🔓 Naya level khul gaya!', chUnlocked: '🔓 Naya adhyay khul gaya!', winNext: 'Chalo, aage badhein! →', winStay: 'Yahin ruko',
+    wanderTarget: ['Bhatakte mehmaan', 'Door-door se naye mehmaan aate rahenge. Jitno ki chaaho madad karo.'], lanternLit: 'Bada Lantern phir se jagmaga raha hai!', heroChange: 'Badlo', heroDone: 'Ho gaya', heroAria: name => `Aapka character: ${name}. Badlo`, heroes: { firefly: 'Jugnu', squirrel: 'Gilahri', fox: 'Lomdi', turtle: 'Kachhua' }, nameLabel: 'Bagicha aapko kis naam se bulaaye?', namePh: 'Aapka naam',
+    helpTitle: 'Kaise khelein',
+    help1: '<b>Beej chuno</b> beej ki thaili se (board ke bagal mein, ya phone par board ke neeche).',
+    help2: '<b>Khaali dibbe par tap karo</b>, beej lag jaayega. Dobara tap karo toh beej wapas uth jaayega.',
+    help3: '<b>"Raat hone do" dabao</b> aur dekho andhere mein aapke paudhe kya karte hain.',
+    helpNote: '<b>Har paudha ek secret niyam maanta hai.</b> Koi niyam nahi batata: unhe khud dhoondhna hi game hai. Aap haar nahi sakte, jitni baar chaho try karo. Atak gaye? Ullu se pucho.',
+    helpStart: 'Seedha khelo', tourStart: 'Step-by-step dikhao',
+    tourCount: (i, n) => `Step ${i} / ${n}`, tourNext: 'Aage', tourBack: 'Peeche', tourDone: 'Khelna shuru karo', tourSkip: 'Chhodo',
+    tour1: '<b>Yeh aapka bagicha hai.</b> Har dibba zameen ka ek tukda hai, jahan aap beej laga sakte ho.',
+    tour2: '<b>Yeh aapke mehmaan (jaanwar) hain</b> aur unki ichha. Sabko khush karoge toh level poora hoga.',
+    tour3: '<b>Yeh beej ki thaili hai.</b> Yahan beej par tap karke use chuno. Number batata hai kitne beej bache hain.',
+    tour4: '<b>Khaali dibbe par tap karo</b>, chuna hua beej lag jaayega. Dobara tap karo toh wapas uth jaayega. Galti ki koi saza nahi.',
+    tour5: '<b>Phir yeh button dabao.</b> Raat hogi, aur aap dekhoge ki andhere mein har paudha kya karta hai. Isi se unke secret niyam pata chalte hain.',
+    tour6: '<b>Yahan bagicha aapse baat karta hai.</b> Batata hai kya hua, aur aage kya try karna hai.',
+    tour7: '<b>Atak gaye? Ullu se pucho.</b> Pehle woh ek madadgaar sawaal poochta hai. Phir se poocho toh board par sahi jagah dikha deta hai.',
+    tour8: '<b>Aapka mission.</b> Har level jeetne par ek chingaari Bade Lantern tak jaati hai. Saari 12 chingaariyan jodo, Lantern phir se jal uthega.',
+    lsGo: 'Chalo madad karein', chGo: 'Adhyay shuru karo', chBtn: '📜 Adhyay ki kahani', chPrev: 'Ab tak', chEyebrow: (n, total) => `Adhyay ${n} / ${total}`, goalLbl: '🎯 Maqsad', rewardLbl: '🎁 Inaam', chGoalLbl: '🎯 Is adhyay ka maqsad', nextCh: name => `📜 Agla adhyay: <b>${name}</b>`, lsBtn: '📖 Level ki kahani', lsPrev: 'Pichhle level se', whatNext: 'Aage kya hoga?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
+    tourStory: '<b>Kahani.</b> Har level jeetne par kahani ka ek naya panna khulta hai. Aage padho aur pata karo Lantern kyun bujha.',
+    bookTitle: 'Lantern ki kahani', bookSub: 'Har level jeetne par ek naya panna khulta hai. Aage padho aur jaano Lantern kyun bujha.',
+    mystery: '🔍 Raaz: Bada Lantern kyun bujha?', bookStart: 'Shuruaat', pageNum: n => `Panna ${n}`,
+    pageNext: 'Agla level jeeto, yeh panna khul jaayega.', pageLocked: 'Abhi chhupa hua hai.',
+    bookBtn: (n, total) => `📜 Kahani padho · ${n}/${total} panne`, newBadge: 'Naya',
+    pageNote: title => `📜 Kahani ka naya panna khula: <b>${title}</b>`, pageNoteBtn: 'Padho',
+    tour9: '<b>Aapki diary.</b> Har paudhe ke baare mein jo samajh aaye, apne shabdon mein yahan likho.',
+    tour10: '<b>Bhasha kabhi bhi badlo:</b> English ya Hinglish. Ab khud try karo!',
+    legend: { moth: 'apne dibbe par roshni chahta hai', toad: 'andhera chahta hai, roshni nahi', snail: 'chahta hai uski Raat Rani khile', beetle: 'apne dibbe par kaai (moss) chahta hai' },
+    confirmTitle: 'Bagicha shuru se khelein?', confirmLede: 'Isse is device par aapke jeete hue level aur diary ke notes mit jaayenge.', confirmNo: 'Mera bagicha rakho', reset: 'Shuru se khelo',
+    proto: 'Prototype · na timer, na lives, na galat jawaab', designerShow: 'Designer view dikhao', designerHide: 'Designer view chhupao',
+    unlock: 'Saare chapter kholo (testing ke liye)', unlocked: 'Saare chapter khule hain',
+    canvasLabel: 'Bagicha. Arrow keys se chalo, Enter se beej lagao ya uthao, number keys se beej chuno, D se raat hone do.',
+  },
+};
+const hi = () => P.lang === 'hi';
+function t(k, ...a) { const v = (hi() ? UI.hi : UI.en)[k]; return typeof v === 'function' ? v(...a) : v; }
+const pT = (p, f) => (hi() ? HI.plants : PLANTS)[p][f];
+const chName = i => (hi() ? HI.chapters[i] : CHAPTERS[i]).name;
+const chReveal = (i, f) => (hi() ? HI.chapters[i] : CHAPTERS[i].reveal)[f];
+const storyT = (i, f) => (hi() ? HI.story : STORY)[i][f];
+const whoT = (w, f) => (hi() ? HI.who : WHO)[w][f];
+const rankT = i => (hi() ? HI.ranks : RANKS)[i];
+const prologueT = () => (hi() ? HI.prologue : PROLOGUE);
+// Level text; generated (endless) levels have no id and use the wandering lines
+function lvT(lv, f) {
+  if (!lv.id) {
+    if (f === 'name') return t('wanderName');
+    if (f === 'hints') return hi() ? HI.wanderHints : WANDER_HINTS;
+    if (f === 'success') return (hi() ? HI.wanderSuccess : WANDER_SUCCESS)[lv.successIdx || 0];
+  }
+  return hi() && HI.levels[lv.id] ? HI.levels[lv.id][f] : lv[f];
+}
+
+// ---------- Saved progress (per browser, optional) ----------
+const SAVE_KEY = 'lanternGrove.v1';
+function loadProgress() {
+  const base = { solved: {}, seen: {}, notes: {}, revealed: {}, unlockAll: false, d: 1, wanderCount: 0, log: [] };
+  try { const raw = localStorage.getItem(SAVE_KEY); if (raw) return Object.assign(base, JSON.parse(raw)); } catch (e) {}
+  return base;
+}
+function saveProgress() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(P)); } catch (e) {} }
+let P = loadProgress();
+if (P.lang !== 'en' && P.lang !== 'hi') P.lang = /^hi/i.test(navigator.language || '') ? 'hi' : 'en';
+
+// ---------- State ----------
+const S = {
+  lv: null, levelIdx: 0, wander: false, challenge: null,   // challenge: { daily: 'YYYY-MM-DD' } or { link: true }
+  trail: [],                                     // share of visitors settled after each dusk
+  placed: {}, sel: null, mode: 'day',            // day | run | paused | night
+  sim: null, anim: null, frameIdx: 0, goalState: null, solved: false,
+  attempts: 0, hints: 0, startedAt: 0, revealTiles: [], cursor: [0, 0], showCursor: false,
+  nightF: 0, endAt: 0, burstUntil: 0,
+};
+
+const $ = id => document.getElementById(id);
+const canvas = $('board'), ctx = canvas.getContext('2d');
+
+// ---------- Helpers ----------
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
+function hex(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function mix(a, b, t) { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',')})`; }
+function rgba(h, a) { const [r, g, b] = hex(h); return `rgba(${r},${g},${b},${a})`; }
+function chapterDone(i) { return LEVELS.filter(l => l.ch === i).every(l => P.solved[l.id]); }
+function chapterOpen(i) { return P.unlockAll || i === 0 || chapterDone(i - 1); }
+function wanderOpen() { return P.unlockAll || chapterDone(1); }
+function goalAt(r, c) { return S.lv.goals.findIndex(g => g[0] === r && g[1] === c); }
+function fixedAt(r, c) { return (S.lv.fixed || []).some(f => f[0] === r && f[1] === c); }
+function rockAt(r, c) { return (S.lv.rocks || []).some(f => f[0] === r && f[1] === c); }
+function pouchLeft(type) { return (S.lv.pouch[type] || 0) - Object.values(S.placed).filter(p => p === type).length; }
+
+// ---------- Sound (soft, optional) ----------
+let audio = null, soundOn = true;
+try { soundOn = localStorage.getItem('lanternGrove.sound') !== 'off'; } catch (e) {}
+function tone(freq, when, dur, vol) {
+  if (!soundOn) return;
+  try {
+    if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+    const t = audio.currentTime + when, o = audio.createOscillator(), g = audio.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(audio.destination); o.start(t); o.stop(t + dur + 0.05);
+  } catch (e) {}
+}
+const sfx = {
+  plant: () => tone(523, 0, 0.18, 0.05),
+  lift: () => tone(392, 0, 0.15, 0.04),
+  dusk: () => { tone(196, 0, 1.6, 0.05); tone(294, 0.15, 1.6, 0.035); },
+  tick: () => tone(660, 0, 0.12, 0.025),
+  glad: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.11, 0.9, 0.05)),
+  cheer: () => { [784, 988, 1175, 1568].forEach((f, i) => tone(f, i * 0.09, 0.5, 0.035)); tone(2093, 0.42, 0.9, 0.025); },
+  hmm: () => { tone(330, 0, 0.5, 0.04); tone(294, 0.18, 0.6, 0.035); },
+};
+
+// ---------- Drawing: plants and visitors ----------
+function drawPlant(c, type, x, y, s, st) {
+  const g = st.glow || 0, nf = st.night == null ? 1 : st.night, a = st.alpha == null ? 1 : st.alpha;
+  c.save(); c.globalAlpha = a;
+  if (type === 'sun') {
+    const halo = c.createRadialGradient(x, y, 0, x, y, s * 0.75);
+    halo.addColorStop(0, rgba('#ffc45e', 0.22 + 0.4 * nf)); halo.addColorStop(1, rgba('#ffc45e', 0));
+    c.fillStyle = halo; c.beginPath(); c.arc(x, y, s * 0.75, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#ffb547';
+    for (let i = 0; i < 8; i++) {
+      c.save(); c.translate(x, y); c.rotate(i * Math.PI / 4 + (st.t || 0) * 0.15);
+      c.beginPath(); c.ellipse(0, -s * 0.2, s * 0.075, s * 0.14, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    }
+    c.fillStyle = '#ffe28f'; c.beginPath(); c.arc(x, y, s * 0.13, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#e59a2f'; c.beginPath(); c.arc(x, y, s * 0.06, 0, Math.PI * 2); c.fill();
+  } else if (type === 'reed') {
+    if (g > 0) halo(c, x, y - s * 0.08, s * 0.62, '#ffd36b', 0.55 * g);
+    const stalks = [[-0.14, 0.3], [0.02, 0.4], [0.16, 0.26]];
+    c.lineCap = 'round';
+    stalks.forEach(([dx, h], i) => {
+      const bx = x + dx * s, top = y + s * 0.3 - h * s * 1.25;
+      c.strokeStyle = '#78ad55'; c.lineWidth = s * 0.035;
+      c.beginPath(); c.moveTo(bx, y + s * 0.32); c.quadraticCurveTo(bx + (i - 1) * s * 0.05, (top + y) / 2, bx, top); c.stroke();
+      c.fillStyle = mix('#8b6a3e', '#ffe27a', g);
+      c.beginPath(); c.ellipse(bx, top + s * 0.06, s * 0.045, s * 0.1, 0, 0, Math.PI * 2); c.fill();
+    });
+    c.strokeStyle = '#5f8f43'; c.lineWidth = s * 0.03;
+    c.beginPath(); c.moveTo(x - s * 0.22, y + s * 0.32); c.quadraticCurveTo(x - s * 0.1, y + s * 0.05, x - s * 0.02, y + s * 0.02); c.stroke();
+  } else if (type === 'lily') {
+    if (g > 0) halo(c, x, y, s * 0.62, '#ffc0d8', 0.55 * g);
+    c.strokeStyle = '#6aa04c'; c.lineWidth = s * 0.035; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(x, y + s * 0.34); c.lineTo(x, y + s * 0.08);
+    c.quadraticCurveTo(x - s * 0.05, y - s * 0.02, x - s * 0.15, y - s * 0.04);
+    c.moveTo(x, y + s * 0.08); c.quadraticCurveTo(x + s * 0.05, y - s * 0.02, x + s * 0.15, y - s * 0.04); c.stroke();
+    [-1, 1].forEach(side => {
+      const fx = x + side * s * 0.15, fy = y - s * 0.1, open = 0.35 + 0.65 * g;
+      c.fillStyle = mix('#c9799c', '#ffd6e6', g);
+      for (let k = -1; k <= 1; k++) {
+        c.save(); c.translate(fx, fy + s * 0.04); c.rotate(k * 0.55 * open);
+        c.beginPath(); c.ellipse(0, -s * 0.08, s * 0.045, s * 0.1, 0, 0, Math.PI * 2); c.fill(); c.restore();
+      }
+      c.fillStyle = g > 0.5 ? '#fff3b0' : '#8d5d76'; c.beginPath(); c.arc(fx, fy + s * 0.02, s * 0.025, 0, Math.PI * 2); c.fill();
+    });
+  } else if (type === 'fern') {
+    const b = st.bloom || 0, w = st.wilt || 0;
+    if (b > 0) halo(c, x, y, s * 0.62, '#62d4c6', 0.5 * b);
+    const col = mix('#4fb7a9', '#3f6a70', w);
+    c.strokeStyle = col; c.fillStyle = col; c.lineCap = 'round'; c.lineWidth = s * 0.03;
+    [-0.17, 0, 0.17].forEach((dx, i) => {
+      const bx = x + dx * s, droop = w * 0.12 * (i - 1);
+      c.beginPath(); c.moveTo(bx, y + s * 0.33);
+      const tx = bx + (i - 1) * s * 0.12 + droop * s, ty = y - s * (0.28 - w * 0.08) + (i === 1 ? -s * 0.04 : 0);
+      c.quadraticCurveTo(bx, y, tx, ty); c.stroke();
+      for (let k = 1; k <= 4; k++) {
+        const t = k / 5, px = bx + (tx - bx) * t, py = y + s * 0.33 + (ty - y - s * 0.33) * t;
+        c.beginPath(); c.ellipse(px - s * 0.04, py, s * 0.04, s * 0.016, -0.5 - w * 0.6, 0, Math.PI * 2); c.fill();
+        c.beginPath(); c.ellipse(px + s * 0.04, py, s * 0.04, s * 0.016, 0.5 + w * 0.6, 0, Math.PI * 2); c.fill();
+      }
+      if (b > 0) {
+        c.save(); c.globalAlpha = a * b; c.fillStyle = '#e4fdff';
+        c.beginPath(); c.arc(tx, ty, s * 0.04, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#8fe9ff'; c.beginPath(); c.arc(tx, ty, s * 0.018, 0, Math.PI * 2); c.fill(); c.restore();
+        c.fillStyle = col;
+      }
+    });
+  } else if (type === 'moss') {
+    halo(c, x, y, s * 0.55, '#a8ef7a', 0.25 + 0.3 * nf);
+    const blobs = [[0, 0, 0.2], [-0.16, 0.06, 0.13], [0.16, 0.07, 0.13], [-0.07, -0.13, 0.12], [0.09, -0.12, 0.11]];
+    blobs.forEach(([dx, dy, r]) => { c.fillStyle = '#6fb04c'; c.beginPath(); c.arc(x + dx * s, y + dy * s, r * s, 0, Math.PI * 2); c.fill(); });
+    blobs.forEach(([dx, dy, r]) => { c.fillStyle = '#b6ec84'; c.beginPath(); c.arc(x + dx * s - r * s * 0.3, y + dy * s - r * s * 0.3, r * s * 0.35, 0, Math.PI * 2); c.fill(); });
+  }
+  c.restore();
+}
+function halo(c, x, y, r, col, a) {
+  const h = c.createRadialGradient(x, y, 0, x, y, r);
+  h.addColorStop(0, rgba(col, a)); h.addColorStop(1, rgba(col, 0));
+  c.fillStyle = h; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+}
+function drawRock(c, x, y, s) {
+  c.fillStyle = '#5a5778';
+  c.beginPath();
+  const pts = [[-0.3, 0.18], [-0.26, -0.08], [-0.08, -0.24], [0.16, -0.2], [0.3, 0.02], [0.24, 0.22]];
+  pts.forEach(([px, py], i) => (i ? c.lineTo : c.moveTo).call(c, x + px * s, y + py * s)); c.closePath(); c.fill();
+  c.fillStyle = '#77749a';
+  c.beginPath(); c.moveTo(x - 0.2 * s, y - 0.06 * s); c.lineTo(x - 0.06 * s, y - 0.18 * s); c.lineTo(x + 0.1 * s, y - 0.14 * s); c.lineTo(x - 0.04 * s, y - 0.04 * s); c.closePath(); c.fill();
+}
+function drawVisitor(c, who, x, y, s, mood, t) {
+  // mood: 0 neutral, 1 happy, -1 unhappy
+  c.save();
+  if (who === 'moth') {
+    const flap = mood === 1 ? 0.75 + 0.25 * Math.sin(t * 9) : 1;
+    const wing = mood === 1 ? '#ffe2a3' : mood === -1 ? '#9d98bf' : '#e9e1f5';
+    c.fillStyle = wing;
+    [[-1, -1], [1, -1]].forEach(([sx]) => {
+      c.beginPath(); c.ellipse(x + sx * s * 0.11 * flap, y - s * 0.04, s * 0.12 * flap, s * 0.09, sx * 0.5, 0, Math.PI * 2); c.fill();
+      c.beginPath(); c.ellipse(x + sx * s * 0.08 * flap, y + s * 0.07, s * 0.08 * flap, s * 0.06, -sx * 0.4, 0, Math.PI * 2); c.fill();
+    });
+    c.fillStyle = '#5b4a3a'; c.beginPath(); c.ellipse(x, y + s * 0.02, s * 0.03, s * 0.1, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#5b4a3a'; c.lineWidth = s * 0.015;
+    c.beginPath(); c.moveTo(x - s * 0.01, y - s * 0.07); c.quadraticCurveTo(x - s * 0.05, y - s * 0.15, x - s * 0.08, y - s * 0.14);
+    c.moveTo(x + s * 0.01, y - s * 0.07); c.quadraticCurveTo(x + s * 0.05, y - s * 0.15, x + s * 0.08, y - s * 0.14); c.stroke();
+  } else if (who === 'toad') {
+    const body = mood === -1 ? '#a58a4d' : '#6f8d52';
+    c.fillStyle = body;
+    c.beginPath(); c.ellipse(x, y + s * 0.07, s * 0.2, s * 0.13, 0, Math.PI, 0); c.lineTo(x + s * 0.2, y + s * 0.1); c.lineTo(x - s * 0.2, y + s * 0.1); c.fill();
+    c.beginPath(); c.ellipse(x, y + s * 0.09, s * 0.21, s * 0.04, 0, 0, Math.PI * 2); c.fill();
+    [-1, 1].forEach(sx => {
+      c.fillStyle = body; c.beginPath(); c.arc(x + sx * s * 0.1, y - s * 0.05, s * 0.055, 0, Math.PI * 2); c.fill();
+      if (mood === 1) { c.strokeStyle = '#1c2016'; c.lineWidth = s * 0.018; c.beginPath(); c.arc(x + sx * s * 0.1, y - s * 0.055, s * 0.03, 0.2, Math.PI - 0.2); c.stroke(); }
+      else { c.fillStyle = '#f4ecd0'; c.beginPath(); c.arc(x + sx * s * 0.1, y - s * 0.055, s * 0.033, 0, Math.PI * 2); c.fill();
+        c.fillStyle = '#1c2016'; c.beginPath(); c.arc(x + sx * s * 0.1, y - s * 0.05, s * (mood === -1 ? 0.012 : 0.018), 0, Math.PI * 2); c.fill(); }
+    });
+  } else if (who === 'snail') {
+    const sx = x + s * 0.24, sy = y + s * 0.28;
+    c.fillStyle = '#d7c9a8'; c.beginPath(); c.ellipse(sx, sy + s * 0.03, s * 0.12, s * 0.03, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = mood === 1 ? '#e8b072' : '#b78b62'; c.beginPath(); c.arc(sx - s * 0.01, sy - s * 0.03, s * 0.065, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#7c5735'; c.lineWidth = s * 0.014; c.beginPath(); c.arc(sx - s * 0.01, sy - s * 0.03, s * 0.03, 0, Math.PI * 1.6); c.stroke();
+    c.strokeStyle = '#d7c9a8'; c.beginPath(); c.moveTo(sx + s * 0.09, sy + s * 0.02); c.lineTo(sx + s * 0.12, sy - s * 0.06); c.stroke();
+  } else if (who === 'beetle') {
+    const bx = x + s * 0.27, by = y - s * 0.27;
+    c.fillStyle = mood === 1 ? '#f0d85a' : mood === -1 ? '#8f8a6a' : '#cdbf5a';
+    c.beginPath(); c.ellipse(bx, by, s * 0.07, s * 0.09, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#3b3420'; c.lineWidth = s * 0.012; c.beginPath(); c.moveTo(bx, by - s * 0.09); c.lineTo(bx, by + s * 0.09); c.stroke();
+    c.fillStyle = '#3b3420'; c.beginPath(); c.arc(bx, by - s * 0.095, s * 0.03, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
+}
+// The player's character, drawn in a 100-unit box centred on (x, y)
+const HEROES = ['firefly', 'squirrel', 'fox', 'turtle'];
+function drawHero(c, kind, x, y, s) {
+  c.save(); c.translate(x, y); c.scale(s / 100, s / 100);
+  const ell = (ex, ey, rx, ry, rot, col) => { c.fillStyle = col; c.beginPath(); c.ellipse(ex, ey, rx, ry, rot, 0, Math.PI * 2); c.fill(); };
+  const tri = (pts, col) => { c.fillStyle = col; c.beginPath(); pts.forEach(([px, py], i) => (i ? c.lineTo : c.moveTo).call(c, px, py)); c.closePath(); c.fill(); };
+  const face = (ex, ey, gap, smile) => {
+    [-1, 1].forEach(k => { ell(ex + k * gap, ey, 3.4, 3.8, 0, '#1c1a26'); ell(ex + k * gap + 1, ey - 1.3, 1.2, 1.2, 0, '#fff'); });
+    if (smile) { c.strokeStyle = '#1c1a26'; c.lineWidth = 1.8; c.lineCap = 'round'; c.beginPath(); c.arc(ex, ey + 4, 3.5, 0.35, Math.PI - 0.35); c.stroke(); }
+  };
+  if (kind === 'firefly') {
+    const g = c.createRadialGradient(0, 22, 2, 0, 22, 32);
+    g.addColorStop(0, 'rgba(255, 226, 122, 0.75)'); g.addColorStop(1, 'rgba(255, 226, 122, 0)');
+    c.fillStyle = g; c.beginPath(); c.arc(0, 22, 32, 0, Math.PI * 2); c.fill();
+    ell(-15, -4, 15, 9, -0.5, 'rgba(220, 235, 255, 0.8)'); ell(15, -4, 15, 9, 0.5, 'rgba(220, 235, 255, 0.8)');
+    ell(0, 8, 12, 19, 0, '#5a4a6e'); ell(0, 25, 11, 10, 0, '#ffe27a');
+    c.strokeStyle = '#7a6a96'; c.lineWidth = 2.5; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(-5, -24); c.lineTo(-12, -38); c.moveTo(5, -24); c.lineTo(12, -38); c.stroke();
+    ell(-12, -38, 3, 3, 0, '#ffe27a'); ell(12, -38, 3, 3, 0, '#ffe27a');
+    ell(0, -14, 14, 13, 0, '#9a88b8'); face(0, -15, 5.5, true);
+  } else if (kind === 'squirrel') {
+    ell(22, -4, 16, 30, 0.25, '#a5683a'); ell(22, -4, 9, 22, 0.25, '#c98a52');
+    ell(-4, 20, 18, 21, 0, '#b9773f'); ell(-4, 24, 10, 13, 0, '#efd3a8');
+    tri([[-17, -24], [-13, -40], [-6, -27]], '#b9773f'); tri([[-2, -27], [5, -40], [9, -24]], '#b9773f');
+    ell(-4, -14, 16, 15, 0, '#c98450'); ell(-4, -7, 8, 6, 0, '#efd3a8'); face(-4, -16, 6, true);
+  } else if (kind === 'fox') {
+    ell(25, 22, 10, 22, -0.7, '#e07a32'); ell(33, 34, 7, 7, 0, '#fff4e6');
+    ell(0, 22, 16, 20, 0, '#e07a32'); ell(0, 25, 9, 13, 0, '#fff4e6');
+    tri([[-19, -18], [-15, -42], [-4, -24]], '#e88a3c'); tri([[4, -24], [15, -42], [19, -18]], '#e88a3c');
+    tri([[-15, -22], [-14, -35], [-8, -25]], '#5a3a2a'); tri([[8, -25], [14, -35], [15, -22]], '#5a3a2a');
+    ell(0, -10, 21, 16, 0, '#e88a3c'); ell(-9, -2, 9, 6, 0.3, '#fff4e6'); ell(9, -2, 9, 6, -0.3, '#fff4e6');
+    face(0, -12, 8, false); ell(0, 0, 3.2, 2.6, 0, '#2a1e1a');
+  } else if (kind === 'turtle') {
+    [[-25, 26], [25, 26], [-20, 4], [20, 4]].forEach(([lx, ly]) => ell(lx, ly, 7, 6, 0, '#7fb069'));
+    ell(0, 26, 31, 6, 0, '#3e6a3c'); ell(0, 12, 29, 21, 0, '#4f7d4a');
+    c.strokeStyle = '#7aa35f'; c.lineWidth = 2; c.beginPath(); c.ellipse(0, 10, 11, 8, 0, 0, Math.PI * 2);
+    c.moveTo(-11, 10); c.lineTo(-26, 8); c.moveTo(11, 10); c.lineTo(26, 8); c.moveTo(0, 2); c.lineTo(0, -8); c.moveTo(0, 18); c.lineTo(0, 30); c.stroke();
+    ell(0, -21, 13, 12, 0, '#8cc070'); face(0, -22, 5, true);
+  }
+  c.restore();
+}
+function heroCanvas(cv, kind, cssPx) {
+  const px = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = cssPx * px; cv.height = cssPx * px;
+  const c = cv.getContext('2d'); c.setTransform(px, 0, 0, px, 0, 0); c.clearRect(0, 0, cssPx, cssPx);
+  drawHero(c, kind, cssPx / 2, cssPx * 0.54, cssPx * 0.86);
+}
+const heroName = k => t('heroes')[k];
+function renderHeroPick(box) {
+  box.innerHTML = '';
+  HEROES.forEach(k => {
+    const b = document.createElement('button'); b.type = 'button';
+    b.setAttribute('aria-pressed', String(P.hero === k));
+    const cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true'); heroCanvas(cv, k, 56);
+    const l = document.createElement('span'); l.textContent = heroName(k);
+    b.append(cv, l);
+    b.onclick = () => { P.hero = k; saveProgress(); renderHeroPick(box); renderHeroBtn(); };
+    box.appendChild(b);
+  });
+}
+function renderHeroBtn() {
+  heroCanvas($('heroAv'), P.hero || HEROES[0], 48);
+  $('heroBtn').setAttribute('aria-label', t('heroAria', heroName(P.hero || HEROES[0])));
+}
+function openHero() { renderHeroPick($('heroPick2')); $('heroOverlay').hidden = false; $('heroDone').focus(); }
+function closeHero() { $('heroOverlay').hidden = true; if (!$('levelOverlay').hidden) openLevelStory(S.lsFace); }
+function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+// ---------- Fireflies ----------
+const flies = Array.from({ length: 18 }, () => ({ x: Math.random(), y: Math.random(), vx: (Math.random() - 0.5) * 0.02, vy: (Math.random() - 0.5) * 0.02, p: Math.random() * 6 }));
+
+// ---------- Board rendering ----------
+let geo = { W: 600, H: 600, cs: 100, ox: 0, oy: 0, dpr: 1 };
+function resize() {
+  if (!S.lv) return;
+  const wrap = $('boardWrap'), W = Math.min(wrap.clientWidth || 600, 640);
+  const pad = Math.max(10, W * 0.03);
+  const cs = (W - pad * 2) / S.lv.cols;
+  const H = cs * S.lv.rows + pad * 2;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+  canvas.style.height = H + 'px';
+  geo = { W, H, cs, ox: pad, oy: pad, dpr };
+}
+const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function currentFrame(now) {
+  if (!S.anim) return S.sim ? S.frameIdx : 0;
+  const a = S.anim;
+  return Math.max(a.from, Math.min(a.to, a.from + Math.floor((now - a.t0) / a.step)));
+}
+// first frame index (from anim start) at which each cell is "on"
+function onsetTime(now, f, r, c, grid) {
+  const a = S.anim;
+  if (!a) return -1e9;
+  let k = f;
+  while (k > a.from && grid(k - 1, r, c)) k--;
+  if (k === a.from && a.from > 0 && grid(a.from - 1, r, c)) return -1e9;
+  return a.t0 + (k - a.from) * a.step;
+}
+
+function render(now) {
+  const t = now / 1000, { W, H, cs, ox, oy, dpr } = geo, lv = S.lv;
+  if (!lv) return requestAnimationFrame(render);
+  const target = S.mode === 'day' ? 0 : 1;
+  S.nightF += (target - S.nightF) * (reduceMotion ? 1 : 0.06);
+  const N = S.nightF;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = mix('#3a3d6e', '#0c1023', N); roundRect(ctx, 0, 0, W, H, 20); ctx.fill();
+
+  // Advance animation
+  let f = currentFrame(now);
+  if (S.anim && now >= S.anim.t0 + (S.anim.to - S.anim.from) * S.anim.step + 260) finishAnim(now);
+  f = currentFrame(now);
+  const sim = S.sim;
+  const isLife = lv.kind === 'life';
+  const glowAt = (k, r, c) => sim && sim.frames[k] && sim.frames[k][r][c];
+  const intensity = (r, c) => {
+    if (!sim || S.mode === 'day' || !glowAt(f, r, c)) return 0;
+    const on = onsetTime(now, f, r, c, glowAt);
+    return reduceMotion ? 1 : ease((now - on) / 380);
+  };
+  const types = isLife ? baseTypes(lv) : typesWith(lv, S.placed);
+  const evaluated = S.mode === 'night' && S.goalState;
+
+  // Tiles
+  for (let r = 0; r < lv.rows; r++) for (let c = 0; c < lv.cols; c++) {
+    const x = ox + c * cs, y = oy + r * cs, p = types[r][c];
+    ctx.fillStyle = p === 'rock' ? mix('#34365f', '#121630', N) : mix('#4f4a7d', '#1b1f3d', N);
+    roundRect(ctx, x + 2.5, y + 2.5, cs - 5, cs - 5, cs * 0.16); ctx.fill();
+    // small soil texture
+    ctx.fillStyle = rgba('#000000', 0.08);
+    ctx.beginPath(); ctx.arc(x + cs * 0.3, y + cs * 0.7, cs * 0.03, 0, 7); ctx.arc(x + cs * 0.68, y + cs * 0.35, cs * 0.02, 0, 7); ctx.fill();
+  }
+  // Light on soil (light chapters)
+  if (!isLife && sim && S.mode !== 'day') {
+    for (let r = 0; r < lv.rows; r++) for (let c = 0; c < lv.cols; c++) {
+      if (types[r][c] === 'rock') continue;
+      let li = 0;
+      for (const [dr, dc] of DIRS) { const rr = r + dr, cc = c + dc; if (rr >= 0 && rr < lv.rows && cc >= 0 && cc < lv.cols) li = Math.max(li, intensity(rr, cc)); }
+      if (li > 0) {
+        const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
+        const gr = ctx.createRadialGradient(x, y, cs * 0.05, x, y, cs * 0.62);
+        gr.addColorStop(0, rgba('#ffc45e', 0.5 * li)); gr.addColorStop(1, rgba('#ffc45e', 0));
+        ctx.fillStyle = gr; roundRect(ctx, ox + c * cs + 2.5, oy + r * cs + 2.5, cs - 5, cs - 5, cs * 0.16); ctx.fill();
+      }
+    }
+  }
+  // Goal rings (under plants)
+  lv.goals.forEach(([r, c, want], i) => {
+    const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
+    const col = want === 'on' ? (isLife ? '#a8ef7a' : '#ffc45e') : '#62d4c6';
+    ctx.save(); ctx.setLineDash([cs * 0.06, cs * 0.06]); ctx.lineWidth = Math.max(1.5, cs * 0.025);
+    ctx.strokeStyle = rgba(col, evaluated ? (S.goalState[i] ? 0.85 : 0.35) : 0.6);
+    ctx.lineDashOffset = -t * cs * 0.05;
+    ctx.beginPath(); ctx.arc(x, y, cs * 0.38, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+  });
+  // Hint ghosts
+  S.revealTiles.forEach(([r, c, p]) => {
+    if (S.placed[key(r, c)] === p) return;
+    const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
+    ctx.save(); ctx.strokeStyle = rgba('#62d4c6', 0.55 + 0.3 * Math.sin(t * 3)); ctx.lineWidth = 2;
+    roundRect(ctx, ox + c * cs + 5, oy + r * cs + 5, cs - 10, cs - 10, cs * 0.14); ctx.stroke(); ctx.restore();
+    drawPlant(ctx, p, x, y, cs, { alpha: 0.35, night: N, t });
+  });
+
+  // Plants
+  for (let r = 0; r < lv.rows; r++) for (let c = 0; c < lv.cols; c++) {
+    const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2, p = types[r][c];
+    if (p === 'rock') { drawRock(ctx, x, y, cs); continue; }
+    if (isLife) continue;
+    if (!p) continue;
+    const st = { glow: p === 'sun' ? 1 : intensity(r, c), night: N, t };
+    if (p === 'fern' && sim && S.mode !== 'day') {
+      const done = S.mode === 'night' || S.mode === 'paused';
+      const lit = sim.n[r][c] > 0;
+      const k = done ? ease((now - S.endAt) / 600) : 0;
+      st.bloom = lit ? 0 : k; st.wilt = lit ? Math.max(k, 0) : 0;
+    }
+    drawPlant(ctx, p, x, y, cs, st);
+    if (fixedAt(r, c)) { ctx.fillStyle = rgba('#f1ead9', 0.35); ctx.beginPath(); ctx.arc(ox + c * cs + cs * 0.16, oy + r * cs + cs * 0.16, cs * 0.035, 0, 7); ctx.fill(); }
+  }
+  // Moss (life chapter)
+  if (isLife) {
+    const showSim = sim && S.mode !== 'day';
+    for (let r = 0; r < lv.rows; r++) for (let c = 0; c < lv.cols; c++) {
+      const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
+      if (showSim) {
+        const aliveNow = sim.frames[f][r][c], alivePrev = f > 0 && sim.frames[f - 1][r][c];
+        const fStart = S.anim ? S.anim.t0 + (f - S.anim.from) * S.anim.step : -1e9;
+        const k = reduceMotion ? 1 : ease((now - fStart) / 350);
+        if (aliveNow) drawPlant(ctx, 'moss', x, y, cs * (alivePrev ? 1 : 0.6 + 0.4 * k), { alpha: alivePrev ? 1 : k, night: N });
+        else if (alivePrev && k < 1) drawPlant(ctx, 'moss', x, y, cs * (1 - 0.3 * k), { alpha: 1 - k, night: N });
+      } else if (S.placed[key(r, c)]) drawPlant(ctx, 'moss', x, y, cs, { night: N });
+    }
+  }
+  // Visitors
+  lv.goals.forEach(([r, c, want, who], i) => {
+    const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
+    const mood = evaluated ? (S.goalState[i] ? 1 : -1) : 0;
+    drawVisitor(ctx, who, x, y, cs, mood, t);
+  });
+  // Fireflies
+  const burst = now < S.burstUntil ? 1 : 0;
+  const fa = Math.max(N * 0.8, 0.15) + burst * 0.4;
+  flies.forEach(fl => {
+    if (!reduceMotion) { fl.x += fl.vx * 0.016 + Math.sin(t + fl.p) * 0.0006; fl.y += fl.vy * 0.016 + Math.cos(t * 0.8 + fl.p) * 0.0006; }
+    if (fl.x < 0 || fl.x > 1) fl.vx *= -1; if (fl.y < 0 || fl.y > 1) fl.vy *= -1;
+    fl.x = clamp(fl.x, 0, 1); fl.y = clamp(fl.y, 0, 1);
+    const tw = 0.5 + 0.5 * Math.sin(t * 2.2 + fl.p * 3);
+    halo(ctx, fl.x * W, fl.y * H, 7 + burst * 4, '#fff0a0', fa * tw * 0.7);
+    ctx.fillStyle = rgba('#fff6c8', fa * tw); ctx.beginPath(); ctx.arc(fl.x * W, fl.y * H, 1.4, 0, 7); ctx.fill();
+  });
+  // Keyboard cursor
+  if (S.showCursor && document.activeElement === canvas) {
+    const [r, c] = S.cursor;
+    ctx.strokeStyle = '#ffc45e'; ctx.lineWidth = 2.5;
+    roundRect(ctx, ox + c * cs + 3, oy + r * cs + 3, cs - 6, cs - 6, cs * 0.15); ctx.stroke();
+  }
+  // Night counter (life)
+  if (isLife && S.mode !== 'day') { $('nightCount').hidden = false; $('nightCount').textContent = t('nightCount', f, lv.nights); }
+  else $('nightCount').hidden = true;
+  if (S.anim && S.anim.lastF !== f) { if (S.anim.lastF != null) sfx.tick(); S.anim.lastF = f; }
+  requestAnimationFrame(render);
+}
+
+// ---------- Level flow ----------
+function startLevel(idx) {
+  S.wander = false; S.challenge = null; S.levelIdx = idx; S.lv = LEVELS[idx];
+  const opensChapter = LEVELS.findIndex(l => l.ch === S.lv.ch) === idx && !P.solved[S.lv.id];
+  const lv = S.lv;
+  say(null, () => (opensChapter ? storyT(lv.ch, 'open') + ' ' : '') + lvT(lv, 'intro')); beginLevel();
+  maybeLevelStory();
+}
+// Show a level's scene the first time it is played, once the opening story and tour are out of the way
+function maybeLevelStory() {
+  if (S.wander || S.lv.id === '1-1' || P.solved[S.lv.id] || (P.lvStory || {})[S.lv.id]) return;   // 1-1: the prologue just set the scene
+  if (!P.seenStory || !$('storyOverlay').hidden || !$('tour').hidden) return;
+  openLevelStory(firstOfChapter(S.lv.ch) === S.levelIdx && !(P.chStory || {})[S.lv.ch] ? 'ch' : 'lv');
+}
+const lsT = (id, f) => (hi() ? HI.levelStory : LEVEL_STORY)[id][f];
+const chS = (ch, f) => (hi() ? HI.chapterStory : CHAPTER_STORY)[ch][f];
+const firstOfChapter = ch => LEVELS.findIndex(l => l.ch === ch);
+// The card has two faces: the chapter opening (first level of a chapter) and the level scene
+function openLevelStory(face) {
+  S.lsFace = face === 'ch' ? 'ch' : 'lv';
+  if (S.lsFace === 'ch') return openChapterFace();
+  const lv = S.lv, idx = S.levelIdx, who = { '1-2': 'toad', '2-2': 'snail', '2-4': 'snail' }[lv.id] || lv.goals[0][3];   // the scene's main character
+  const c = lsArtCtx(), k = 96 / 44;
+  drawHero(c, P.hero || HEROES[0], 44, 52, 70);
+  c.translate(64, 0);
+  const pos = { moth: [22, 24], toad: [22, 26], snail: [10, 8], beetle: [8, 38] }[who];
+  drawVisitor(c, who, pos[0] * k, pos[1] * k, 70 * k, 1, 0);
+  $('lsEyebrow').textContent = t('lsEyebrow', idx + 1, chName(lv.ch));
+  $('lsTitle').textContent = lvT(lv, 'name');
+  $('lsPrev').hidden = idx === 0;
+  if (idx > 0) $('lsPrev').innerHTML = `<b>${t('lsPrev')}</b>${lsT(LEVELS[idx - 1].id, 'next')}`;
+  $('lsText').textContent = lsT(lv.id, 'intro');
+  $('lsGoal').hidden = false;
+  $('lsGoal').innerHTML = `<p><b>${t('goalLbl')}:</b> ${lsT(lv.id, 'goal')}</p><p><b>${t('rewardLbl')}:</b> ${lsT(lv.id, 'reward')}</p>`;
+  $('lsCh').hidden = false; $('lsCh').textContent = t('chBtn');
+  $('lsGo').textContent = t('lsGo');
+  $('levelOverlay').hidden = false; $('lsGo').focus();
+}
+function lsArtCtx() {
+  const cv = $('lsArt'), px = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = 160 * px; cv.height = 96 * px;
+  const c = cv.getContext('2d'); c.setTransform(px, 0, 0, px, 0, 0);
+  return c;
+}
+function openChapterFace() {
+  const ch = S.lv.ch;
+  drawHero(lsArtCtx(), P.hero || HEROES[0], 80, 52, 76);
+  $('lsEyebrow').textContent = t('chEyebrow', ch + 1, CHAPTERS.length);
+  $('lsTitle').textContent = chName(ch);
+  $('lsPrev').hidden = !chS(ch, 'recap');
+  $('lsPrev').innerHTML = `<b>${t('chPrev')}</b>${chS(ch, 'recap')}`;
+  $('lsText').textContent = chS(ch, 'story');
+  $('lsGoal').hidden = false;
+  $('lsGoal').innerHTML = `<p><b>${t('chGoalLbl')}:</b> ${chS(ch, 'goal')}</p>`;
+  $('lsCh').hidden = true;
+  $('lsGo').textContent = t('chGo');
+  $('levelOverlay').hidden = false; $('lsGo').focus();
+}
+function lsGoClick() {
+  if (S.lsFace === 'ch') {
+    P.chStory = Object.assign(P.chStory || {}, { [S.lv.ch]: true }); saveProgress();
+    return openLevelStory('lv');
+  }
+  closeLevelStory();
+}
+function closeLevelStory() {
+  $('levelOverlay').hidden = true;
+  if (S.lv && S.lv.id) { P.lvStory = Object.assign(P.lvStory || {}, { [S.lv.id]: true }); saveProgress(); }
+  canvas.focus({ preventScroll: true });
+}
+function startWander() {
+  startGrove(makeGrove(P.d, (Date.now() ^ (P.wanderCount * 2654435761)) >>> 0), null);
+}
+function startGrove(lv, challenge) {
+  lv.successIdx = P.wanderCount % WANDER_SUCCESS.length;
+  S.wander = true; S.challenge = challenge; S.lv = lv; beginLevel();
+  if (challenge) { say(null, () => t(challenge.daily ? 'dailyIntro' : 'linkIntro')); return; }
+  const wi = Math.floor(Math.random() * WANDER_INTROS.length);
+  say(null, () => (hi() ? HI.wanderIntros : WANDER_INTROS)[wi]);
+}
+
+// ---------- Shareable groves: the same difficulty and seed make the same puzzle on every device ----------
+const DAILY_D = 3;
+function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+function seedOf(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
+function makeGrove(d, seed) {
+  const lv = generateLevel(d, seed) || generateLevel(1, seed + 1);
+  return Object.assign(lv, { d, seed });
+}
+function startDaily(day) { startGrove(makeGrove(DAILY_D, seedOf('daily-' + day)), { daily: day }); }
+// #daily=2026-10-30 or #grove=3-123456
+function groveFromHash() {
+  const h = new URLSearchParams(location.hash.slice(1)), day = h.get('daily') || '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(day)) { startDaily(day); return true; }
+  const m = /^(\d{1,2})-(\d{1,10})$/.exec(h.get('grove') || '');
+  if (!m) return false;
+  startGrove(makeGrove(clamp(+m[1], 1, 10), +m[2] >>> 0), { link: true });
+  return true;
+}
+// Links only travel from a hosted page; a local file or sandboxed preview has no address a friend can open
+function pageLink(hash) { return /^https?:$/.test(location.protocol) ? location.href.split('#')[0] + (hash ? '#' + hash : '') : ''; }
+function shareGrove() {
+  const lv = S.lv, c = S.challenge, trail = S.trail.map(f => (f >= 1 ? '🌕' : f > 0 ? '🌗' : '🌑')).join('');
+  const where = c && c.daily ? `${t('dailyName')} ${c.daily}` : t(c ? 'linkName' : 'wanderName');
+  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink(c && c.daily ? 'daily=' + c.daily : `grove=${lv.d}-${lv.seed}`), $('shareBtn'));
+}
+function shareProgress() {
+  const n = sparkCount();
+  const text = n >= SPARKS_TOTAL ? t('shareLit', SPARKS_TOTAL) : t('shareCh', chName(S.win ? LEVELS.find(l => l.id === S.win.id).ch : 0), n, SPARKS_TOTAL);
+  share(text + '\n' + '✨'.repeat(n) + '▫️'.repeat(SPARKS_TOTAL - n), pageLink(''), $('winShare'));
+}
+// Native share sheet on phones; elsewhere copy to the clipboard and say so on the button
+async function share(text, url, btn) {
+  if (navigator.share) {
+    try { await navigator.share(url ? { text, url } : { text }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const full = url ? text + '\n' + url : text;
+  let ok = false;
+  try { await navigator.clipboard.writeText(full); ok = true; } catch (e) {
+    const ta = document.createElement('textarea'); ta.value = full; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (e2) {}
+    ta.remove();
+  }
+  if (!ok) { say(null, () => full); return; }
+  const was = btn.textContent; btn.textContent = t('copied');
+  setTimeout(() => { if (btn.textContent === t('copied')) btn.textContent = was; }, 2200);
+}
+function beginLevel() {
+  Object.assign(S, { placed: {}, mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
+  const types = Object.keys(S.lv.pouch);
+  S.sel = types[0] || null;
+  $('discover').hidden = true; $('pageNote').hidden = true;
+  resize(); renderUI();
+}
+function toDay() {
+  if (S.mode === 'day') return;
+  S.mode = 'day'; S.sim = null; S.anim = null; S.goalState = null;
+  renderUI();
+}
+function letDusk(oneNight) {
+  if (S.mode === 'run') return;
+  const lv = S.lv;
+  if (oneNight && lv.kind === 'life') {
+    if (S.mode === 'day' || !S.sim) { S.sim = simulate(lv, S.placed); S.frameIdx = 0; sfx.dusk(); }
+    if (S.frameIdx >= lv.nights) return;
+    S.anim = { from: S.frameIdx, to: S.frameIdx + 1, t0: performance.now(), step: 700 };
+    S.mode = 'run'; watchAnim(S.anim); renderUI(); return;
+  }
+  S.sim = simulate(lv, S.placed);
+  const from = lv.kind === 'life' && S.mode === 'paused' ? S.frameIdx : 0;
+  const to = S.sim.frames.length - 1;
+  S.anim = { from, to, t0: performance.now() + (S.mode === 'day' ? 500 : 0), step: lv.kind === 'life' ? 700 : 300 };
+  if (S.mode === 'day') sfx.dusk();
+  S.mode = 'run'; watchAnim(S.anim); renderUI();
+}
+// Backup for when animation frames pause (hidden tab): the run still completes.
+function watchAnim(a) {
+  const ms = a.t0 - performance.now() + (a.to - a.from) * a.step + 300;
+  setTimeout(() => { if (S.anim === a) finishAnim(performance.now()); }, Math.max(0, ms));
+}
+function finishAnim(now) {
+  const a = S.anim; S.anim = null; S.frameIdx = a.to; S.endAt = now;
+  if (a.to < S.sim.frames.length - 1) { S.mode = 'paused'; renderUI(); say(null, () => t('nightPassed', a.to)); return; }
+  evaluate();
+}
+function evaluate() {
+  const lv = S.lv;
+  S.goalState = checkGoals(lv, S.sim);
+  S.mode = 'night'; S.attempts++;
+  noteDiscoveries();
+  const all = S.goalState.every(Boolean);
+  if (!S.solved) S.trail.push(S.goalState.filter(Boolean).length / S.goalState.length);
+  if (all) {
+    S.solved = true; S.burstUntil = performance.now() + 4000; sfx.glad();
+    const newSpark = !S.wander && !P.solved[lv.id];
+    const pageNo = sparkCount() + 1;
+    if (newSpark) S.newSpark = pageNo;
+    const firstTry = lv.id === '1-1' && S.attempts === 1;
+    say(null, () => lvT(lv, 'success') + (newSpark ? t('newSpark') : '') + (firstTry ? t('pressNext') : ''));
+    logEvent(`solved ${lv.id || 'wander d' + P.d} in ${S.attempts} ${S.attempts === 1 ? 'try' : 'tries'}, ${S.hints} hints, ${Math.round((Date.now() - S.startedAt) / 1000)}s`);
+    if (S.challenge) {
+      // Shared puzzles don't move the hidden difficulty; remember the best daily score
+      const day = S.challenge.daily, best = (P.daily || {})[day];
+      if (day) P.daily = Object.assign(P.daily || {}, { [day]: best ? Math.min(best, S.attempts) : S.attempts });
+    } else if (S.wander) {
+      P.wanderCount++;
+      const before = P.d;
+      if (S.attempts <= 2 && S.hints === 0) P.d = Math.min(10, P.d + 1);
+      else if (S.attempts >= 6 || S.hints >= 2) P.d = Math.max(1, P.d - 1);
+      if (P.d !== before) logEvent(`difficulty ${before} -> ${P.d} (hidden from player)`);
+    } else {
+      const firstTime = !P.solved[lv.id];
+      P.solved[lv.id] = true;
+      if (firstTime && chapterDone(lv.ch) && !P.revealed[lv.ch]) { P.revealed[lv.ch] = true; S.pendingReveal = lv.ch; }
+    }
+    saveProgress();
+    if (!S.wander) {
+      showPageNote(newSpark ? pageNo : 0, lv.id);
+      S.win = { id: lv.id, spark: newSpark, page: newSpark ? pageNo : 0, cheer: Math.floor(Math.random() * 4) };
+      setTimeout(() => { if (S.lv === lv && S.solved) openWin(true); }, 1400);   // let the happy creatures show first
+    }
+  } else {
+    sfx.hmm();
+    const happy = S.goalState.filter(Boolean).length, total = S.goalState.length;
+    const i = S.goalState.findIndex(v => !v), [r, c, want, who] = lv.goals[i];
+    const line = who === 'moth' ? 'failMoth' : who === 'snail' ? 'failSnail' : who === 'toad' ? (lv.kind === 'life' ? 'failToadLife' : 'failToad') : 'failBeetle';
+    say(null, () => t(line) + (total > 1 ? t('tally', happy, total) : '') + t('tryAgain'));
+    logEvent(`${lv.id || 'wander'}: attempt ${S.attempts}, ${happy}/${total} settled`);
+  }
+  renderUI();
+}
+function noteDiscoveries() {
+  const types = new Set(Object.values(S.placed).concat((S.lv.fixed || []).map(f => f[2])));
+  const fresh = [...types].filter(p => PLANTS[p] && !P.seen[p]);
+  fresh.forEach(p => (P.seen[p] = true));
+  if (fresh.length) {
+    saveProgress();
+    showDiscover(fresh[fresh.length - 1]);
+  }
+}
+function showDiscover(p) {
+  const box = $('discover'); S.discover = p;
+  box.innerHTML = `<p>${t('discover', pT(p, 'name'))}</p><button type="button" id="discoverBtn">${t('discoverBtn')}</button>`;
+  box.hidden = false;
+  $('discoverBtn').onclick = () => { box.hidden = true; openJournal(p); };
+}
+function nextLevel() {
+  if (S.challenge && !wanderOpen()) return startLevel(resumeIdx());   // came in by a link: carry on with the story
+  if (S.wander) return startWander();
+  const i = S.levelIdx + 1;
+  if (i < LEVELS.length && chapterOpen(LEVELS[i].ch)) return startLevel(i);
+  if (wanderOpen()) return startWander();
+  startLevel(Math.min(i, LEVELS.length - 1));
+}
+
+// ---------- Owl hints: questions first, then a nudge on the board ----------
+function askOwl() {
+  const lv = S.lv;
+  S.hints++;
+  const n = S.hints;
+  if (n <= (lvT(lv, 'hints') || []).length) { say('owl', () => lvT(lv, 'hints')[n - 1]); }
+  else {
+    const remaining = (lv.solution || []).filter(([r, c, p]) => S.placed[key(r, c)] !== p && !S.revealTiles.some(t => t[0] === r && t[1] === c));
+    if (remaining.length) {
+      const pick = remaining[0]; S.revealTiles.push(pick);
+      say('owl', () => t('owlTap', pT(pick[2], 'name')));
+    } else say('owl', () => t('owlDone'));
+  }
+  logEvent(`owl asked (${S.hints})`);
+  renderUI();
+}
+
+// ---------- Interaction ----------
+function cellFromEvent(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) * (geo.W / rect.width) - geo.ox, y = (e.clientY - rect.top) * (geo.H / rect.height) - geo.oy;
+  const c = Math.floor(x / geo.cs), r = Math.floor(y / geo.cs);
+  if (r < 0 || c < 0 || r >= S.lv.rows || c >= S.lv.cols) return null;
+  return [r, c];
+}
+function tapCell(r, c) {
+  if (S.mode === 'run') return;
+  if (S.mode !== 'day') toDay();
+  const lv = S.lv, k = key(r, c);
+  if (rockAt(r, c)) return;
+  if (fixedAt(r, c)) { say(null, () => t('fixedPlant')); return; }
+  if (lv.kind !== 'life' && goalAt(r, c) >= 0) { const who = lv.goals[goalAt(r, c)][3]; say(null, () => t('resting', whoT(who, 'label'))); return; }
+  if (S.placed[k]) { const p = S.placed[k]; delete S.placed[k]; S.sel = p; sfx.lift(); renderUI(); return; }
+  if (!S.sel) return;
+  if (pouchLeft(S.sel) <= 0) {
+    const other = Object.keys(lv.pouch).find(p => pouchLeft(p) > 0);
+    if (other) S.sel = other;
+    else { say(null, () => t('pouchEmpty')); renderUI(); return; }
+  }
+  S.placed[k] = S.sel; sfx.plant();
+  if (pouchLeft(S.sel) <= 0) { const other = Object.keys(lv.pouch).find(p => pouchLeft(p) > 0); if (other) S.sel = other; }
+  renderUI();
+}
+canvas.addEventListener('click', e => { S.showCursor = false; const cell = cellFromEvent(e); if (cell) tapCell(...cell); });
+canvas.addEventListener('keydown', e => {
+  const lv = S.lv; let [r, c] = S.cursor;
+  const moves = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+  if (moves[e.key]) { r = clamp(r + moves[e.key][0], 0, lv.rows - 1); c = clamp(c + moves[e.key][1], 0, lv.cols - 1); S.cursor = [r, c]; S.showCursor = true; e.preventDefault(); }
+  else if (e.key === 'Enter' || e.key === ' ') { S.showCursor = true; tapCell(r, c); e.preventDefault(); }
+  else if (/^[1-9]$/.test(e.key)) { const t = Object.keys(lv.pouch)[+e.key - 1]; if (t) { S.sel = t; renderUI(); } }
+  else if (e.key === 'd' || e.key === 'D') letDusk(false);
+});
+canvas.addEventListener('focus', () => { S.showCursor = true; });
+
+// ---------- UI ----------
+// Text is passed as a function so it can be re-read when the language changes
+let voiceWho = null, voiceText = null;
+function say(who, text) {
+  voiceWho = who; voiceText = text;
+  $('voice').classList.toggle('owl', who === 'owl');
+  $('speaker').textContent = t(who === 'owl' ? 'owl' : 'grove');
+  $('voiceText').textContent = typeof text === 'function' ? text() : text;
+}
+function miniPlant(cv, type, size) {
+  const d = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = size * d; cv.height = size * d;
+  const c = cv.getContext('2d'); c.setTransform(d, 0, 0, d, 0, 0);
+  drawPlant(c, type, size / 2, size / 2 + size * 0.04, size * 0.95, { glow: type === 'sun' ? 1 : 0.6, bloom: 1, night: 0.6 });
+}
+function renderUI() {
+  const lv = S.lv;
+  // chapters
+  const nav = $('chapters'); nav.innerHTML = '';
+  CHAPTERS.forEach((ch, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip';
+    const done = LEVELS.filter(l => l.ch === i && P.solved[l.id]).length, total = LEVELS.filter(l => l.ch === i).length;
+    b.innerHTML = `${chName(i)} <span class="n">${done}/${total}</span>`;
+    b.disabled = !chapterOpen(i);
+    if (b.disabled) b.title = t('chLocked');
+    b.setAttribute('aria-current', String(!S.wander && lv.ch === i));
+    b.onclick = () => { const first = LEVELS.findIndex(l => l.ch === i && !P.solved[l.id]); startLevel(first >= 0 ? first : LEVELS.findIndex(l => l.ch === i)); };
+    nav.appendChild(b);
+  });
+  const day = todayStr(), dy = document.createElement('button'); dy.type = 'button'; dy.className = 'chip';
+  dy.innerHTML = `${t('dailyName')} <span class="n">${(P.daily || {})[day] ? '✓' : '★'}</span>`;
+  dy.disabled = !wanderOpen(); if (dy.disabled) dy.title = t('wanderLocked');
+  dy.setAttribute('aria-current', String(!!S.challenge && S.challenge.daily === day));
+  dy.onclick = () => startDaily(day); nav.appendChild(dy);
+  const w = document.createElement('button'); w.type = 'button'; w.className = 'chip';
+  w.innerHTML = `${t('wanderName')} <span class="n">${P.wanderCount}</span>`;
+  w.disabled = !wanderOpen(); if (w.disabled) w.title = t('wanderLocked');
+  w.setAttribute('aria-current', String(S.wander && !S.challenge));
+  w.onclick = startWander; nav.appendChild(w);
+
+  // heading + dots
+  const dots = $('dots'); dots.innerHTML = '';
+  if (S.challenge) {
+    $('eyebrow').textContent = S.challenge.daily ? t('eyebrowDaily', S.challenge.daily) : t('eyebrowLink');
+  } else if (S.wander) {
+    $('eyebrow').textContent = t('eyebrowWander', P.wanderCount + 1);
+  } else {
+    const chLevels = LEVELS.filter(l => l.ch === lv.ch), pos = chLevels.indexOf(lv) + 1;
+    $('eyebrow').textContent = t('eyebrow', lv.ch + 1, chName(lv.ch), pos, chLevels.length);
+    chLevels.forEach(l => {
+      const d = document.createElement('button'); d.type = 'button'; d.className = 'dot' + (P.solved[l.id] ? ' done' : '');
+      d.setAttribute('aria-label', t('dotLabel', l.id, lvT(l, 'name'), P.solved[l.id]));
+      d.setAttribute('aria-current', String(l === lv));
+      d.onclick = () => startLevel(LEVELS.indexOf(l));
+      dots.appendChild(d);
+    });
+  }
+  $('levelName').textContent = S.challenge ? t(S.challenge.daily ? 'dailyName' : 'linkName') : lvT(lv, 'name');
+  $('lsBtn').hidden = S.wander; $('lsBtn').textContent = t('lsBtn');
+  $('goalLine').hidden = S.wander;
+  if (!S.wander) $('goalLine').innerHTML = `<b>${t('goalLbl')}:</b> ${lsT(lv.id, 'goal')}`;
+
+  // wishes
+  const wishes = $('wishes'); wishes.innerHTML = '';
+  lv.goals.forEach(([r, c, want, who], i) => {
+    const el = document.createElement('span');
+    let cls = 'wish ' + want;
+    if (S.mode === 'night' && S.goalState) cls += S.goalState[i] ? ' happy' : ' sad';
+    el.className = cls;
+    const text = lv.kind === 'life' && want === 'off' ? t('clearSpot') : whoT(who, 'want');
+    el.innerHTML = `<i></i><span><b>${whoT(who, 'label')}</b> · ${text}</span>`;
+    wishes.appendChild(el);
+  });
+
+  // pouch
+  const pouch = $('pouch'); pouch.innerHTML = '';
+  Object.keys(lv.pouch).forEach((type, i) => {
+    const b = document.createElement('button'); b.type = 'button';
+    const left = pouchLeft(type);
+    b.className = 'seed' + (left <= 0 ? ' empty' : '');
+    b.setAttribute('aria-pressed', String(S.sel === type));
+    const cv = document.createElement('canvas'); miniPlant(cv, type, 38);
+    const label = document.createElement('div');
+    label.innerHTML = `<b>${pT(type, 'name')}</b><span>${t('seedLeft', left, i + 1)}</span>`;
+    b.append(cv, label);
+    b.onclick = () => { S.sel = type; renderUI(); };
+    pouch.appendChild(b);
+  });
+
+  // actions
+  const life = lv.kind === 'life';
+  const running = S.mode === 'run';
+  $('duskBtn').textContent = life ? (S.mode === 'paused' ? t('watchRest') : t('duskLife', lv.nights)) : t('dusk');
+  $('stepBtn').textContent = t('step');
+  $('duskBtn').hidden = S.mode === 'night';
+  $('duskBtn').disabled = running;
+  $('stepBtn').hidden = !life || S.mode === 'night' || lv.nights < 2;
+  $('stepBtn').disabled = running;
+  $('dayBtn').hidden = !(S.mode === 'night' || S.mode === 'paused');
+  $('dayBtn').textContent = t(S.solved ? 'replant' : 'back');
+  $('nextBtn').hidden = !S.solved;
+  $('nextBtn').textContent = t(S.wander ? 'nextVisitor' : 'nextGrove');
+  $('shareBtn').hidden = !(S.solved && lv.generated); $('shareBtn').textContent = t('shareBtn');
+  $('pouchTip').textContent = t(life ? 'tipLife' : 'tipLight');
+
+  // First grove: walk through the three controls step by step
+  const coach = !S.wander && lv.id === '1-1' && S.attempts === 0 && S.mode === 'day' && voiceWho !== 'owl';
+  const hasPlant = Object.keys(S.placed).length > 0;
+  $('duskBtn').classList.toggle('pulse', coach && hasPlant);
+  if (coach) {
+    $('voice').classList.remove('owl'); $('speaker').textContent = t('grove');
+    $('voiceText').innerHTML = t(hasPlant ? 'coach2' : 'coach1');
+  }
+
+  // owl
+  const owl = $('owlBtn');
+  owl.classList.toggle('nudge', !S.solved && S.attempts >= 3);
+  $('owlText').textContent = t(S.hints >= (lvT(lv, 'hints') || []).length ? 'owlShow' : 'owlAsk');
+
+  $('journalCount').textContent = Object.keys(P.seen).length;
+  $('unlockBtn').textContent = t(P.unlockAll ? 'unlocked' : 'unlock');
+  renderQuest();
+  renderDesigner();
+}
+function renderQuest() {
+  renderHeroBtn();
+  const n = sparkCount(), who = keeperName(), done = n >= SPARKS_TOTAL;
+  $('rank').textContent = t('yourQuest') + ' · ' + rankT(rankIndex()) + (who ? ' ' + who : '');
+  $('questTitle').textContent = t(done ? 'questDone' : 'questTitle');
+  $('questText').textContent = done ? t('questDoneText', P.wanderCount) : t('questText', n, SPARKS_TOTAL);
+  const sp = $('sparks'); sp.innerHTML = '';
+  for (let i = 1; i <= SPARKS_TOTAL; i++) {
+    const d = document.createElement('i');
+    d.className = 'spark' + (i <= n ? ' lit' : '') + (S.newSpark === i ? ' new' : '');
+    sp.appendChild(d);
+  }
+  S.newSpark = null;
+  $('bookBtn').innerHTML = t('bookBtn', n, SPARKS_TOTAL) + (n > (P.storyRead || 0) ? `<span class="new">${t('newBadge')}</span>` : '');
+  const k = n / SPARKS_TOTAL;
+  $('qlGlow').setAttribute('opacity', String(0.08 + 0.8 * k));
+  $('qlPane').setAttribute('opacity', String(0.12 + 0.88 * k));
+}
+
+// ---------- Designer view: the signals the hidden difficulty uses ----------
+let designerOn = false;
+function logEvent(s) {
+  const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  P.log.push(`${stamp}  ${s}`); if (P.log.length > 80) P.log.shift(); saveProgress();
+}
+function renderDesigner() {
+  const el = $('designer'); el.hidden = !designerOn;
+  if (!designerOn) return;
+  const secs = Math.round((Date.now() - S.startedAt) / 1000);
+  el.innerHTML = `<h3>Designer view · what the game tracks quietly</h3>
+    <dl>
+      <div><dt>Grove</dt><dd>${S.wander ? 'generated' : S.lv.id}</dd></div>
+      <div><dt>Dusk attempts</dt><dd>${S.attempts}</dd></div>
+      <div><dt>Owl hints used</dt><dd>${S.hints}</dd></div>
+      <div><dt>Time on this grove</dt><dd>${secs}s</dd></div>
+      <div><dt>Endless difficulty</dt><dd>${P.d} / 10</dd></div>
+      <div><dt>Owl nudges after</dt><dd>3 attempts</dd></div>
+    </dl>
+    <div class="log">${P.log.slice().reverse().join('\n') || 'No events yet.'}</div>`;
+}
+setInterval(() => { if (designerOn) renderDesigner(); }, 1000);
+
+// ---------- Journal ----------
+function openJournal(focusType) {
+  const pages = $('pages'); pages.innerHTML = '';
+  const seen = Object.keys(PLANTS).filter(p => P.seen[p]);
+  if (!seen.length) pages.innerHTML = `<p class="empty-journal">${t('journalEmpty')}</p>`;
+  seen.forEach(p => {
+    const ch = CHAPTERS.findIndex(c => c.plants.includes(p));
+    const unlocked = P.revealed[ch];
+    const page = document.createElement('div'); page.className = 'page';
+    const cv = document.createElement('canvas'); miniPlant(cv, p, 56);
+    const body = document.createElement('div');
+    body.innerHTML = `<h3>${pT(p, 'name')}</h3>
+      <label for="note-${p}">${t('noticed')}</label>
+      <textarea id="note-${p}" placeholder="${t('notePh')}"></textarea>
+      ${unlocked
+        ? `<div class="science"><b>${t('sciHead')} · ${pT(p, 'science')}</b>${pT(p, 'explain')}</div>`
+        : `<div class="science locked"><b>${t('sciHead')}</b>${t('sciLocked', chName(ch))}</div>`}`;
+    page.append(cv, body); pages.appendChild(page);
+    const ta = body.querySelector('textarea'); ta.value = P.notes[p] || '';
+    ta.addEventListener('input', () => { P.notes[p] = ta.value; saveProgress(); });
+  });
+  $('journalOverlay').hidden = false;
+  const focus = focusType && document.getElementById('note-' + focusType);
+  (focus || $('journalClose')).focus();
+}
+function openReveal(ch) {
+  const c = CHAPTERS[ch];
+  const who = keeperName();
+  S.revealCh = ch;
+  $('revealRank').textContent = rankT(ch === 2 ? 3 : ch + 1) + (who ? ' ' + who : '');
+  $('revealStory').textContent = storyT(ch, 'end') + (ch === 2 ? t('finale', who) : '');
+  $('revealTitle').textContent = chReveal(ch, 'title');
+  $('revealLede').textContent = chReveal(ch, 'lede');
+  const list = $('revealList'); list.innerHTML = '';
+  const plants = ch === 0 ? ['sun', 'reed'] : c.plants;
+  plants.forEach(p => {
+    const row = document.createElement('div'); row.className = 'reveal-item';
+    const cv = document.createElement('canvas'); miniPlant(cv, p, 48);
+    const body = document.createElement('div');
+    body.innerHTML = `<h3>${t('revealItem', pT(p, 'name'), pT(p, 'science'))}</h3><p>${pT(p, 'explain')}</p>`;
+    row.append(cv, body); list.appendChild(row);
+  });
+  $('revealOverlay').hidden = false; $('revealClose').focus();
+}
+
+let storyStep = 0;
+function openStory() {
+  storyStep = 0; renderStory();
+  $('storyOverlay').hidden = false; $('storyNext').focus();
+}
+function renderStory() {
+  const last = storyStep === PROLOGUE.length - 1;
+  $('storyLine').textContent = prologueT()[storyStep];
+  $('nameField').hidden = !last; $('heroField').hidden = !last;
+  if (last) { if (!P.hero) P.hero = HEROES[0]; renderHeroPick($('heroPick')); }
+  $('storyNext').textContent = t(last ? 'storyBecome' : 'storyNext');
+  $('storySkip').hidden = last; $('storySkip').textContent = t('storySkip');
+  $('slGlow').setAttribute('opacity', storyStep === 0 ? '0.75' : '0.06');
+  $('slPane').setAttribute('opacity', storyStep === 0 ? '1' : '0.1');
+  $('storyDots').innerHTML = PROLOGUE.map((_, i) => '<i class="' + (i === storyStep ? 'on' : '') + '"></i>').join('');
+  if (last && !$('keeperName').value) { $('keeperName').value = P.name || ''; setTimeout(() => $('keeperName').focus(), 0); }
+}
+function storyNext() {
+  if (storyStep < PROLOGUE.length - 1) { storyStep++; renderStory(); return; }
+  P.name = $('keeperName').value.trim().slice(0, 24);
+  finishStory();
+}
+// Straight into the grove: the first level's coach teaches the controls, and the tour stays one tap away in the help sheet
+function finishStory() {
+  if (!P.hero) P.hero = HEROES[0];
+  P.seenStory = true; saveProgress();
+  $('storyOverlay').hidden = true;
+  renderUI(); maybeLevelStory();
+  canvas.focus({ preventScroll: true });
+}
+
+// ---------- Story book: the mystery unfolds one page per spark ----------
+const pagesT = () => (hi() ? HI.pages : PAGES);
+function openBook(focusPage) {
+  const book = $('book'), n = sparkCount();
+  book.innerHTML = `<div class="book-page"><span class="num">${t('bookStart')}</span><p>${prologueT().join(' ')}</p></div>`;
+  pagesT().forEach(([title, text], i) => {
+    const d = document.createElement('div'), open = i < n;
+    d.className = 'book-page' + (open ? '' : ' locked') + (open && i === n - 1 ? ' latest' : '');
+    d.id = 'page-' + (i + 1);
+    d.innerHTML = open
+      ? `<span class="num">${t('pageNum', i + 1)}</span><h3>${title}</h3><p>${text}</p>`
+      : `<span class="num">🔒 ${t('pageNum', i + 1)}</span><p>${t(i === n ? 'pageNext' : 'pageLocked')}</p>`;
+    book.appendChild(d);
+  });
+  P.storyRead = n; saveProgress(); renderQuest();
+  if (!$('pageNote').hidden && S.pageNote) showPageNote(0, S.pageNote[1]);   // page is read; keep the cliffhanger
+  $('bookOverlay').hidden = false;
+  $('bookClose').focus({ preventScroll: true });
+  const target = focusPage && $('page-' + focusPage);
+  if (target) target.scrollIntoView({ block: 'center' }); else $('bookSheet').scrollTop = 0;
+}
+// After a win: the new story page (first solve only) and the cliffhanger into the next level
+function showPageNote(p, id) {
+  const box = $('pageNote'); S.pageNote = [p, id];
+  box.innerHTML = (p ? `<p>${t('pageNote', pagesT()[p - 1][0])}</p><button type="button" id="pageNoteBtn">${t('pageNoteBtn')}</button>` : '')
+    + `<p class="teaser"><b>${t('whatNext')}</b>${lsT(id, 'next')}</p>`
+    + nextChapterNote(id);
+  box.hidden = false;
+  if (p) $('pageNoteBtn').onclick = () => openBook(p);
+}
+
+function nextChapterNote(id) {
+  const lv = LEVELS.find(l => l.id === id), nx = LEVELS[LEVELS.indexOf(lv) + 1];
+  if (!nx || nx.ch === lv.ch) return '';
+  return `<p class="next-ch">${t('nextCh', chName(nx.ch))}<br>${chS(nx.ch, 'goal')}</p>`;
+}
+
+// The celebration: what you just earned, and the next target shining ahead
+function openWin(fresh) {
+  const w = S.win, lv = LEVELS.find(l => l.id === w.id), idx = LEVELS.indexOf(lv), nx = LEVELS[idx + 1];
+  const chEnd = !nx || nx.ch !== lv.ch, n = sparkCount(), name = keeperName();
+  heroCanvas($('winHero'), P.hero || HEROES[0], 96);
+  $('winKicker').textContent = chEnd && chapterDone(lv.ch) ? t('chDone', chName(lv.ch)) : t('winKicker', idx + 1);
+  $('winTitle').textContent = t('cheers')[w.cheer] + (name ? ' ' + name : '');
+  $('winMeterText').innerHTML = (n >= SPARKS_TOTAL ? t('lanternLit') : t('winMeter', n, SPARKS_TOTAL)) + (w.spark ? `<span class="plus">${t('plusSpark')}</span>` : '');
+  const bar = $('winBar'), pct = k => Math.round(100 * k / SPARKS_TOTAL) + '%';
+  if (fresh) { bar.style.width = pct(w.spark ? n - 1 : n); requestAnimationFrame(() => requestAnimationFrame(() => (bar.style.width = pct(n)))); }
+  else bar.style.width = pct(n);
+  $('winGot').innerHTML = `<b>${t('gotLbl')}</b><p>${lsT(lv.id, 'reward')}</p>` + (w.page ? `<p>${t('newPage', pagesT()[w.page - 1][0])}</p>` : '');
+  let tName, tGoal, unlock = '';
+  if (!nx) { [tName, tGoal] = t('wanderTarget'); }
+  else if (chEnd) { tName = chName(nx.ch); tGoal = chS(nx.ch, 'goal'); if (w.spark) unlock = t('chUnlocked'); }
+  else { tName = `Level ${idx + 2} · ${lvT(nx, 'name')}`; tGoal = lsT(nx.id, 'goal'); if (w.spark) unlock = t('lvUnlocked'); }
+  $('winTarget').innerHTML = `<b>${t('targetLbl')}</b><h3>${tName}</h3><p>${tGoal}</p>` + (unlock ? `<span class="unlock">${unlock}</span>` : '');
+  $('winNext').textContent = t('winNext'); $('winStay').textContent = t('winStay');
+  $('winShare').hidden = !(chEnd && chapterDone(lv.ch)); $('winShare').textContent = t('shareWin');   // milestones only: spoiler-free progress
+  if (fresh) {
+    const cf = $('confetti'), cols = ['#ffc45e', '#ff9e3d', '#9ad0ff', '#b9a6dd', '#8cc070', '#ff8fb1'];
+    cf.innerHTML = Array.from({ length: 36 }, (_, i) => `<i style="left:${(i * 37) % 100}%;background:${cols[i % 6]};animation-delay:${(i % 9) * 0.12}s;--r:${(i % 2 ? 1 : -1) * (200 + i * 15)}deg"></i>`).join('');
+    sfx.cheer();
+  }
+  $('winOverlay').hidden = false; $('winNext').focus();
+}
+function closeWin(goNext) {
+  $('winOverlay').hidden = true; $('confetti').innerHTML = '';
+  if (S.pendingReveal != null) { const ch = S.pendingReveal; S.pendingReveal = null; S.revealThenNext = goNext; return openReveal(ch); }
+  if (goNext) nextLevel();
+}
+
+function openHelp() {
+  renderLegend();
+  $('helpOverlay').hidden = false; $('helpClose').focus();
+}
+function renderLegend() {
+  const legend = $('legend'); legend.innerHTML = '';
+  Object.entries(t('legend')).forEach(([who, text]) => {
+    const d = document.createElement('div'), cv = document.createElement('canvas');
+    const px = Math.min(window.devicePixelRatio || 1, 2); cv.width = 44 * px; cv.height = 44 * px;
+    const c = cv.getContext('2d'); c.setTransform(px, 0, 0, px, 0, 0);
+    const pos = { moth: [22, 24], toad: [22, 26], snail: [10, 8], beetle: [8, 38] }[who];
+    drawVisitor(c, who, pos[0], pos[1], 70, 1, 0);
+    const el = document.createElement('div'); el.innerHTML = '<b>' + whoT(who, 'label') + '</b><span>' + text + '</span>';
+    d.append(cv, el); legend.appendChild(d);
+  });
+}
+
+// ---------- Guided tour: points at each control in turn ----------
+const TOUR = [
+  ['tour1', () => $('boardWrap')], ['tour2', () => $('wishes')], ['tour3', () => $('pouch')], ['tour4', () => $('boardWrap')],
+  ['tour5', () => $('duskBtn')], ['tour6', () => $('voice')], ['tour7', () => $('owlBtn')], ['tour8', () => document.querySelector('.quest')],
+  ['tourStory', () => $('bookBtn')], ['tour9', () => $('journalBtn')], ['tour10', () => document.querySelector('.top .lang-switch')],
+];
+let tourSteps = [], tourI = 0;
+function startTour() {
+  closeHelp();
+  tourSteps = TOUR.filter(([, el]) => el() && el().offsetParent !== null);
+  tourI = 0; $('tour').hidden = false;
+  window.addEventListener('resize', placeTour); window.addEventListener('scroll', placeTour, true);
+  showTourStep();
+  document.fonts?.ready?.then(placeTour);   // web fonts can shift the layout after the first frame
+}
+function showTourStep() {
+  const [k, el] = tourSteps[tourI], last = tourI === tourSteps.length - 1;
+  $('tourCount').textContent = t('tourCount', tourI + 1, tourSteps.length);
+  $('tourText').innerHTML = t(k);
+  $('tourBack').hidden = tourI === 0; $('tourBack').textContent = t('tourBack');
+  $('tourNext').textContent = t(last ? 'tourDone' : 'tourNext');
+  $('tourSkip').textContent = t('tourSkip'); $('tourSkip').hidden = last;
+  el().scrollIntoView({ block: 'center' });
+  placeTour(); $('tourNext').focus();
+}
+function placeTour() {
+  if ($('tour').hidden) return;
+  const r = tourSteps[tourI][1]().getBoundingClientRect(), pad = 6, tip = $('tourTip');
+  Object.assign($('tourSpot').style, { left: r.left - pad + 'px', top: r.top - pad + 'px', width: r.width + pad * 2 + 'px', height: r.height + pad * 2 + 'px' });
+  const vw = document.documentElement.clientWidth, vh = window.innerHeight, tw = tip.offsetWidth, th = tip.offsetHeight, gap = 14;
+  let top = r.bottom + pad + gap, left = r.left + r.width / 2 - tw / 2;   // below the target
+  if (top + th > vh - 16) top = r.top - pad - gap - th;                     // else above it
+  if (top < 16) {                                                            // tall target: beside it, else bottom of the screen
+    top = r.top + r.height / 2 - th / 2;
+    if (vw - r.right - pad - gap >= tw + 16) left = r.right + pad + gap;
+    else if (r.left - pad - gap >= tw + 16) left = r.left - pad - gap - tw;
+    else top = vh - th - 16;
+  }
+  tip.style.top = Math.min(Math.max(16, top), vh - th - 16) + 'px';
+  tip.style.left = Math.min(Math.max(16, left), vw - tw - 16) + 'px';
+}
+function tourGo(d) {
+  if (tourI + d >= tourSteps.length) return endTour();
+  tourI = Math.max(0, tourI + d); showTourStep();
+}
+function endTour() {
+  $('tour').hidden = true;
+  if (!P.seenTour) { P.seenTour = true; saveProgress(); }
+  setTimeout(maybeLevelStory, 0);
+  window.removeEventListener('resize', placeTour); window.removeEventListener('scroll', placeTour, true);
+  window.scrollTo({ top: 0 }); canvas.focus({ preventScroll: true });
+}
+
+// ---------- Language ----------
+function applyLang() {
+  document.documentElement.lang = hi() ? 'hi-Latn' : 'en';
+  document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === P.lang)));
+  $('keeperName').placeholder = t('namePh');
+  canvas.setAttribute('aria-label', t('canvasLabel'));
+  $('soundBtn').textContent = t(soundOn ? 'soundOn' : 'soundOff');
+  $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow');
+}
+function setLang(lang) {
+  if (P.lang === lang) return;
+  P.lang = lang; saveProgress(); applyLang();
+  if (voiceText) say(voiceWho, voiceText);
+  renderUI();
+  if (!$('storyOverlay').hidden) renderStory();
+  if (!$('helpOverlay').hidden) renderLegend();
+  if (!$('journalOverlay').hidden) openJournal();
+  if (!$('revealOverlay').hidden) openReveal(S.revealCh);
+  if (!$('discover').hidden && S.discover) showDiscover(S.discover);
+  if (!$('pageNote').hidden && S.pageNote) showPageNote(...S.pageNote);
+  if (!$('levelOverlay').hidden) openLevelStory(S.lsFace);
+  if (!$('bookOverlay').hidden) openBook();
+  if (!$('heroOverlay').hidden) renderHeroPick($('heroPick2'));
+  if (!$('winOverlay').hidden) openWin(false);
+}
+function closeHelp() { $('helpOverlay').hidden = true; if (!P.seenHelp) { P.seenHelp = true; saveProgress(); } }
+
+// ---------- Wiring ----------
+$('helpBtn').onclick = openHelp;
+$('storyNext').onclick = storyNext;
+$('storySkip').onclick = finishStory;
+$('keeperName').addEventListener('keydown', e => { if (e.key === 'Enter') storyNext(); });
+$('helpClose').onclick = closeHelp;
+$('tourBtn').onclick = startTour;
+$('tourNext').onclick = () => tourGo(1);
+$('tourBack').onclick = () => tourGo(-1);
+$('tourSkip').onclick = endTour;
+$('duskBtn').onclick = () => letDusk(false);
+$('stepBtn').onclick = () => letDusk(true);
+$('dayBtn').onclick = () => { toDay(); say(null, () => t(S.solved ? 'dayAgainSolved' : 'dayAgain')); };
+document.querySelectorAll('[data-lang]').forEach(b => { b.onclick = () => setLang(b.dataset.lang); });
+$('nextBtn').onclick = nextLevel;
+$('shareBtn').onclick = shareGrove;
+$('winShare').onclick = shareProgress;
+window.addEventListener('hashchange', () => { if (groveFromHash()) canvas.focus({ preventScroll: true }); });
+$('owlBtn').onclick = askOwl;
+$('journalBtn').onclick = () => openJournal();
+$('journalClose').onclick = () => { $('journalOverlay').hidden = true; };
+$('bookBtn').onclick = () => openBook();
+$('lsBtn').onclick = () => openLevelStory('lv');
+$('heroBtn').onclick = openHero;
+$('heroDone').onclick = closeHero;
+$('heroOverlay').addEventListener('click', e => { if (e.target.id === 'heroOverlay') closeHero(); });
+$('lsCh').onclick = () => openLevelStory('ch');
+$('lsGo').onclick = lsGoClick;
+$('bookClose').onclick = () => { $('bookOverlay').hidden = true; };
+$('revealOverlay').addEventListener('click', e => { if (e.target.id === 'revealOverlay') S.revealThenNext = false; });
+$('revealClose').onclick = () => { $('revealOverlay').hidden = true; if (S.revealThenNext) { S.revealThenNext = false; nextLevel(); } };
+$('winNext').onclick = () => closeWin(true);
+$('winStay').onclick = () => closeWin(false);
+$('winOverlay').addEventListener('click', e => { if (e.target.id === 'winOverlay') closeWin(false); });
+$('soundBtn').onclick = () => {
+  soundOn = !soundOn; try { localStorage.setItem('lanternGrove.sound', soundOn ? 'on' : 'off'); } catch (e) {}
+  $('soundBtn').textContent = t(soundOn ? 'soundOn' : 'soundOff'); $('soundBtn').setAttribute('aria-pressed', String(soundOn));
+};
+$('soundBtn').setAttribute('aria-pressed', String(soundOn));
+$('designerBtn').onclick = () => { designerOn = !designerOn; $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow'); renderDesigner(); };
+$('unlockBtn').onclick = () => { P.unlockAll = true; saveProgress(); renderUI(); };
+$('resetBtn').onclick = () => { $('confirmOverlay').hidden = false; $('confirmNo').focus(); };
+$('confirmNo').onclick = () => { $('confirmOverlay').hidden = true; };
+$('confirmYes').onclick = () => { $('confirmOverlay').hidden = true; P = Object.assign(loadProgressFresh(), { lang: P.lang }); saveProgress(); startLevel(0); };
+function resumeIdx() { const i = LEVELS.findIndex(l => !P.solved[l.id] && chapterOpen(l.ch)); return i >= 0 ? i : 0; }
+function loadProgressFresh() { return { solved: {}, seen: {}, notes: {}, revealed: {}, unlockAll: false, d: 1, wanderCount: 0, log: [] }; }
+document.addEventListener('keydown', e => {
+  if (!$('tour').hidden) {
+    if (e.key === 'Escape') endTour();
+    else if (e.key === 'ArrowRight') tourGo(1);
+    else if (e.key === 'ArrowLeft') tourGo(-1);
+    return;
+  }
+  if (e.key === 'Escape') S.revealThenNext = false;
+  if (e.key === 'Escape') ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay'].forEach(id => ($(id).hidden = true));
+  if (e.key === 'Escape' && !$('helpOverlay').hidden) closeHelp();
+  if (e.key === 'Escape' && !$('winOverlay').hidden) return closeWin(false);
+  if (e.key === 'Escape' && !$('heroOverlay').hidden) return closeHero();
+  if (e.key === 'Escape' && !$('levelOverlay').hidden) closeLevelStory();
+});
+$('helpOverlay').addEventListener('click', e => { if (e.target.id === 'helpOverlay') closeHelp(); });
+$('levelOverlay').addEventListener('click', e => { if (e.target.id === 'levelOverlay') closeLevelStory(); });
+['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe($('boardWrap'));
+window.addEventListener('resize', resize);
+
+function boot(data) {
+  applyLang();
+  if (data && data.wander) startWander();
+  else if (data && data.levelIdx != null) startLevel(data.levelIdx);
+  else if (!groveFromHash()) startLevel(resumeIdx());   // a shared link opens its grove instead
+  if (data && data.placed && !data.wander) { S.placed = data.placed; renderUI(); }
+  requestAnimationFrame(render);
+  if (!P.seenStory) openStory();
+}
+window.claude?.hot?.snapshot?.(() => ({ levelIdx: S.levelIdx, wander: S.wander, placed: S.placed }));
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+</script>
