@@ -296,6 +296,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .ls-goal p + p { margin-top: 6px; }
 .ls-goal b { color: var(--amber); }
 .level-sheet .actions { justify-content: center; position: sticky; bottom: -22px; width: 100%; padding: 12px 0 22px; margin-bottom: -22px; background: var(--panel); }
+.level-sheet .actions #lsCh { justify-self: center; margin: 0; }   /* lives in the sticky bar so it is never half-covered */
 @media (max-width: 480px) {
   .level-sheet { gap: 12px; padding: 18px; }
   .level-sheet #lsArt { width: 107px; height: 64px; border-radius: 16px; }
@@ -521,8 +522,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     <div class="ls-prev" id="lsPrev" hidden></div>
     <p class="story-beat" id="lsText"></p>
     <div class="ls-goal" id="lsGoal"></div>
-    <button class="story-link" id="lsCh" type="button"></button>
-    <div class="actions"><button class="primary wide" id="lsGo" type="button"></button></div>
+    <div class="actions"><button class="primary wide" id="lsGo" type="button"></button><button class="story-link wide" id="lsCh" type="button"></button></div>
   </div>
 </div>
 
@@ -1365,6 +1365,13 @@ function drawVisitor(c, who, x, y, s, mood, t) {
   }
   c.restore();
 }
+// On the board the snail and beetle sit small in a tile corner, so the fern or moss under them stays visible.
+// For a portrait (the level card), centre each visitor on (cx, cy) and enlarge the small ones: [dx, dy, zoom] in units of s.
+const VISITOR_ART = { moth: [0, 0, 1], toad: [0, 0.02, 1], snail: [0.24, 0.27, 1.6], beetle: [0.27, -0.29, 1.4] };
+function drawVisitorIcon(c, who, cx, cy, size) {
+  const [dx, dy, zoom] = VISITOR_ART[who], s = size * zoom;
+  drawVisitor(c, who, cx - dx * s, cy - dy * s, s, 1, 0);
+}
 // The player's character, drawn in a 100-unit box centred on (x, y)
 const HEROES = ['firefly', 'squirrel', 'fox', 'turtle'];
 function drawHero(c, kind, x, y, s) {
@@ -1467,7 +1474,7 @@ function onsetTime(now, f, r, c, grid) {
 }
 
 function render(now) {
-  const t = now / 1000, { W, H, cs, ox, oy, dpr } = geo, lv = S.lv;
+  const secs = now / 1000, { W, H, cs, ox, oy, dpr } = geo, lv = S.lv;   // not "t": that name is the translation function
   if (!lv) return requestAnimationFrame(render);
   const target = S.mode === 'day' ? 0 : 1;
   S.nightF += (target - S.nightF) * (reduceMotion ? 1 : 0.06);
@@ -1520,16 +1527,16 @@ function render(now) {
     const col = want === 'on' ? (isLife ? '#a8ef7a' : '#ffc45e') : '#62d4c6';
     ctx.save(); ctx.setLineDash([cs * 0.06, cs * 0.06]); ctx.lineWidth = Math.max(1.5, cs * 0.025);
     ctx.strokeStyle = rgba(col, evaluated ? (S.goalState[i] ? 0.85 : 0.35) : 0.6);
-    ctx.lineDashOffset = -t * cs * 0.05;
+    ctx.lineDashOffset = -secs * cs * 0.05;
     ctx.beginPath(); ctx.arc(x, y, cs * 0.38, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
   });
   // Hint ghosts
   S.revealTiles.forEach(([r, c, p]) => {
     if (S.placed[key(r, c)] === p) return;
     const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
-    ctx.save(); ctx.strokeStyle = rgba('#62d4c6', 0.55 + 0.3 * Math.sin(t * 3)); ctx.lineWidth = 2;
+    ctx.save(); ctx.strokeStyle = rgba('#62d4c6', 0.55 + 0.3 * Math.sin(secs * 3)); ctx.lineWidth = 2;
     roundRect(ctx, ox + c * cs + 5, oy + r * cs + 5, cs - 10, cs - 10, cs * 0.14); ctx.stroke(); ctx.restore();
-    drawPlant(ctx, p, x, y, cs, { alpha: 0.35, night: N, t });
+    drawPlant(ctx, p, x, y, cs, { alpha: 0.35, night: N, t: secs });
   });
 
   // Plants
@@ -1538,7 +1545,7 @@ function render(now) {
     if (p === 'rock') { drawRock(ctx, x, y, cs); continue; }
     if (isLife) continue;
     if (!p) continue;
-    const st = { glow: p === 'sun' ? 1 : intensity(r, c), night: N, t };
+    const st = { glow: p === 'sun' ? 1 : intensity(r, c), night: N, t: secs };
     if (p === 'fern' && sim && S.mode !== 'day') {
       const done = S.mode === 'night' || S.mode === 'paused';
       const lit = sim.n[r][c] > 0;
@@ -1566,16 +1573,16 @@ function render(now) {
   lv.goals.forEach(([r, c, want, who], i) => {
     const x = ox + c * cs + cs / 2, y = oy + r * cs + cs / 2;
     const mood = evaluated ? (S.goalState[i] ? 1 : -1) : 0;
-    drawVisitor(ctx, who, x, y, cs, mood, t);
+    drawVisitor(ctx, who, x, y, cs, mood, secs);
   });
   // Fireflies
   const burst = now < S.burstUntil ? 1 : 0;
   const fa = Math.max(N * 0.8, 0.15) + burst * 0.4;
   flies.forEach(fl => {
-    if (!reduceMotion) { fl.x += fl.vx * 0.016 + Math.sin(t + fl.p) * 0.0006; fl.y += fl.vy * 0.016 + Math.cos(t * 0.8 + fl.p) * 0.0006; }
+    if (!reduceMotion) { fl.x += fl.vx * 0.016 + Math.sin(secs + fl.p) * 0.0006; fl.y += fl.vy * 0.016 + Math.cos(secs * 0.8 + fl.p) * 0.0006; }
     if (fl.x < 0 || fl.x > 1) fl.vx *= -1; if (fl.y < 0 || fl.y > 1) fl.vy *= -1;
     fl.x = clamp(fl.x, 0, 1); fl.y = clamp(fl.y, 0, 1);
-    const tw = 0.5 + 0.5 * Math.sin(t * 2.2 + fl.p * 3);
+    const tw = 0.5 + 0.5 * Math.sin(secs * 2.2 + fl.p * 3);
     halo(ctx, fl.x * W, fl.y * H, 7 + burst * 4, '#fff0a0', fa * tw * 0.7);
     ctx.fillStyle = rgba('#fff6c8', fa * tw); ctx.beginPath(); ctx.arc(fl.x * W, fl.y * H, 1.4, 0, 7); ctx.fill();
   });
@@ -1617,8 +1624,7 @@ function openLevelStory(face) {
   const c = lsArtCtx(), k = 96 / 44;
   drawHero(c, P.hero || HEROES[0], 44, 52, 70);
   c.translate(64, 0);
-  const pos = { moth: [22, 24], toad: [22, 26], snail: [10, 8], beetle: [8, 38] }[who];
-  drawVisitor(c, who, pos[0] * k, pos[1] * k, 70 * k, 1, 0);
+  drawVisitorIcon(c, who, 48, 52, 70 * k);
   $('lsEyebrow').textContent = t('lsEyebrow', idx + 1, chName(lv.ch));
   $('lsTitle').textContent = lvT(lv, 'name');
   $('lsPrev').hidden = idx === 0;
