@@ -124,7 +124,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .voice { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; min-height: 90px; }
 .speaker { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
 .voice p { margin: 4px 0 0; font-size: 1rem; line-height: 1.55; }
-.voice.owl .speaker { color: var(--fern); }
+.voice.owl-voice .speaker { color: var(--fern); }
 .pouch h3, .side h3 { margin: 0 0 8px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
 .seeds { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
 .seed {
@@ -223,14 +223,36 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .quest .sparks { gap: 4px; flex-wrap: nowrap; }
 .quest .spark { width: 10px; height: 10px; border-radius: 2px; }
 .quest-n { font-size: 0.8rem; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ch-pick { position: relative; }
+.ch-pick { position: relative; display: flex; align-items: center; gap: 6px; }
 .ch-btn { color: var(--ink); background: var(--panel-2); border-color: #4a5390; }
 .ch-btn::after { content: ""; width: 6px; height: 6px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); }
+.map-btn { white-space: nowrap; padding-inline: 10px; }
 .ch-menu {
   position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 250px; flex-direction: column; flex-wrap: nowrap;
   padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
 }
 .ch-menu .chip { justify-content: space-between; border-color: transparent; padding: 8px 12px; }
+.map-sheet { width: min(900px, 100%); }
+.map-route { position: relative; display: grid; gap: 14px; margin: 0; padding: 4px 0; list-style: none; }
+.map-route::before { content: ""; position: absolute; top: 24px; bottom: 24px; left: 21px; border-left: 2px dashed #59609a; opacity: 0.65; }
+.map-stop { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: start; }
+.map-marker { z-index: 1; display: grid; place-items: center; width: 42px; height: 42px; border: 2px solid #59609a; border-radius: 50%; background: var(--panel); color: var(--muted); font-weight: 800; font-variant-numeric: tabular-nums; }
+.map-stop.complete .map-marker { border-color: var(--reed); color: var(--reed); }
+.map-stop.current .map-marker { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 0 4px rgba(255, 196, 94, 0.13); }
+.map-stop.locked .map-marker { border-style: dashed; }
+.map-card { min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(120deg, #20274b, #1a203d); }
+.map-stop.current .map-card { border-color: #8c744a; background: linear-gradient(120deg, #302a42, #202747); }
+.map-stop.locked .map-card { border-style: dashed; color: var(--muted); }
+.map-card-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.map-card-head h3 { flex-basis: 100%; margin: 0; font-family: var(--font-display); font-size: 1.12rem; font-weight: 400; }
+.map-chapter { color: var(--amber); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.map-progress { color: var(--muted); font-size: 0.82rem; font-weight: 700; }
+.map-levels { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.map-level { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid #59609a; border-radius: 50%; background: #171c39; color: var(--ink); font-weight: 800; font-variant-numeric: tabular-nums; }
+.map-level:hover { border-color: var(--amber); }
+.map-level.done { border-color: var(--reed); background: #263d3c; color: var(--reed); }
+.map-level[aria-current="true"] { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(255, 196, 94, 0.25); }
+.map-locked-note { margin: 6px 0 0; color: var(--muted); font-size: 0.88rem; }
 .prof-btn { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: #161b38; }
 .prof-btn canvas { width: 34px; height: 34px; }
 .prof-btn .dot-new { position: absolute; top: -1px; right: -1px; width: 11px; height: 11px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 2px var(--night); }
@@ -421,6 +443,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   .ch-pick { flex: 0 1 auto; min-width: 0; }
   .ch-btn { max-width: 100%; min-height: 40px; padding-inline: 12px; white-space: nowrap; }
   .ch-btn .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .map-btn { flex: none; width: 40px; height: 40px; padding: 0; }
+  .map-btn [data-t] { display: none; }
   .quest { flex: none; gap: 6px; }
   .quest-lantern { width: 26px; height: 31px; }
   .quest-n, .quest .sparks { display: none; }   /* the chapter pill already counts them; the lantern glows with progress */
@@ -515,6 +539,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     </div>
     <div class="ch-pick">
       <button class="chip ch-btn" id="chBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="chapters"></button>
+      <button class="ghost map-btn" id="mapBtn" type="button" aria-label="Open the map" title="Open the map">🗺️ <span data-t="map">Map</span></button>
       <nav class="chapters ch-menu" id="chapters" aria-label="Chapters" hidden></nav>
     </div>
     <div class="quest" id="quest">
@@ -716,6 +741,19 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     <p class="story-beat" id="lsText"></p>
     <div class="ls-goal" id="lsGoal"></div>
     <div class="actions"><button class="primary wide" id="lsGo" type="button"></button><button class="story-link wide" id="lsCh" type="button"></button></div>
+  </div>
+</div>
+
+<div class="overlay" id="mapOverlay" hidden>
+  <div class="sheet map-sheet" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
+    <div class="sheet-head">
+      <div>
+        <h2 id="mapTitle" data-t="mapTitle">The grove trail</h2>
+        <p class="sub" id="mapSub" data-t="mapSub"></p>
+      </div>
+      <button class="ghost close-x" id="mapClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <ol class="map-route" id="mapRoute"></ol>
   </div>
 </div>
 
@@ -1047,6 +1085,11 @@ const UI = {
     eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · grove ${pos} of ${total}`,
     dotLabel: (id, name, done) => `Grove ${id}: ${name}${done ? ', settled' : ''}`,
     chLocked: 'Finish the chapter before to open this one', upNext: 'Up next', nextLocked: name => `Finish "${name}" to open this chapter`,
+    map: 'Map', mapOpen: 'Open the map', mapTitle: 'The grove trail', mapSub: 'Follow the path through Deepvan. Choose any level in an open chapter.',
+    mapChapter: (n, total) => `Chapter ${n} of ${total}`, mapCount: (done, total) => `${done} of ${total} levels settled`,
+    mapComplete: 'Complete', mapHere: 'You are here', mapReady: 'Ready', mapLocked: name => `Finish "${name}" to continue this path`,
+    mapLevel: (chapter, level, status) => `Chapter ${chapter}, level ${level}: ${status}`,
+    mapLvDone: 'settled', mapLvHere: 'you are here', mapLvOpen: 'open level',
     loadFail: 'The next part of the grove could not be reached. Check your connection, then solve the level again or reload.', loadFailTitle: 'The grove could not load', loadFailText: 'The chapters live on the server and could not be fetched. Check your connection and try again. (Opening index.html straight from disk will not work: use a web server, or play-offline.html.)', retry: 'Try again',
     wanderLocked: 'Opens after "Flowers that decide"',
     clearSpot: 'wants this spot clear', seedLeft: (n, k) => `${n} left<span class="key"> · key ${k}</span>`,
@@ -1132,6 +1175,11 @@ const UI = {
     eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · level ${pos} / ${total}`,
     dotLabel: (id, name, done) => `Level ${id}: ${name}${done ? ', poora hua' : ''}`,
     chLocked: 'Pehle pichhla chapter poora karo', upNext: 'Agla', nextLocked: name => `Pehle "${name}" poora karo, phir yeh chapter khulega`,
+    map: 'Map', mapOpen: 'Game ka map kholo', mapTitle: 'Bagiche ki raah', mapSub: 'Deepvan ke raaston par chalo. Khule hue chapter mein koi bhi level chuno.',
+    mapChapter: (n, total) => `Chapter ${n} / ${total}`, mapCount: (done, total) => `${total} mein se ${done} level poore`,
+    mapComplete: 'Poora hua', mapHere: 'Aap yahan hain', mapReady: 'Khula hai', mapLocked: name => `Is raah par aage jaane ke liye pehle "${name}" poora karo`,
+    mapLevel: (chapter, level, status) => `Chapter ${chapter}, level ${level}: ${status}`,
+    mapLvDone: 'poora hua', mapLvHere: 'aap yahan hain', mapLvOpen: 'level kholo',
     loadFail: 'Bagiche ka agla hissa nahi mil paaya. Internet check karo, phir level dobara jeeto ya page reload karo.', loadFailTitle: 'Bagicha load nahi hua', loadFailText: 'Chapters server par rakhe hain aur abhi nahi mil paaye. Internet check karke dobara try karo. (index.html ko seedha disk se kholne par yeh nahi chalega: web server use karo, ya play-offline.html kholo.)', retry: 'Dobara try karo',
     wanderLocked: 'Chapter 2 ("Faisla karne wale phool") ke baad khulega',
     clearSpot: 'chahta hai yeh jagah khaali rahe', seedLeft: (n, k) => `${n} bache<span class="key"> · key ${k}</span>`,
@@ -2018,7 +2066,7 @@ canvas.addEventListener('focus', () => { S.showCursor = true; });
 let voiceWho = null, voiceText = null;
 function say(who, text) {
   voiceWho = who; voiceText = text;
-  $('voice').classList.toggle('owl', who === 'owl');
+  $('voice').classList.toggle('owl-voice', who === 'owl');
   $('speaker').textContent = t(who === 'owl' ? 'owl' : 'grove');
   $('voiceText').textContent = typeof text === 'function' ? text() : text;
 }
@@ -2027,6 +2075,69 @@ function miniPlant(cv, type, size) {
   cv.width = size * d; cv.height = size * d;
   const c = cv.getContext('2d'); c.setTransform(d, 0, 0, d, 0, 0);
   drawPlant(c, type, size / 2, size / 2 + size * 0.04, size * 0.95, { glow: type === 'sun' ? 1 : 0.6, bloom: 1, night: 0.6 });
+}
+function renderMap() {
+  const route = $('mapRoute'); route.innerHTML = '';
+  for (let i = 0; i < MANIFEST.length; i++) {
+    const stop = document.createElement('li'); stop.className = 'map-stop';
+    const marker = document.createElement('span'); marker.className = 'map-marker';
+    const card = document.createElement('div'); card.className = 'map-card';
+    const head = document.createElement('div'); head.className = 'map-card-head';
+    const title = document.createElement('h3');
+    const chapter = document.createElement('span'); chapter.className = 'map-chapter';
+    chapter.textContent = t('mapChapter', i + 1, MANIFEST.length);
+    const state = document.createElement('span'); state.className = 'map-progress';
+    head.append(chapter, state, title);
+    title.textContent = chName(i);
+    stop.append(marker, card); card.append(head);
+
+    if (!chapterOpen(i) || !CHAPTERS[i]) {
+      stop.classList.add('locked');
+      marker.textContent = '🔒';
+      state.textContent = t('upNext');
+      const note = document.createElement('p'); note.className = 'map-locked-note';
+      note.textContent = t('mapLocked', chName(i - 1));
+      card.append(note); route.append(stop);
+      break;
+    }
+
+    const levels = LEVELS.filter(l => l.ch === i);
+    const done = levels.filter(l => P.solved[l.id]).length;
+    const current = !S.wander && !S.challenge && S.lv.ch === i;
+    const complete = levels.length > 0 && done === levels.length;
+    stop.classList.toggle('complete', complete);
+    stop.classList.toggle('current', current);
+    marker.textContent = complete ? '✓' : String(i + 1);
+    state.textContent = t(complete ? 'mapComplete' : current ? 'mapHere' : 'mapReady');
+
+    const count = document.createElement('span'); count.className = 'map-progress';
+    count.textContent = t('mapCount', done, levels.length);
+    head.insertBefore(count, title);
+
+    const nodes = document.createElement('div'); nodes.className = 'map-levels';
+    nodes.setAttribute('role', 'group'); nodes.setAttribute('aria-label', t('mapChapter', i + 1, MANIFEST.length));
+    levels.forEach((level, index) => {
+      const solved = !!P.solved[level.id], here = current && S.lv === level;
+      const button = document.createElement('button'); button.type = 'button';
+      button.className = 'map-level' + (solved ? ' done' : '');
+      button.textContent = solved ? '✓' : String(index + 1);
+      button.setAttribute('aria-current', String(here));
+      button.setAttribute('aria-label', t('mapLevel', i + 1, index + 1, solved ? t('mapLvDone') : here ? t('mapLvHere') : t('mapLvOpen')));
+      button.onclick = () => { closeMap(false); startLevel(LEVELS.indexOf(level)); };
+      nodes.appendChild(button);
+    });
+    card.append(nodes); route.append(stop);
+  }
+}
+function openMap() {
+  renderMap();
+  $('mapOverlay').hidden = false;
+  $('mapClose').focus();
+  document.querySelector('.map-stop.current')?.scrollIntoView({ block: 'nearest' });
+}
+function closeMap(restoreFocus = true) {
+  $('mapOverlay').hidden = true;
+  if (restoreFocus) $('mapBtn').focus();
 }
 function renderUI() {
   const lv = S.lv;
@@ -2155,6 +2266,7 @@ function renderUI() {
   $('unlockBtn').textContent = t(P.unlockAll ? 'unlocked' : 'unlock');
   renderQuest();
   renderDesigner();
+  if (!$('mapOverlay').hidden) renderMap();
 }
 function renderQuest() {
   renderHeroBtn();
@@ -2439,6 +2551,7 @@ function applyLang() {
   $('keeperName').placeholder = t('namePh');
   document.querySelectorAll('.close-x').forEach(b => { b.setAttribute('aria-label', t('close')); b.title = t('close'); });
   canvas.setAttribute('aria-label', t('canvasLabel'));
+  $('mapBtn').setAttribute('aria-label', t('mapOpen')); $('mapBtn').title = t('mapOpen');
   $('soundBtn').textContent = t(soundOn ? 'soundOn' : 'soundOff');
   $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow');
 }
@@ -2454,6 +2567,7 @@ function setLang(lang) {
   if (!$('discover').hidden && S.discover) showDiscover(S.discover);
   if (!$('pageNote').hidden && S.pageNote) showPageNote(...S.pageNote);
   if (!$('levelOverlay').hidden) openLevelStory(S.lsFace);
+  if (!$('mapOverlay').hidden) renderMap();
   if (!$('bookOverlay').hidden) openBook();
   if (!$('heroOverlay').hidden) renderHeroPick($('heroPick2'));
   if (!$('winOverlay').hidden) openWin(false);
@@ -2469,6 +2583,9 @@ $('helpBtn').onclick = () => { closeProfile(); openHelp(); };
 // Chapter picker: one button in the header, the full chapter list on demand
 function setChMenu(open) { $('chapters').hidden = !open; $('chBtn').setAttribute('aria-expanded', String(open)); }
 $('chBtn').onclick = () => setChMenu($('chapters').hidden);
+$('mapBtn').onclick = openMap;
+$('mapClose').onclick = () => closeMap();
+$('mapOverlay').addEventListener('click', e => { if (e.target.id === 'mapOverlay') closeMap(); });
 $('chapters').addEventListener('click', e => { if (e.target.closest('.chip')) setChMenu(false); });
 document.addEventListener('click', e => { if (!e.target.closest('.ch-pick')) setChMenu(false); });
 if (!/[?&]dev\b/.test(location.search)) { document.querySelectorAll('.dev-only').forEach(el => (el.hidden = true)); document.querySelector('.foot').hidden = true; }
@@ -2524,6 +2641,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Escape') S.revealThenNext = false;
+  if (e.key === 'Escape' && !$('mapOverlay').hidden) return closeMap();
   if (e.key === 'Escape') { setChMenu(false); ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay'].forEach(id => ($(id).hidden = true)); }
   if (e.key === 'Escape' && !$('helpOverlay').hidden) closeHelp();
   if (e.key === 'Escape' && !$('winOverlay').hidden) return closeWin(false);
