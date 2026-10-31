@@ -139,5 +139,44 @@ function generateLevel(d, seed) {
   }
   return null;
 }
+
+// Checks a hand-made (plug-in) level. Returns a list of problems; an empty list means it is playable.
+const PLANT_TYPES = ['sun', 'reed', 'lily', 'fern', 'moss'];
+const VISITORS = ['moth', 'toad', 'snail', 'beetle'];
+function validateLevel(lv) {
+  const errs = [], cell = (r, c) => Number.isInteger(r) && Number.isInteger(c) && r >= 0 && r < lv.rows && c >= 0 && c < lv.cols;
+  if (!lv.id || typeof lv.id !== 'string') errs.push('needs an "id" string, e.g. "4-1"');
+  if (lv.kind !== 'light' && lv.kind !== 'life') errs.push('"kind" must be "light" or "life"');
+  if (!(lv.rows >= 2 && lv.rows <= 10 && lv.cols >= 2 && lv.cols <= 10)) errs.push('"rows" and "cols" must be 2 to 10');
+  if (lv.kind === 'life' && !(lv.nights >= 1)) errs.push('a "life" level needs "nights" (1 or more)');
+  if (errs.length) return errs;
+  const used = {};
+  const take = (r, c, what) => {
+    if (!cell(r, c)) return errs.push(`${what} at [${r}, ${c}] is off the board`);
+    if (used[key(r, c)]) errs.push(`${what} at [${r}, ${c}] overlaps ${used[key(r, c)]}`);
+    used[key(r, c)] = what;
+  };
+  (lv.rocks || []).forEach(([r, c]) => take(r, c, 'rock'));
+  (lv.fixed || []).forEach(([r, c, p]) => { if (!PLANT_TYPES.includes(p)) errs.push(`fixed plant "${p}" is unknown`); take(r, c, 'fixed ' + p); });
+  const pouch = lv.pouch || {};
+  if (!Object.keys(pouch).length) errs.push('"pouch" needs at least one seed, e.g. { reed: 2 }');
+  for (const p in pouch) if (!PLANT_TYPES.includes(p) || !(pouch[p] >= 1)) errs.push(`pouch entry ${p}: ${pouch[p]} is not valid`);
+  if (!(lv.goals || []).length) errs.push('needs at least one goal: [row, col, "on" | "off", visitor]');
+  (lv.goals || []).forEach(([r, c, want, who]) => {
+    if (!cell(r, c)) errs.push(`goal at [${r}, ${c}] is off the board`);
+    if (want !== 'on' && want !== 'off') errs.push(`goal at [${r}, ${c}] must want "on" or "off"`);
+    if (!VISITORS.includes(who)) errs.push(`goal at [${r}, ${c}]: visitor "${who}" is unknown (use ${VISITORS.join(', ')})`);
+  });
+  if (errs.length || !lv.solution) return errs;
+  // The solution must fit the pouch and the free soil, and must actually make every visitor happy
+  const placed = {}, count = {};
+  lv.solution.forEach(([r, c, p]) => {
+    if (!cell(r, c) || used[key(r, c)]) return errs.push(`solution plant at [${r}, ${c}] is not on free soil`);
+    placed[key(r, c)] = p; count[p] = (count[p] || 0) + 1;
+  });
+  for (const p in count) if (count[p] > (pouch[p] || 0)) errs.push(`solution uses ${count[p]} ${p} but the pouch has ${pouch[p] || 0}`);
+  if (!errs.length && !checkGoals(lv, simulate(lv, placed)).every(Boolean)) errs.push('the solution does not make every visitor happy');
+  return errs;
+}
 // ENGINE END
-if (typeof module !== 'undefined') module.exports = { simulate, simLight, simLife, checkGoals, generateLevel, key, unkey, baseTypes };
+if (typeof module !== 'undefined') module.exports = { simulate, simLight, simLife, checkGoals, generateLevel, validateLevel, key, unkey, baseTypes };

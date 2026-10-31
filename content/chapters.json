@@ -1,0 +1,25 @@
+{
+  "chapters": [
+    {
+      "id": "c1",
+      "name": "First light",
+      "hi": { "name": "Pehli roshni" },
+      "levels": 4,
+      "file": "c1.json"
+    },
+    {
+      "id": "c2",
+      "name": "Flowers that decide",
+      "hi": { "name": "Faisla karne wale phool" },
+      "levels": 4,
+      "file": "c2.json"
+    },
+    {
+      "id": "c3",
+      "name": "Moss that remembers",
+      "hi": { "name": "Yaad rakhne wali kaai" },
+      "levels": 4,
+      "file": "c3.json"
+    }
+  ]
+}

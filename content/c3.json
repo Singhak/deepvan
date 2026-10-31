@@ -1,0 +1,174 @@
+{
+  "id": "c3",
+  "name": "Moss that remembers",
+  "plants": ["moss"],
+  "reveal": {
+    "title": "You found the Game of Life",
+    "lede": "Mathematician John Conway invented these moss rules in 1970. Three tiny rules make shapes that stay still, blink and walk. Scientists use rules like these, called cellular automata, to model forest fires, crystal growth and patterns on seashells."
+  },
+  "open": "In the oldest corner of the grove grows moss that remembers. \"No keeper has understood this moss in a hundred years,\" says the owl.",
+  "end": "The twelfth spark catches. The Great Lantern blazes, and its light reaches every corner of the grove. Every lost creature can find its way home.",
+  "recap": "Dheeru gave you a silver key. A page said \"I did not break the lantern.\" The key opened the mossy gate.",
+  "story": "Behind the gate is the oldest corner of Deepvan. The moss here remembers every keeper who ever lived, even the Old Keeper. Wake its memory and follow where it leads.",
+  "goal": "Follow the Old Keeper's footprints to the last page, and light the Great Lantern again.",
+  "hi": {
+    "name": "Yaad rakhne wali kaai",
+    "title": "Aapne Game of Life dhoondh liya",
+    "lede": "Ganitagya John Conway ne 1970 mein kaai ke yeh niyam banaye the. Teen chhote niyam aisi shapes banate hain jo ruki rehti hain, jhapakti hain aur chalti hain. Scientist aise niyamon (cellular automata) se jungle ki aag, crystal ka badhna aur seepiyon ke design samajhte hain.",
+    "open": "Bagiche ke sabse purane kone mein yaad rakhne wali kaai ugti hai. \"Sau saal mein koi rakshak is kaai ko nahi samajh paaya,\" ullu kehta hai.",
+    "end": "Baarahvi chingaari jal uthi. Bada Lantern tez roshni se chamak utha, aur uski roshni bagiche ke har kone tak pahunch gayi. Har bhatka jaanwar ab ghar ka raasta dhoondh sakta hai.",
+    "recap": "Dheeru ne aapko chaandi ki chaabi di. Ek panne par likha tha \"Maine Lantern ko toda nahi.\" Chaabi se kaai wala darwaaza khul gaya.",
+    "story": "Darwaaze ke peeche Deepvan ka sabse purana kona hai. Yahan ki kaai har Rakshak ko yaad rakhti hai, Purane Rakshak ko bhi. Uski yaad jagao aur jahan woh le jaaye, wahan chalo.",
+    "goal": "Purane Rakshak ke kadmon ke peechhe chal kar aakhri panna paao, aur Bada Lantern phir se jalao."
+  },
+  "levels": [
+    {
+      "id": "3-1",
+      "name": "Moss needs company",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 1,
+      "pouch": { "moss": 3 },
+      "goals": [[2, 2, "on", "beetle"]],
+      "solution": [[1, 1, "moss"], [1, 3, "moss"], [3, 2, "moss"]],
+      "intro": "Glowmoss changes night after night. A beetle wants moss on its spot by morning. Plant moss anywhere, even on the beetle, and watch a night pass.",
+      "hints": ["Plant one moss by itself and watch a night. What happens to it?", "Moss counts all eight neighbours, corners too. What if an empty spot had three moss around it?"],
+      "success": "Moss grew where there was none. How many neighbours did that spot have?",
+      "story": {
+        "goal": "Grow moss on the bare ground.",
+        "reward": "The moss starts to remember, and shows old footprints.",
+        "intro": "In the oldest corner, Bholu the beetle waits on a bare patch of ground. \"Moss used to grow here,\" Bholu says. \"Make it grow again and it will start to remember.\"",
+        "next": "The moss shivers and shows a pattern: footprints. Old ones. But they keep fading. Can you grow moss that stays?"
+      },
+      "page": ["What the moss remembers", "The beetles say the moss keeps the footprints of every keeper who ever lived here. Some patterns stay still. Some blink. One of them seems to be walking somewhere."],
+      "hi": {
+        "name": "Kaai ko saathi chahiye",
+        "intro": "Jaadui Kaai har raat badalti hai. Beetle subah tak apni jagah par kaai chahta hai. Kaai kahin bhi lagao, beetle ke upar bhi, aur ek raat guzarne do.",
+        "hints": ["Ek kaai akeli lagao aur ek raat dekho. Uske saath kya hota hai?", "Kaai apne aathon padosi ginti hai, corner wale bhi. Agar kisi khaali jagah ke paas teen kaai hon toh?"],
+        "success": "Jahan kaai nahi thi, wahan kaai ug aayi. Us jagah ke kitne padosi the?",
+        "story": {
+          "goal": "Khaali zameen par kaai ugao.",
+          "reward": "Kaai yaad karna shuru karegi aur purane kadmon ke nishaan dikhayegi.",
+          "intro": "Sabse purane kone mein Bholu beetle ek khaali zameen par intezaar kar raha hai. \"Yahan kabhi kaai ugti thi,\" Bholu kehta hai. \"Use phir se ugao, toh woh yaad karna shuru karegi.\"",
+          "next": "Kaai kaanpti hai aur ek nishaan dikhati hai: kadmon ke nishaan. Purane. Par woh mit-te ja rahe hain. Kya aap aisi kaai uga sakte ho jo tiki rahe?"
+        },
+        "page": ["Kaai ko kya yaad hai", "Beetles kehte hain ki yeh kaai har us Rakshak ke kadmon ke nishaan sambhaal kar rakhti hai jo kabhi yahan raha. Kuch nishaan ruke hue hain. Kuch jhapakte hain. Aur ek kahin chalta hua lagta hai."]
+      }
+    },
+    {
+      "id": "3-2",
+      "name": "Moss that stays",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 4,
+      "pouch": { "moss": 4 },
+      "goals": [[2, 2, "on", "beetle"], [2, 3, "on", "beetle"], [3, 2, "on", "beetle"], [3, 3, "on", "beetle"]],
+      "solution": [[2, 2, "moss"], [2, 3, "moss"], [3, 2, "moss"], [3, 3, "moss"]],
+      "intro": "These beetles want a patch of moss that's still there after four nights.",
+      "hints": ["Watch one night at a time. Which moss fade, and how many neighbours did they have?", "Try a shape where every moss touches exactly three others."],
+      "success": "A shape that never changes. Every moss has just the right number of neighbours.",
+      "story": {
+        "goal": "Grow moss that never fades.",
+        "reward": "The footprints stay, and one of them starts blinking.",
+        "intro": "Four beetles want to keep the footprints safe. They need moss that does not fade, not tonight and not in four nights.",
+        "next": "Now the moss remembers clearly. One footprint keeps blinking, like a signal. Is someone trying to say something?"
+      },
+      "page": ["Footsteps in the moss", "You follow the walking pattern across the grove. It leads to a flat stone with the lantern mark on it, and the last page lies on top."],
+      "hi": {
+        "name": "Tiki rehne wali kaai",
+        "intro": "In beetles ko kaai ka aisa tukda chahiye jo chaar raat baad bhi wahin ho.",
+        "hints": ["Ek-ek raat dekho. Kaun si kaai murjhaati hai, aur uske kitne padosi the?", "Aisi shape try karo jismein har kaai theek teen doosri kaai ko chhooye."],
+        "success": "Ek shape jo kabhi nahi badalti. Har kaai ke paas bilkul sahi ginti ke padosi hain.",
+        "story": {
+          "goal": "Aisi kaai ugao jo kabhi na mite.",
+          "reward": "Nishaan tik jaayenge, aur ek nishaan jhapakne lagega.",
+          "intro": "Chaar beetles in kadmon ke nishaanon ko bachana chahte hain. Unhe aisi kaai chahiye jo na aaj mite, na chaar raat baad.",
+          "next": "Ab kaai saaf-saaf yaad rakhti hai. Ek nishaan baar-baar jhapak raha hai, jaise koi ishaara. Kya koi kuch kehna chahta hai?"
+        },
+        "page": ["Kaai mein kadam", "Aap us chalte hue nishaan ke peechhe-peechhe bagiche ke paar jaate ho. Woh ek chapte patthar tak le jaata hai, jis par Lantern ka nishaan bana hai, aur uske upar aakhri panna rakha hai."]
+      }
+    },
+    {
+      "id": "3-3",
+      "name": "Moss that blinks",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 3,
+      "pouch": { "moss": 3 },
+      "goals": [
+        [1, 2, "on", "beetle"],
+        [2, 2, "on", "beetle"],
+        [3, 2, "on", "beetle"],
+        [2, 1, "off", "toad"],
+        [2, 3, "off", "toad"]
+      ],
+      "solution": [[2, 1, "moss"], [2, 2, "moss"], [2, 3, "moss"]],
+      "intro": "The beetles want a standing line of moss after three nights, and the toads want the spots beside it left clear.",
+      "hints": ["Plant a standing line and watch one night. What shape does it become?", "If a line keeps flipping, which way should it start so it ends up standing after three nights?"],
+      "success": "Your line flipped every night: lying, standing, lying, standing. Some shapes pulse like a heartbeat.",
+      "story": {
+        "goal": "Make the blinker stand upright after the third night.",
+        "reward": "It points the way to the last page.",
+        "intro": "The blinking footprint is trying to point somewhere. The beetles want it standing up when the third night ends, so they can see which way it points.",
+        "next": "It points to a footprint that is walking. Walking all by itself, toward a flat stone with the lantern mark. The last page must be there."
+      },
+      "page": ["The last page", "\"If you are reading this, you already know everything I knew. The lantern was never broken. It was waiting for you.\""],
+      "hi": {
+        "name": "Jhapakne wali kaai",
+        "intro": "Beetles ko teen raat baad kaai ki khadi line chahiye, aur mendhak chahte hain ki line ke bagal ki jagah khaali rahe.",
+        "hints": ["Ek khadi line lagao aur ek raat dekho. Woh kis shape mein badalti hai?", "Agar line har raat palatti hai, toh shuru mein use kaise lagao ki teen raat baad khadi ho?"],
+        "success": "Aapki line har raat palti: leti, khadi, leti, khadi. Kuch shapes dil ki dhadkan ki tarah dhadakti hain.",
+        "story": {
+          "goal": "Teesri raat ke baad jhapakte nishaan ko khada rakho.",
+          "reward": "Woh aakhri panne ka raasta dikhayega.",
+          "intro": "Jhapakta hua nishaan kahin ishaara karna chahta hai. Beetles chahte hain ki teesri raat ke baad woh khada ho, taaki dikhe ki woh kis taraf ishaara karta hai.",
+          "next": "Woh ek aise nishaan ki taraf ishaara karta hai jo chal raha hai. Apne aap chalta hua, Lantern ke nishaan wale ek chapte patthar ki taraf. Aakhri panna wahin hoga."
+        },
+        "page": ["Aakhri panna", "\"Agar aap yeh padh rahe ho, toh mera saara gyaan ab aapke paas hai. Lantern kabhi toota hi nahi tha. Woh aapka intezaar kar raha tha.\""]
+      }
+    },
+    {
+      "id": "3-4",
+      "name": "Moss that walks",
+      "kind": "life",
+      "rows": 8,
+      "cols": 8,
+      "nights": 4,
+      "pouch": { "moss": 5 },
+      "goals": [
+        [2, 3, "on", "beetle"],
+        [3, 4, "on", "beetle"],
+        [4, 2, "on", "beetle"],
+        [4, 3, "on", "beetle"],
+        [4, 4, "on", "beetle"]
+      ],
+      "solution": [[1, 2, "moss"], [2, 3, "moss"], [3, 1, "moss"], [3, 2, "moss"], [3, 3, "moss"]],
+      "intro": "The beetles have moved camp. They want five moss in exactly this shape after four nights. Your moss will have to travel to get there.",
+      "hints": ["Plant the beetles' exact shape and watch night by night. Does it stay put?", "Try the same shape one step up and one step to the left of the beetles."],
+      "success": "Your moss walked across the grove by itself. Five moss and three simple rules made something that moves.",
+      "story": {
+        "goal": "Send your moss walking to the flat stone.",
+        "reward": "The last page, and the Great Lantern lights up again.",
+        "intro": "This is it. Five beetles wait at the flat stone. Send your moss walking across the grove to reach them, and the last page will be yours.",
+        "next": "The lantern is lit. But visitors keep arriving from far away, each with a story of their own. Deepvan will always need a keeper."
+      },
+      "page": ["The new Keeper", "The twelfth spark catches and the Great Lantern blazes. In its light the owl smiles: \"The Old Keeper would be proud. This grove is yours to look after now, until one day you teach someone new.\""],
+      "hi": {
+        "name": "Chalne wali kaai",
+        "intro": "Beetles ne apna dera badal liya hai. Unhe chaar raat baad bilkul isi shape mein paanch kaai chahiye. Aapki kaai ko chal kar wahan pahunchna hoga.",
+        "hints": ["Beetles wali shape hi lagao aur raat-dar-raat dekho. Kya woh wahin rehti hai?", "Wahi shape beetles se ek dibba upar aur ek dibba left mein lagao."],
+        "success": "Aapki kaai khud chal kar bagiche ke paar chali gayi. Paanch kaai aur teen aasaan niyamon ne kuch aisa banaya jo chalta hai.",
+        "story": {
+          "goal": "Apni kaai ko chala kar chapte patthar tak bhejo.",
+          "reward": "Aakhri panna, aur Bada Lantern phir se jal uthega.",
+          "intro": "Yahi hai woh pal. Paanch beetles chapte patthar ke paas intezaar kar rahe hain. Apni kaai ko bagiche ke paar chala kar unke paas pahunchao, aur aakhri panna aapka hoga.",
+          "next": "Lantern jal gaya. Par door-door se mehmaan aate rehte hain, har ek ki apni kahani ke saath. Deepvan ko hamesha ek Rakshak ki zaroorat rahegi."
+        },
+        "page": ["Naya Rakshak", "Baarahvi chingaari jalti hai aur Bada Lantern jagmaga uthta hai. Uski roshni mein ullu muskurata hai: \"Purane Rakshak ko aap par garv hota. Ab yeh bagicha aapka hai, jab tak ek din aap kisi naye ko sikha na do.\""]
+      }
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "id": "c2",
+  "name": "Flowers that decide",
+  "plants": ["lily", "fern"],
+  "reveal": {
+    "title": "You built logic gates",
+    "lede": "Twinlily and Shadefern make decisions about light. Computers are built from exactly these two decisions, repeated billions of times. You worked them out by watching flowers."
+  },
+  "open": "Deeper in, the flowers seem to make up their own minds. \"These ones are fussy,\" the owl whispers. \"Watch them closely.\"",
+  "end": "Eight sparks. The lantern hums, and the deep garden wakes up. The flowers trust you now.",
+  "recap": "The witnesses spoke: a shadow on the tower, a kind voice saying \"Someone new will come\", a page with a lantern mark, and a map in the lantern glass.",
+  "story": "The map leads to the deep garden, where the flowers make up their own minds. The Old Keeper hid something here before the light went out.",
+  "goal": "Find what the Old Keeper hid, and open the mossy gate. Help 4 more creatures and light 4 more sparks.",
+  "hi": {
+    "name": "Faisla karne wale phool",
+    "title": "Aapne logic gates banaye",
+    "lede": "Judwa Kamal aur Raat Rani roshni ke baare mein faisla karte hain. Computer bilkul inhi do faislon se bane hain, arabon baar dohraaye hue. Aapne yeh sirf phool dekh kar samajh liya.",
+    "open": "Aage jaakar phool khud faisla karte lagte hain. \"Yeh thode nakhre wale hain,\" ullu dheere se kehta hai. \"Dhyaan se dekhna.\"",
+    "end": "Aath chingaariyan. Lantern gungunaane laga, aur gehra bagicha jaag utha. Phool ab aap par bharosa karte hain.",
+    "recap": "Gawahon ne bataya: meenar par ek parchhai, ek pyaari awaaz \"Koi naya aayega\", Lantern ke nishaan wala panna, aur Lantern ke sheeshe par ek naksha.",
+    "story": "Naksha gehre bagiche tak le jaata hai, jahan phool khud faisla karte hain. Roshni bujhne se pehle Purane Rakshak ne yahan kuch chhupaya tha.",
+    "goal": "Purane Rakshak ki chhupayi cheez dhoondho aur kaai wala darwaaza kholo. 4 aur jaanwaron ki madad karo, 4 aur chingaariyan jalao."
+  },
+  "levels": [
+    {
+      "id": "2-1",
+      "name": "Twinlily",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[1, 0, "sun"], [3, 0, "sun"]],
+      "pouch": { "lily": 1 },
+      "goals": [[2, 1, "on", "moth"]],
+      "solution": [[2, 0, "lily"]],
+      "intro": "A new seed has fallen: Twinlily, two flowers sharing one stem. The moth is waiting near two old Sunbells.",
+      "hints": ["Try the Twinlily next to just one Sunbell. Does it glow?", "Is there a spot that touches both Sunbells at once?"],
+      "success": "The Twinlily opened. Next to only one light it stayed shut. Why might that be?",
+      "story": {
+        "goal": "Use the Twinlily seed to light the moth.",
+        "reward": "The flowers tell you about a snail guarding a secret.",
+        "intro": "The deep garden is dark and strange. A single Twinlily seed lies on the path, as if someone left it for you. A moth sits between two old Sunbells, waiting to see what you will do.",
+        "next": "The Twinlilies whisper about a snail who has guarded something under a Shadefern for a whole year. It will only show it to whoever makes the fern bloom."
+      },
+      "page": ["Flowers that were taught", "The map leads into the deep garden. The Twinlilies whisper that the Old Keeper planted them long ago, \"so the grove could learn to make decisions\"."],
+      "hi": {
+        "name": "Judwa Kamal",
+        "intro": "Ek naya beej gira hai: Judwa Kamal, ek dandi par do phool. Patanga do purane Surajmukhiyon ke paas intezaar kar raha hai.",
+        "hints": ["Judwa Kamal ko sirf ek Surajmukhi ke bagal mein lagao. Kya woh chamakta hai?", "Kya koi aisi jagah hai jo dono Surajmukhiyon ko ek saath chhooti ho?"],
+        "success": "Judwa Kamal khil gaya. Sirf ek roshni ke paas woh band raha tha. Aisa kyun?",
+        "story": {
+          "goal": "Judwa Kamal ke beej se patange tak roshni pahunchao.",
+          "reward": "Phool batayenge ki ek ghonga kaunsa raaz chhupa kar baitha hai.",
+          "intro": "Gehra bagicha andhera aur ajeeb hai. Raaste par Judwa Kamal ka ek akela beej pada hai, jaise kisi ne aapke liye chhoda ho. Do purane Surajmukhiyon ke beech ek patanga baitha dekh raha hai ki aap kya karoge.",
+          "next": "Judwa Kamal fusfusaate hain ki ek ghonga poore saal se Raat Rani ke neeche kuch chhupa kar baitha hai. Woh sirf use dikhayega jo Raat Rani ko khila de."
+        },
+        "page": ["Sikhaaye hue phool", "Naksha gehre bagiche ki taraf le jaata hai. Judwa Kamal fusfusaate hain ki Purane Rakshak ne unhe bahut pehle lagaya tha, \"taaki bagicha faisle lena seekh sake\"."]
+      }
+    },
+    {
+      "id": "2-2",
+      "name": "The snail's fern",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[0, 2, "sun"], [2, 2, "fern"]],
+      "pouch": { "reed": 1 },
+      "goals": [[2, 2, "on", "snail"], [1, 3, "on", "moth"]],
+      "solution": [[0, 3, "reed"]],
+      "intro": "A snail lives under this Shadefern and is waiting for it to flower tonight. The moth would like some warmth nearby.",
+      "hints": ["Put the Reed right beside the fern and let dusk fall. What does the fern do?", "Can the light reach the moth by a path that doesn't touch the fern?"],
+      "success": "The fern flowered in the shade, and the moth is warm. Now light and shade both matter.",
+      "who": "snail",
+      "story": {
+        "goal": "Make the Raat Rani bloom for Dheeru.",
+        "reward": "What the Old Keeper left with Dheeru: a silver key.",
+        "intro": "Dheeru the snail has waited under the Shadefern since the night the lantern went out. \"When it blooms,\" Dheeru says slowly, \"I will give you what the Old Keeper left with me.\"",
+        "next": "A tiny silver key. But a key needs a lock. Somewhere between two lights, another page is waiting."
+      },
+      "page": ["The snail's key", "When the Shadefern blooms, the snail shows you what it has guarded all year: a tiny silver key, hidden under the leaves."],
+      "hi": {
+        "name": "Ghonge ki Raat Rani",
+        "intro": "Is Raat Rani ke neeche ek ghonga rehta hai aur aaj raat iske khilne ka intezaar kar raha hai. Paas mein patange ko thodi garmi chahiye.",
+        "hints": ["Narkat ko Raat Rani ke bilkul bagal mein lagao aur raat hone do. Raat Rani kya karti hai?", "Kya roshni patange tak aise raaste se pahunch sakti hai jo Raat Rani ko na chhoye?"],
+        "success": "Raat Rani chhaaya mein khil gayi, aur patange ko garmi mil gayi. Ab roshni aur chhaaya dono zaroori hain.",
+        "story": {
+          "goal": "Dheeru ke liye Raat Rani khilao.",
+          "reward": "Purane Rakshak ki chhodi hui cheez: chaandi ki chaabi.",
+          "intro": "Jis raat Lantern bujha, tab se Dheeru ghonga Raat Rani ke neeche intezaar kar raha hai. \"Jab yeh khilegi,\" Dheeru dheere se kehta hai, \"tab main aapko woh dunga jo Purane Rakshak mere paas chhod gaye the.\"",
+          "next": "Ek chhoti si chaandi ki chaabi. Par chaabi ko taala chahiye. Do roshniyon ke beech kahin ek aur panna intezaar kar raha hai."
+        },
+        "page": ["Ghonge ki chaabi", "Jab Raat Rani khilti hai, ghonga aapko woh cheez dikhata hai jiski woh poore saal se hifaazat kar raha tha: patton ke neeche chhupi ek chhoti si chaandi ki chaabi."]
+      }
+    },
+    {
+      "id": "2-3",
+      "name": "Between two lights",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[0, 1, "sun"], [0, 3, "sun"]],
+      "pouch": { "lily": 2, "reed": 1 },
+      "goals": [[2, 2, "on", "moth"], [2, 0, "off", "toad"], [2, 4, "off", "toad"]],
+      "solution": [[0, 2, "lily"], [1, 2, "reed"]],
+      "intro": "The moth is deep in the grove, with a toad dozing on each side. You have Twinlilies and one Reed.",
+      "hints": ["Where could a Twinlily stand to feel two lights at once?", "Once a Twinlily glows, could it help something next to it glow?"],
+      "success": "The Twinlily caught light from both Sunbells and passed it on.",
+      "story": {
+        "goal": "Light the moth, but keep both toads asleep.",
+        "reward": "The Old Keeper's page, and where the key fits.",
+        "intro": "Between two old Sunbells, a moth guards a folded page, and a toad sleeps on each side of it. Wake the toads and the page blows away. Light only the moth.",
+        "next": "\"I did not break the lantern.\" Then why did it go dark? Beyond the night garden, a gate covered in moss is waiting for a silver key."
+      },
+      "page": ["The second page", "Another page, in the same handwriting: \"I did not break the lantern. I let it rest, so that someone new could learn how to light it again.\""],
+      "hi": {
+        "name": "Do roshniyon ke beech",
+        "intro": "Patanga bagiche ke andar hai, aur uske dono taraf ek-ek mendhak so raha hai. Aapke paas Judwa Kamal aur ek Narkat hai.",
+        "hints": ["Judwa Kamal kahan khada ho ki use ek saath do roshniyan milein?", "Jab Judwa Kamal chamakne lage, kya woh apne bagal wale ko chamkane mein madad kar sakta hai?"],
+        "success": "Judwa Kamal ne dono Surajmukhiyon se roshni pakdi aur aage pahuncha di.",
+        "story": {
+          "goal": "Patange ko roshni do, par dono mendhak sote rahein.",
+          "reward": "Purane Rakshak ka panna, aur chaabi kahan lagegi.",
+          "intro": "Do purane Surajmukhiyon ke beech ek patanga ek mude hue panne ki hifaazat kar raha hai, aur uske dono taraf ek-ek mendhak so raha hai. Mendhak jaage toh panna ud jaayega. Roshni sirf patange tak pahunchao.",
+          "next": "\"Maine Lantern ko toda nahi.\" Toh phir woh bujha kyun? Raat ke bagiche ke us paar, kaai se dhaka ek darwaaza chaandi ki chaabi ka intezaar kar raha hai."
+        },
+        "page": ["Doosra panna", "Usi likhawat mein ek aur panna: \"Maine Lantern ko toda nahi. Maine use aaram karne diya, taaki koi naya use dobara jalaana seekh sake.\""]
+      }
+    },
+    {
+      "id": "2-4",
+      "name": "Night garden",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[4, 4, "sun"], [3, 3, "sun"], [0, 3, "fern"]],
+      "pouch": { "lily": 2, "reed": 2 },
+      "goals": [[0, 3, "on", "snail"], [0, 4, "on", "moth"], [2, 2, "on", "moth"], [1, 2, "off", "toad"]],
+      "solution": [[3, 4, "lily"], [2, 4, "reed"], [2, 3, "lily"], [1, 4, "reed"]],
+      "intro": "Two Sunbells in one corner, a snail under its fern, two moths and a sleepy toad. Use everything you've learned.",
+      "hints": ["A Twinlily needs two glowing neighbours. Which spots near the Sunbells could give it that?", "Which plants have to keep away from the fern?"],
+      "success": "Every visitor in the night garden is settled. You know every flower in the grove now.",
+      "who": "snail",
+      "story": {
+        "goal": "Settle everyone waiting at the gate.",
+        "reward": "The key opens the gate to the oldest corner (Chapter 3).",
+        "intro": "The gate is at the far side of the night garden, and everyone has come to watch you open it: Dheeru, two moths and a very sleepy toad. Settle them all and the path to the gate will light up.",
+        "next": "The key turns. Behind the gate is the oldest corner of the grove, where the moss remembers every keeper who ever lived. Even the Old Keeper."
+      },
+      "page": ["The old gate", "Eight sparks light a path to a gate covered in moss. The silver key fits. Behind it lies the oldest corner of the grove, where the moss is said to remember everything."],
+      "hi": {
+        "name": "Raat ka bagicha",
+        "intro": "Ek kone mein do Surajmukhi, apni Raat Rani ke neeche ghonga, do patange aur ek oonghta mendhak. Ab tak jo seekha, sab use karo.",
+        "hints": ["Judwa Kamal ko do chamakte padosi chahiye. Surajmukhiyon ke paas kaun si jagah yeh de sakti hai?", "Kaun se paudhe Raat Rani se door rehne chahiye?"],
+        "success": "Raat ke bagiche mein har mehmaan khush hai. Ab aap bagiche ka har phool jaante ho.",
+        "story": {
+          "goal": "Darwaaze par khade sab mehmaanon ko khush karo.",
+          "reward": "Chaabi sabse purane kone ka darwaaza kholegi (Chapter 3).",
+          "intro": "Darwaaza raat ke bagiche ke us paar hai, aur use khulta dekhne sab aaye hain: Dheeru, do patange aur ek bahut oonghta mendhak. Sabko khush karo, toh darwaaze tak ka raasta roshan ho jaayega.",
+          "next": "Chaabi ghoomti hai. Darwaaze ke peeche bagiche ka sabse purana kona hai, jahan kaai har Rakshak ko yaad rakhti hai. Purane Rakshak ko bhi."
+        },
+        "page": ["Purana darwaaza", "Aath chingaariyan kaai se dhake ek darwaaze tak raasta roshan karti hain. Chaandi ki chaabi bilkul fit hoti hai. Uske peeche bagiche ka sabse purana kona hai, jahan kehte hain kaai sab kuch yaad rakhti hai."]
+      }
+    }
+  ]
+}

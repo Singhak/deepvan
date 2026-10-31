@@ -1,0 +1,162 @@
+{
+  "id": "c1",
+  "name": "First light",
+  "plants": ["sun", "reed"],
+  "reveal": {
+    "title": "You've been building circuits",
+    "lede": "The light in your grove behaves like electricity. A source pushes it out, and a path of conductors carries it to where it is needed. Engineers draw these paths every day."
+  },
+  "open": "The owl leads you to the edge of the grove. \"Every creature you help sends a spark to the Great Lantern,\" it says. \"Start small.\"",
+  "end": "Four sparks glow inside the Great Lantern. The moths are telling everyone: a new keeper has come.",
+  "recap": "",
+  "story": "The Great Lantern went dark last winter, and nobody knows why. The owl says the answer starts with the creatures who were awake that night. They will only talk once they feel safe.",
+  "goal": "Find out who was at the lantern that night. Help 4 witnesses and light 4 sparks.",
+  "hi": {
+    "name": "Pehli roshni",
+    "title": "Aap circuit bana rahe the",
+    "lede": "Aapke bagiche ki roshni bijli ki tarah chalti hai. Source use bahar bhejta hai, aur conductors ka raasta use wahan tak le jaata hai jahan zaroorat hai. Engineers roz aise raaste banate hain.",
+    "open": "Ullu aapko bagiche ke kinaare le jaata hai. \"Har jaanwar jiski aap madad karoge, Bade Lantern tak ek chingaari bhejega,\" woh kehta hai. \"Chhote se shuru karo.\"",
+    "end": "Bade Lantern mein chaar chingaariyan chamak rahi hain. Patange sabko bata rahe hain: naya rakshak aa gaya hai.",
+    "recap": "",
+    "story": "Pichhli sardi Bada Lantern bujh gaya, aur kisi ko nahi pata kyun. Ullu kehta hai ki jawaab un jaanwaron se shuru hota hai jo us raat jaag rahe the. Par woh tabhi bolenge jab unhe aaram milega.",
+    "goal": "Pata lagao us raat Lantern ke paas kaun tha. 4 gawahon ki madad karo aur 4 chingaariyan jalao."
+  },
+  "levels": [
+    {
+      "id": "1-1",
+      "name": "A warm corner",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "pouch": { "sun": 1 },
+      "goals": [[1, 2, "on", "moth"]],
+      "solution": [[1, 1, "sun"]],
+      "intro": "A moth is circling the grove, looking for somewhere warm to rest. Plant the Sunbell on any patch of soil, then let dusk fall.",
+      "hints": ["When dusk fell, which patches of soil lit up around the Sunbell?", "Look at the tiles that touch the moth. Could the Sunbell stand on one of them?"],
+      "success": "The moth folds its wings and settles. Did you see where the light reached?",
+      "story": {
+        "goal": "Warm Pinku the moth.",
+        "reward": "Pinku tells you what it saw that night, and who else was awake.",
+        "intro": "Pinku the moth has flown all night looking for the Great Lantern. Its wings are cold and tired. \"Just one warm spot,\" it whispers, \"and I'll tell you what I saw the night the lantern went out.\"",
+        "next": "Pinku saw a shadow climb the lantern tower. But someone else was awake that night: old Mendhu the toad, who never forgets a sound."
+      },
+      "page": ["The moth remembers", "The moth you helped tells you something strange. On the night the lantern went out, it saw a shadow climb the lantern tower, carrying a small light of its own."],
+      "hi": {
+        "name": "Garam kona",
+        "intro": "Ek patanga garam jagah dhoondh raha hai. Surajmukhi ko kisi bhi khaali dibbe par lagao, phir \"Raat hone do\" dabao.",
+        "hints": ["Raat hone par Surajmukhi ke aas-paas kaun se dibbe chamke?", "Patange ko chhoone wale dibbe dekho. Kya Surajmukhi unmein se kisi par lag sakta hai?"],
+        "success": "Patanga pankh mod kar baith gaya. Dekha, roshni kahan tak pahunchi?",
+        "story": {
+          "goal": "Pinku patange ko garmi do.",
+          "reward": "Pinku batayega usne us raat kya dekha, aur kaun aur jaag raha tha.",
+          "intro": "Pinku patanga poori raat Bade Lantern ko dhoondhta raha. Uske pankh thande aur thake hue hain. \"Bas ek garam jagah de do,\" woh dheere se kehta hai, \"phir main bataunga ki jis raat Lantern bujha, maine kya dekha.\"",
+          "next": "Pinku ne meenar par ek parchhai dekhi. Par us raat koi aur bhi jaag raha tha: boodha Mendhu mendhak, jo koi awaaz kabhi nahi bhoolta."
+        },
+        "page": ["Patange ko yaad hai", "Jis patange ki aapne madad ki, woh ek ajeeb baat batata hai. Jis raat Lantern bujha, usne ek parchhai ko Lantern ki meenar par chadhte dekha tha, haath mein apni ek chhoti si roshni liye."]
+      }
+    },
+    {
+      "id": "1-2",
+      "name": "Shade for the toad",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "pouch": { "sun": 1 },
+      "goals": [[0, 0, "on", "moth"], [0, 2, "off", "toad"]],
+      "solution": [[1, 0, "sun"]],
+      "intro": "The moth is back, and a toad has come along. Toads like it cool and dim. Can you warm one without bothering the other?",
+      "hints": ["Does the light spread in every direction, or only some?", "Corners never seem to get light. Find a spot that touches the moth but not the toad."],
+      "success": "Both are happy. The light reached some neighbours but not others. Which ones?",
+      "who": "toad",
+      "story": {
+        "goal": "Keep Mendhu cool and dark, and Pinku warm.",
+        "reward": "Mendhu tells you what the voice said, and where something was left behind.",
+        "intro": "Mendhu the toad heard a voice on the night the lantern went out, but he will only talk somewhere cool and dark. Pinku has come back too, shivering. Can you help them both?",
+        "next": "The voice said \"Someone new will come.\" Was it the Old Keeper? Mendhu points across the grove: \"Look where the light can't reach. Something was left there.\""
+      },
+      "page": ["A voice in the dark", "The toad heard a voice that night, soft and kind: \"Rest now. Someone new will come.\" The toad is sure it was the Old Keeper, who looked after this grove before you."],
+      "hi": {
+        "name": "Mendhak ke liye chhaaya",
+        "intro": "Patanga wapas aaya hai, aur saath mein ek mendhak bhi. Mendhak ko thandak aur andhera pasand hai. Kya aap ek ko roshni de sakte ho, bina doosre ko pareshaan kiye?",
+        "hints": ["Kya roshni har disha mein failti hai, ya sirf kuch mein?", "Tirchhe (corner wale) dibbon tak roshni kabhi nahi jaati. Aisi jagah dhoondho jo patange ko chhoye par mendhak ko nahi."],
+        "success": "Dono khush hain. Roshni kuch padosiyon tak gayi, kuch tak nahi. Kaun se?",
+        "story": {
+          "goal": "Mendhu ko thanda-andhera do, aur Pinku ko garmi.",
+          "reward": "Mendhu batayega awaaz ne kya kaha, aur kahan kuch chhoda gaya tha.",
+          "intro": "Jis raat Lantern bujha, Mendhu mendhak ne ek awaaz suni thi. Par woh sirf thandi, andheri jagah par hi baat karega. Pinku bhi wapas aaya hai, kaanpta hua. Kya aap dono ki madad kar sakte ho?",
+          "next": "Awaaz ne kaha tha \"Koi naya aayega.\" Kya woh Purane Rakshak the? Mendhu bagiche ke us paar ishaara karta hai: \"Wahan dekho jahan roshni nahi pahunchti. Wahan kuch chhoda gaya tha.\""
+        },
+        "page": ["Andhere mein ek awaaz", "Mendhak ne us raat ek naram, pyaari awaaz suni thi: \"Ab aaram karo. Koi naya aayega.\" Mendhak ko pakka yakeen hai ki woh Purane Rakshak the, jo aapse pehle is bagiche ki dekhbhaal karte the."]
+      }
+    },
+    {
+      "id": "1-3",
+      "name": "Carry the light",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"]],
+      "pouch": { "reed": 2 },
+      "goals": [[2, 3, "on", "moth"]],
+      "solution": [[2, 1, "reed"], [2, 2, "reed"]],
+      "intro": "This old Sunbell has grown here for years and won't move. The moth is waiting too far away. You have two Reeds.",
+      "hints": ["Plant one Reed right next to the Sunbell. What happens to it at dusk?", "If a Reed can glow, can it share that glow with the next Reed?"],
+      "success": "The light travelled all the way across. What did each Reed do?",
+      "story": {
+        "goal": "Carry the light all the way to the far moth.",
+        "reward": "The hidden page, in a handwriting the owl knows.",
+        "intro": "Far from the old Sunbell, a moth is waiting beside a patch of Reeds. Something is tucked between the stalks, but it is too dark to see. Carry the light all the way there.",
+        "next": "The page is signed with a lantern mark. The owl goes very quiet when it sees it. \"I know this handwriting,\" it says, and flies off toward the stones."
+      },
+      "page": ["A page among the reeds", "Between the Reeds you find a torn page in old handwriting: \"Light that is passed on never grows less.\" Below it is a little drawing of a lantern."],
+      "hi": {
+        "name": "Roshni aage badhao",
+        "intro": "Yeh purana Surajmukhi saalon se yahin hai aur hilega nahi. Patanga bahut door hai. Aapke paas do Narkat hain.",
+        "hints": ["Ek Narkat Surajmukhi ke bilkul bagal mein lagao. Raat mein uske saath kya hota hai?", "Agar Narkat chamak sakta hai, toh kya woh apni chamak agle Narkat ko de sakta hai?"],
+        "success": "Roshni poora raasta paar kar gayi. Har Narkat ne kya kiya?",
+        "story": {
+          "goal": "Roshni ko door wale patange tak pahunchao.",
+          "reward": "Chhupa hua panna, jiski likhawat ullu pehchaanta hai.",
+          "intro": "Purane Surajmukhi se bahut door, Narkaton ke paas ek patanga intezaar kar raha hai. Dandiyon ke beech kuch chhupa hai, par itna andhera hai ki dikhta nahi. Roshni ko wahan tak pahunchao.",
+          "next": "Panne par Lantern ka nishaan hai. Use dekhte hi ullu bilkul chup ho jaata hai. \"Main yeh likhawat pehchaanta hoon,\" woh kehta hai, aur pattharon ki taraf ud jaata hai."
+        },
+        "page": ["Narkaton ke beech ek panna", "Narkaton ke beech aapko purani likhawat wala ek phata panna milta hai: \"Jo roshni aage baanti jaaye, woh kabhi kam nahi hoti.\" Neeche ek chhote Lantern ka nishaan bana hai."]
+      }
+    },
+    {
+      "id": "1-4",
+      "name": "Around the stones",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[0, 0, "sun"]],
+      "rocks": [[1, 1], [3, 2]],
+      "pouch": { "reed": 4 },
+      "goals": [[0, 4, "on", "moth"], [2, 2, "on", "moth"], [2, 0, "off", "toad"]],
+      "solution": [[0, 1, "reed"], [0, 2, "reed"], [0, 3, "reed"], [1, 2, "reed"]],
+      "intro": "Two moths are waiting in different places, and the toad is dozing nearby. Four Reeds, one old Sunbell.",
+      "hints": ["Which moth is harder to reach? Start there.", "A path of Reeds can branch. Where could a branch leave the main path?"],
+      "success": "You split one light into two paths without waking the toad.",
+      "story": {
+        "goal": "Light up the stones for the owl.",
+        "reward": "The owl's secret: a map to the deep garden (Chapter 2).",
+        "intro": "The owl waits among the stones, two moths asleep at its feet and Mendhu dozing nearby. \"Light this place for me,\" it says, \"and I will tell you a secret I have kept for a whole year.\"",
+        "next": "The map in the lantern glass points to the deep garden, where the flowers make up their own minds. What did the Old Keeper hide there?"
+      },
+      "page": ["The owl's secret", "At last the owl speaks: \"The Old Keeper was my dearest friend. One winter night they walked into the oldest corner of the grove and never came back.\" The lantern glows a little, and you notice a map scratched inside its glass."],
+      "hi": {
+        "name": "Pattharon ke aas-paas",
+        "intro": "Do patange alag-alag jagah intezaar kar rahe hain, aur paas mein mendhak so raha hai. Chaar Narkat, ek purana Surajmukhi.",
+        "hints": ["Kis patange tak pahunchna zyada mushkil hai? Wahin se shuru karo.", "Narkaton ka raasta do hisson mein bant sakta hai. Shaakha kahan se nikal sakti hai?"],
+        "success": "Aapne ek roshni ko do raaston mein baant diya, aur mendhak ko jagaya bhi nahi.",
+        "story": {
+          "goal": "Ullu ke liye pattharon ko roshan karo.",
+          "reward": "Ullu ka raaz: gehre bagiche ka naksha (Chapter 2).",
+          "intro": "Ullu pattharon ke beech baitha hai, uske paas do patange so rahe hain aur Mendhu oongh raha hai. \"Mere liye yeh jagah roshan karo,\" woh kehta hai, \"aur main aapko woh raaz bataunga jo maine poore saal chhupa kar rakha.\"",
+          "next": "Lantern ke sheeshe par bana naksha gehre bagiche ki taraf ishaara karta hai, jahan phool khud faisla karte hain. Purane Rakshak ne wahan kya chhupaya tha?"
+        },
+        "page": ["Ullu ka raaz", "Aakhir ullu bolta hai: \"Purane Rakshak mere sabse achhe dost the. Ek sardi ki raat woh bagiche ke sabse purane kone ki taraf gaye aur kabhi wapas nahi aaye.\" Lantern thoda sa chamakta hai, aur aapko uske sheeshe ke andar khurcha hua ek naksha dikhta hai."]
+      }
+    }
+  ]
+}

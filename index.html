@@ -65,6 +65,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 }
 .chip[aria-current="true"] { background: var(--panel-2); color: var(--ink); border-color: #4a5390; }
 .chip:disabled { opacity: 0.45; cursor: default; }
+.chip.up-next { opacity: 0.75; border-style: dashed; }   /* the next chapter, shown before it opens */
+.chip.up-next .n { color: var(--muted); font-weight: 700; text-transform: uppercase; font-size: 0.72em; letter-spacing: 0.05em; }
 .chip .n { font-variant-numeric: tabular-nums; color: var(--amber); font-weight: 800; }
 .top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .top > * { min-width: 0; }
@@ -895,6 +897,45 @@ function generateLevel(d, seed) {
   }
   return null;
 }
+
+// Checks a hand-made (plug-in) level. Returns a list of problems; an empty list means it is playable.
+const PLANT_TYPES = ['sun', 'reed', 'lily', 'fern', 'moss'];
+const VISITORS = ['moth', 'toad', 'snail', 'beetle'];
+function validateLevel(lv) {
+  const errs = [], cell = (r, c) => Number.isInteger(r) && Number.isInteger(c) && r >= 0 && r < lv.rows && c >= 0 && c < lv.cols;
+  if (!lv.id || typeof lv.id !== 'string') errs.push('needs an "id" string, e.g. "4-1"');
+  if (lv.kind !== 'light' && lv.kind !== 'life') errs.push('"kind" must be "light" or "life"');
+  if (!(lv.rows >= 2 && lv.rows <= 10 && lv.cols >= 2 && lv.cols <= 10)) errs.push('"rows" and "cols" must be 2 to 10');
+  if (lv.kind === 'life' && !(lv.nights >= 1)) errs.push('a "life" level needs "nights" (1 or more)');
+  if (errs.length) return errs;
+  const used = {};
+  const take = (r, c, what) => {
+    if (!cell(r, c)) return errs.push(`${what} at [${r}, ${c}] is off the board`);
+    if (used[key(r, c)]) errs.push(`${what} at [${r}, ${c}] overlaps ${used[key(r, c)]}`);
+    used[key(r, c)] = what;
+  };
+  (lv.rocks || []).forEach(([r, c]) => take(r, c, 'rock'));
+  (lv.fixed || []).forEach(([r, c, p]) => { if (!PLANT_TYPES.includes(p)) errs.push(`fixed plant "${p}" is unknown`); take(r, c, 'fixed ' + p); });
+  const pouch = lv.pouch || {};
+  if (!Object.keys(pouch).length) errs.push('"pouch" needs at least one seed, e.g. { reed: 2 }');
+  for (const p in pouch) if (!PLANT_TYPES.includes(p) || !(pouch[p] >= 1)) errs.push(`pouch entry ${p}: ${pouch[p]} is not valid`);
+  if (!(lv.goals || []).length) errs.push('needs at least one goal: [row, col, "on" | "off", visitor]');
+  (lv.goals || []).forEach(([r, c, want, who]) => {
+    if (!cell(r, c)) errs.push(`goal at [${r}, ${c}] is off the board`);
+    if (want !== 'on' && want !== 'off') errs.push(`goal at [${r}, ${c}] must want "on" or "off"`);
+    if (!VISITORS.includes(who)) errs.push(`goal at [${r}, ${c}]: visitor "${who}" is unknown (use ${VISITORS.join(', ')})`);
+  });
+  if (errs.length || !lv.solution) return errs;
+  // The solution must fit the pouch and the free soil, and must actually make every visitor happy
+  const placed = {}, count = {};
+  lv.solution.forEach(([r, c, p]) => {
+    if (!cell(r, c) || used[key(r, c)]) return errs.push(`solution plant at [${r}, ${c}] is not on free soil`);
+    placed[key(r, c)] = p; count[p] = (count[p] || 0) + 1;
+  });
+  for (const p in count) if (count[p] > (pouch[p] || 0)) errs.push(`solution uses ${count[p]} ${p} but the pouch has ${pouch[p] || 0}`);
+  if (!errs.length && !checkGoals(lv, simulate(lv, placed)).every(Boolean)) errs.push('the solution does not make every visitor happy');
+  return errs;
+}
 // ENGINE END
 
 // ---------- Content ----------
@@ -905,140 +946,33 @@ const PLANTS = {
   fern: { name: 'Shadefern', science: 'A NOT gate (an inverter)', explain: 'It flips the answer: light in, no bloom; no light, bloom. With AND and NOT together you can build any calculation a computer can do.' },
   moss: { name: 'Glowmoss',  science: "Conway's Game of Life", explain: 'Each moss looks at its 8 neighbours. With fewer than 2 it fades (lonely), with more than 3 it fades (crowded), and an empty spot with exactly 3 grows new moss. The still block, the blinker and the glider you found are their real scientific names.' },
 };
-const CHAPTERS = [
-  { id: 'c1', name: 'First light', plants: ['sun', 'reed'],
-    reveal: { title: "You've been building circuits", lede: 'The light in your grove behaves like electricity. A source pushes it out, and a path of conductors carries it to where it is needed. Engineers draw these paths every day.' } },
-  { id: 'c2', name: 'Flowers that decide', plants: ['lily', 'fern'],
-    reveal: { title: 'You built logic gates', lede: 'Twinlily and Shadefern make decisions about light. Computers are built from exactly these two decisions, repeated billions of times. You worked them out by watching flowers.' } },
-  { id: 'c3', name: 'Moss that remembers', plants: ['moss'],
-    reveal: { title: 'You found the Game of Life', lede: 'Mathematician John Conway invented these moss rules in 1970. Three tiny rules make shapes that stay still, blink and walk. Scientists use rules like these, called cellular automata, to model forest fires, crystal growth and patterns on seashells.' } },
-];
+// Chapters and levels are not in this file: content/chapters.json lists every chapter, and each chapter's
+// levels live in their own JSON file. A chapter is fetched once the chapter before it is finished (see
+// "Chapter loading"), and these tables fill up as each one arrives.
+const MANIFEST = [];   // every chapter from chapters.json (id, name, level count), loaded or not
+const CHAPTERS = [];
+// Each chapter's opening line and its ending
+const STORY = [];
+// Each chapter's opening: the story so far, the new place, and the chapter's mission
+const CHAPTER_STORY = [];
+// Each level's scene, and the cliffhanger that leads into the next level's scene
+const LEVEL_STORY = {};
+// The mystery of the dark lantern: one page opens with each spark
+const PAGES = [];
+const LEVELS = [];
 // The hero's journey: a calm quest. Nothing is lost if you stop; the lantern waits for you.
-const SPARKS_TOTAL = 12;
+let SPARKS_TOTAL = 0;   // one spark per level in every chapter, from chapters.json
 const PROLOGUE = [
   'For a hundred years, the Great Lantern at the heart of Deepvan guided lost creatures home through the night.',
   'Last winter, its light went out, and nobody knows why. Now moths, toads, snails and beetles wander in the dark, looking for somewhere to rest.',
   'An old owl has been waiting for someone who notices things. Someone patient and curious. Someone like you.',
 ];
-const STORY = [
-  { open: 'The owl leads you to the edge of the grove. "Every creature you help sends a spark to the Great Lantern," it says. "Start small."',
-    end: 'Four sparks glow inside the Great Lantern. The moths are telling everyone: a new keeper has come.' },
-  { open: 'Deeper in, the flowers seem to make up their own minds. "These ones are fussy," the owl whispers. "Watch them closely."',
-    end: 'Eight sparks. The lantern hums, and the deep garden wakes up. The flowers trust you now.' },
-  { open: 'In the oldest corner of the grove grows moss that remembers. "No keeper has understood this moss in a hundred years," says the owl.',
-    end: 'The twelfth spark catches. The Great Lantern blazes, and its light reaches every corner of the grove. Every lost creature can find its way home.' },
-];
 const RANKS = ['New Keeper', 'Apprentice Keeper', 'Lantern Keeper', 'Keeper of Deepvan'];
-// Each chapter's opening: the story so far, the new place, and the chapter's mission
-const CHAPTER_STORY = [{"recap":"","story":"The Great Lantern went dark last winter, and nobody knows why. The owl says the answer starts with the creatures who were awake that night. They will only talk once they feel safe.","goal":"Find out who was at the lantern that night. Help 4 witnesses and light 4 sparks."},{"recap":"The witnesses spoke: a shadow on the tower, a kind voice saying \"Someone new will come\", a page with a lantern mark, and a map in the lantern glass.","story":"The map leads to the deep garden, where the flowers make up their own minds. The Old Keeper hid something here before the light went out.","goal":"Find what the Old Keeper hid, and open the mossy gate. Help 4 more creatures and light 4 more sparks."},{"recap":"Dheeru gave you a silver key. A page said \"I did not break the lantern.\" The key opened the mossy gate.","story":"Behind the gate is the oldest corner of Deepvan. The moss here remembers every keeper who ever lived, even the Old Keeper. Wake its memory and follow where it leads.","goal":"Follow the Old Keeper's footprints to the last page, and light the Great Lantern again."}];
-// Each level's scene, and the cliffhanger that leads into the next level's scene
-const LEVEL_STORY = {
-  '1-1': { goal: "Warm Pinku the moth.", reward: "Pinku tells you what it saw that night, and who else was awake.", intro: 'Pinku the moth has flown all night looking for the Great Lantern. Its wings are cold and tired. "Just one warm spot," it whispers, "and I\'ll tell you what I saw the night the lantern went out."',
-    next: 'Pinku saw a shadow climb the lantern tower. But someone else was awake that night: old Mendhu the toad, who never forgets a sound.' },
-  '1-2': { goal: "Keep Mendhu cool and dark, and Pinku warm.", reward: "Mendhu tells you what the voice said, and where something was left behind.", intro: 'Mendhu the toad heard a voice on the night the lantern went out, but he will only talk somewhere cool and dark. Pinku has come back too, shivering. Can you help them both?',
-    next: 'The voice said "Someone new will come." Was it the Old Keeper? Mendhu points across the grove: "Look where the light can\'t reach. Something was left there."' },
-  '1-3': { goal: "Carry the light all the way to the far moth.", reward: "The hidden page, in a handwriting the owl knows.", intro: 'Far from the old Sunbell, a moth is waiting beside a patch of Reeds. Something is tucked between the stalks, but it is too dark to see. Carry the light all the way there.',
-    next: 'The page is signed with a lantern mark. The owl goes very quiet when it sees it. "I know this handwriting," it says, and flies off toward the stones.' },
-  '1-4': { goal: "Light up the stones for the owl.", reward: "The owl's secret: a map to the deep garden (Chapter 2).", intro: 'The owl waits among the stones, two moths asleep at its feet and Mendhu dozing nearby. "Light this place for me," it says, "and I will tell you a secret I have kept for a whole year."',
-    next: 'The map in the lantern glass points to the deep garden, where the flowers make up their own minds. What did the Old Keeper hide there?' },
-  '2-1': { goal: "Use the Twinlily seed to light the moth.", reward: "The flowers tell you about a snail guarding a secret.", intro: 'The deep garden is dark and strange. A single Twinlily seed lies on the path, as if someone left it for you. A moth sits between two old Sunbells, waiting to see what you will do.',
-    next: 'The Twinlilies whisper about a snail who has guarded something under a Shadefern for a whole year. It will only show it to whoever makes the fern bloom.' },
-  '2-2': { goal: "Make the Raat Rani bloom for Dheeru.", reward: "What the Old Keeper left with Dheeru: a silver key.", intro: 'Dheeru the snail has waited under the Shadefern since the night the lantern went out. "When it blooms," Dheeru says slowly, "I will give you what the Old Keeper left with me."',
-    next: 'A tiny silver key. But a key needs a lock. Somewhere between two lights, another page is waiting.' },
-  '2-3': { goal: "Light the moth, but keep both toads asleep.", reward: "The Old Keeper's page, and where the key fits.", intro: 'Between two old Sunbells, a moth guards a folded page, and a toad sleeps on each side of it. Wake the toads and the page blows away. Light only the moth.',
-    next: '"I did not break the lantern." Then why did it go dark? Beyond the night garden, a gate covered in moss is waiting for a silver key.' },
-  '2-4': { goal: "Settle everyone waiting at the gate.", reward: "The key opens the gate to the oldest corner (Chapter 3).", intro: 'The gate is at the far side of the night garden, and everyone has come to watch you open it: Dheeru, two moths and a very sleepy toad. Settle them all and the path to the gate will light up.',
-    next: 'The key turns. Behind the gate is the oldest corner of the grove, where the moss remembers every keeper who ever lived. Even the Old Keeper.' },
-  '3-1': { goal: "Grow moss on the bare ground.", reward: "The moss starts to remember, and shows old footprints.", intro: 'In the oldest corner, Bholu the beetle waits on a bare patch of ground. "Moss used to grow here," Bholu says. "Make it grow again and it will start to remember."',
-    next: 'The moss shivers and shows a pattern: footprints. Old ones. But they keep fading. Can you grow moss that stays?' },
-  '3-2': { goal: "Grow moss that never fades.", reward: "The footprints stay, and one of them starts blinking.", intro: 'Four beetles want to keep the footprints safe. They need moss that does not fade, not tonight and not in four nights.',
-    next: 'Now the moss remembers clearly. One footprint keeps blinking, like a signal. Is someone trying to say something?' },
-  '3-3': { goal: "Make the blinker stand upright after the third night.", reward: "It points the way to the last page.", intro: 'The blinking footprint is trying to point somewhere. The beetles want it standing up when the third night ends, so they can see which way it points.',
-    next: 'It points to a footprint that is walking. Walking all by itself, toward a flat stone with the lantern mark. The last page must be there.' },
-  '3-4': { goal: "Send your moss walking to the flat stone.", reward: "The last page, and the Great Lantern lights up again.", intro: 'This is it. Five beetles wait at the flat stone. Send your moss walking across the grove to reach them, and the last page will be yours.',
-    next: 'The lantern is lit. But visitors keep arriving from far away, each with a story of their own. Deepvan will always need a keeper.' },
-};
-// The mystery of the dark lantern: one page opens with each spark
-const PAGES = [
-  ['The moth remembers', 'The moth you helped tells you something strange. On the night the lantern went out, it saw a shadow climb the lantern tower, carrying a small light of its own.'],
-  ['A voice in the dark', 'The toad heard a voice that night, soft and kind: "Rest now. Someone new will come." The toad is sure it was the Old Keeper, who looked after this grove before you.'],
-  ['A page among the reeds', 'Between the Reeds you find a torn page in old handwriting: "Light that is passed on never grows less." Below it is a little drawing of a lantern.'],
-  ["The owl's secret", 'At last the owl speaks: "The Old Keeper was my dearest friend. One winter night they walked into the oldest corner of the grove and never came back." The lantern glows a little, and you notice a map scratched inside its glass.'],
-  ['Flowers that were taught', 'The map leads into the deep garden. The Twinlilies whisper that the Old Keeper planted them long ago, "so the grove could learn to make decisions".'],
-  ["The snail's key", 'When the Shadefern blooms, the snail shows you what it has guarded all year: a tiny silver key, hidden under the leaves.'],
-  ['The second page', 'Another page, in the same handwriting: "I did not break the lantern. I let it rest, so that someone new could learn how to light it again."'],
-  ['The old gate', 'Eight sparks light a path to a gate covered in moss. The silver key fits. Behind it lies the oldest corner of the grove, where the moss is said to remember everything.'],
-  ['What the moss remembers', 'The beetles say the moss keeps the footprints of every keeper who ever lived here. Some patterns stay still. Some blink. One of them seems to be walking somewhere.'],
-  ['Footsteps in the moss', 'You follow the walking pattern across the grove. It leads to a flat stone with the lantern mark on it, and the last page lies on top.'],
-  ['The last page', '"If you are reading this, you already know everything I knew. The lantern was never broken. It was waiting for you."'],
-  ['The new Keeper', 'The twelfth spark catches and the Great Lantern blazes. In its light the owl smiles: "The Old Keeper would be proud. This grove is yours to look after now, until one day you teach someone new."'],
-];
 function keeperName() { return (P.name || '').trim(); }
-function rankIndex() { let i = 0; while (i < 3 && chapterDone(i)) i++; return i; }
+// The top rank waits for the last chapter, however many chapters chapters.json lists
+function rankIndex() { let i = 0; while (i < MANIFEST.length && chapterDone(i)) i++; return i >= MANIFEST.length ? RANKS.length - 1 : Math.min(i, RANKS.length - 2); }
 function sparkCount() { return LEVELS.filter(l => P.solved[l.id]).length; }
 
-const LEVELS = [
-  { id: '1-1', ch: 0, name: 'A warm corner', kind: 'light', rows: 4, cols: 4, pouch: { sun: 1 },
-    goals: [[1, 2, 'on', 'moth']], solution: [[1, 1, 'sun']],
-    intro: 'A moth is circling the grove, looking for somewhere warm to rest. Plant the Sunbell on any patch of soil, then let dusk fall.',
-    hints: ['When dusk fell, which patches of soil lit up around the Sunbell?', 'Look at the tiles that touch the moth. Could the Sunbell stand on one of them?'],
-    success: 'The moth folds its wings and settles. Did you see where the light reached?' },
-  { id: '1-2', ch: 0, name: 'Shade for the toad', kind: 'light', rows: 5, cols: 5, pouch: { sun: 1 },
-    goals: [[0, 0, 'on', 'moth'], [0, 2, 'off', 'toad']], solution: [[1, 0, 'sun']],
-    intro: 'The moth is back, and a toad has come along. Toads like it cool and dim. Can you warm one without bothering the other?',
-    hints: ['Does the light spread in every direction, or only some?', 'Corners never seem to get light. Find a spot that touches the moth but not the toad.'],
-    success: 'Both are happy. The light reached some neighbours but not others. Which ones?' },
-  { id: '1-3', ch: 0, name: 'Carry the light', kind: 'light', rows: 5, cols: 5, fixed: [[2, 0, 'sun']], pouch: { reed: 2 },
-    goals: [[2, 3, 'on', 'moth']], solution: [[2, 1, 'reed'], [2, 2, 'reed']],
-    intro: "This old Sunbell has grown here for years and won't move. The moth is waiting too far away. You have two Reeds.",
-    hints: ['Plant one Reed right next to the Sunbell. What happens to it at dusk?', 'If a Reed can glow, can it share that glow with the next Reed?'],
-    success: 'The light travelled all the way across. What did each Reed do?' },
-  { id: '1-4', ch: 0, name: 'Around the stones', kind: 'light', rows: 5, cols: 5, fixed: [[0, 0, 'sun']], rocks: [[1, 1], [3, 2]], pouch: { reed: 4 },
-    goals: [[0, 4, 'on', 'moth'], [2, 2, 'on', 'moth'], [2, 0, 'off', 'toad']], solution: [[0, 1, 'reed'], [0, 2, 'reed'], [0, 3, 'reed'], [1, 2, 'reed']],
-    intro: 'Two moths are waiting in different places, and the toad is dozing nearby. Four Reeds, one old Sunbell.',
-    hints: ['Which moth is harder to reach? Start there.', 'A path of Reeds can branch. Where could a branch leave the main path?'],
-    success: 'You split one light into two paths without waking the toad.' },
-  { id: '2-1', ch: 1, name: 'Twinlily', kind: 'light', rows: 5, cols: 5, fixed: [[1, 0, 'sun'], [3, 0, 'sun']], pouch: { lily: 1 },
-    goals: [[2, 1, 'on', 'moth']], solution: [[2, 0, 'lily']],
-    intro: 'A new seed has fallen: Twinlily, two flowers sharing one stem. The moth is waiting near two old Sunbells.',
-    hints: ['Try the Twinlily next to just one Sunbell. Does it glow?', 'Is there a spot that touches both Sunbells at once?'],
-    success: 'The Twinlily opened. Next to only one light it stayed shut. Why might that be?' },
-  { id: '2-2', ch: 1, name: "The snail's fern", kind: 'light', rows: 5, cols: 5, fixed: [[0, 2, 'sun'], [2, 2, 'fern']], pouch: { reed: 1 },
-    goals: [[2, 2, 'on', 'snail'], [1, 3, 'on', 'moth']], solution: [[0, 3, 'reed']],
-    intro: 'A snail lives under this Shadefern and is waiting for it to flower tonight. The moth would like some warmth nearby.',
-    hints: ['Put the Reed right beside the fern and let dusk fall. What does the fern do?', "Can the light reach the moth by a path that doesn't touch the fern?"],
-    success: 'The fern flowered in the shade, and the moth is warm. Now light and shade both matter.' },
-  { id: '2-3', ch: 1, name: 'Between two lights', kind: 'light', rows: 5, cols: 5, fixed: [[0, 1, 'sun'], [0, 3, 'sun']], pouch: { lily: 2, reed: 1 },
-    goals: [[2, 2, 'on', 'moth'], [2, 0, 'off', 'toad'], [2, 4, 'off', 'toad']], solution: [[0, 2, 'lily'], [1, 2, 'reed']],
-    intro: 'The moth is deep in the grove, with a toad dozing on each side. You have Twinlilies and one Reed.',
-    hints: ['Where could a Twinlily stand to feel two lights at once?', 'Once a Twinlily glows, could it help something next to it glow?'],
-    success: 'The Twinlily caught light from both Sunbells and passed it on.' },
-  { id: '2-4', ch: 1, name: 'Night garden', kind: 'light', rows: 5, cols: 5, fixed: [[4, 4, 'sun'], [3, 3, 'sun'], [0, 3, 'fern']], pouch: { lily: 2, reed: 2 },
-    goals: [[0, 3, 'on', 'snail'], [0, 4, 'on', 'moth'], [2, 2, 'on', 'moth'], [1, 2, 'off', 'toad']], solution: [[3, 4, 'lily'], [2, 4, 'reed'], [2, 3, 'lily'], [1, 4, 'reed']],
-    intro: "Two Sunbells in one corner, a snail under its fern, two moths and a sleepy toad. Use everything you've learned.",
-    hints: ['A Twinlily needs two glowing neighbours. Which spots near the Sunbells could give it that?', 'Which plants have to keep away from the fern?'],
-    success: 'Every visitor in the night garden is settled. You know every flower in the grove now.' },
-  { id: '3-1', ch: 2, name: 'Moss needs company', kind: 'life', rows: 6, cols: 6, nights: 1, pouch: { moss: 3 },
-    goals: [[2, 2, 'on', 'beetle']], solution: [[1, 1, 'moss'], [1, 3, 'moss'], [3, 2, 'moss']],
-    intro: 'Glowmoss changes night after night. A beetle wants moss on its spot by morning. Plant moss anywhere, even on the beetle, and watch a night pass.',
-    hints: ['Plant one moss by itself and watch a night. What happens to it?', 'Moss counts all eight neighbours, corners too. What if an empty spot had three moss around it?'],
-    success: 'Moss grew where there was none. How many neighbours did that spot have?' },
-  { id: '3-2', ch: 2, name: 'Moss that stays', kind: 'life', rows: 6, cols: 6, nights: 4, pouch: { moss: 4 },
-    goals: [[2, 2, 'on', 'beetle'], [2, 3, 'on', 'beetle'], [3, 2, 'on', 'beetle'], [3, 3, 'on', 'beetle']], solution: [[2, 2, 'moss'], [2, 3, 'moss'], [3, 2, 'moss'], [3, 3, 'moss']],
-    intro: "These beetles want a patch of moss that's still there after four nights.",
-    hints: ['Watch one night at a time. Which moss fade, and how many neighbours did they have?', 'Try a shape where every moss touches exactly three others.'],
-    success: 'A shape that never changes. Every moss has just the right number of neighbours.' },
-  { id: '3-3', ch: 2, name: 'Moss that blinks', kind: 'life', rows: 5, cols: 5, nights: 3, pouch: { moss: 3 },
-    goals: [[1, 2, 'on', 'beetle'], [2, 2, 'on', 'beetle'], [3, 2, 'on', 'beetle'], [2, 1, 'off', 'toad'], [2, 3, 'off', 'toad']], solution: [[2, 1, 'moss'], [2, 2, 'moss'], [2, 3, 'moss']],
-    intro: 'The beetles want a standing line of moss after three nights, and the toads want the spots beside it left clear.',
-    hints: ['Plant a standing line and watch one night. What shape does it become?', 'If a line keeps flipping, which way should it start so it ends up standing after three nights?'],
-    success: 'Your line flipped every night: lying, standing, lying, standing. Some shapes pulse like a heartbeat.' },
-  { id: '3-4', ch: 2, name: 'Moss that walks', kind: 'life', rows: 8, cols: 8, nights: 4, pouch: { moss: 5 },
-    goals: [[2, 3, 'on', 'beetle'], [3, 4, 'on', 'beetle'], [4, 2, 'on', 'beetle'], [4, 3, 'on', 'beetle'], [4, 4, 'on', 'beetle']], solution: [[1, 2, 'moss'], [2, 3, 'moss'], [3, 1, 'moss'], [3, 2, 'moss'], [3, 3, 'moss']],
-    intro: 'The beetles have moved camp. They want five moss in exactly this shape after four nights. Your moss will have to travel to get there.',
-    hints: ["Plant the beetles' exact shape and watch night by night. Does it stay put?", 'Try the same shape one step up and one step to the left of the beetles.'],
-    success: 'Your moss walked across the grove by itself. Five moss and three simple rules made something that moves.' },
-];
 const WANDER_INTROS = [
   'A few visitors drifted in on the evening breeze.',
   'Someone new is waiting at the edge of the grove.',
@@ -1063,24 +997,13 @@ const HI = {
     fern: { name: 'Raat Rani', science: 'NOT gate (ulta karne wala)', explain: 'Yeh jawaab ulta kar deti hai: roshni mili toh phool nahi; roshni nahi mili toh phool khila. AND aur NOT milakar computer ka har hisaab banaya ja sakta hai.' },
     moss: { name: 'Jaadui Kaai', science: 'Conway ka Game of Life', explain: 'Har kaai apne 8 padosi dekhti hai. 2 se kam hon toh akelepan se murjha jaati hai, 3 se zyada hon toh bheed se murjha jaati hai, aur jis khaali jagah ke paas theek 3 kaai hon wahan nayi kaai ugti hai. Aapne jo ruki hui shape, blinker aur glider banaye, unke asli scientific naam yahi hain.' },
   },
-  chapters: [
-    { name: 'Pehli roshni', title: 'Aap circuit bana rahe the', lede: 'Aapke bagiche ki roshni bijli ki tarah chalti hai. Source use bahar bhejta hai, aur conductors ka raasta use wahan tak le jaata hai jahan zaroorat hai. Engineers roz aise raaste banate hain.' },
-    { name: 'Faisla karne wale phool', title: 'Aapne logic gates banaye', lede: 'Judwa Kamal aur Raat Rani roshni ke baare mein faisla karte hain. Computer bilkul inhi do faislon se bane hain, arabon baar dohraaye hue. Aapne yeh sirf phool dekh kar samajh liya.' },
-    { name: 'Yaad rakhne wali kaai', title: 'Aapne Game of Life dhoondh liya', lede: 'Ganitagya John Conway ne 1970 mein kaai ke yeh niyam banaye the. Teen chhote niyam aisi shapes banate hain jo ruki rehti hain, jhapakti hain aur chalti hain. Scientist aise niyamon (cellular automata) se jungle ki aag, crystal ka badhna aur seepiyon ke design samajhte hain.' },
-  ],
+  chapters: [],
   prologue: [
     'Sau saal tak, Deepvan ke beech jalta Bada Lantern raat mein bhatke hue jaanwaron ko ghar ka raasta dikhata tha.',
     'Pichhli sardi uski roshni bujh gayi, aur kisi ko nahi pata kyun. Ab patange, mendhak, ghonge aur beetle andhere mein bhatak rahe hain, aaram ki jagah dhoondh rahe hain.',
     'Ek boodha ullu kisi aise insaan ka intezaar kar raha tha jo cheezon par dhyaan deta ho. Sabr wala aur jigyaasu. Aap jaisa koi.',
   ],
-  story: [
-    { open: 'Ullu aapko bagiche ke kinaare le jaata hai. "Har jaanwar jiski aap madad karoge, Bade Lantern tak ek chingaari bhejega," woh kehta hai. "Chhote se shuru karo."',
-      end: 'Bade Lantern mein chaar chingaariyan chamak rahi hain. Patange sabko bata rahe hain: naya rakshak aa gaya hai.' },
-    { open: 'Aage jaakar phool khud faisla karte lagte hain. "Yeh thode nakhre wale hain," ullu dheere se kehta hai. "Dhyaan se dekhna."',
-      end: 'Aath chingaariyan. Lantern gungunaane laga, aur gehra bagicha jaag utha. Phool ab aap par bharosa karte hain.' },
-    { open: 'Bagiche ke sabse purane kone mein yaad rakhne wali kaai ugti hai. "Sau saal mein koi rakshak is kaai ko nahi samajh paaya," ullu kehta hai.',
-      end: 'Baarahvi chingaari jal uthi. Bada Lantern tez roshni se chamak utha, aur uski roshni bagiche ke har kone tak pahunch gayi. Har bhatka jaanwar ab ghar ka raasta dhoondh sakta hai.' },
-  ],
+  story: [],
   ranks: ['Naya Rakshak', 'Sikhta hua Rakshak', 'Roshni ka Rakshak', 'Deepvan ka Rakshak'],
   who: {
     moth:   { label: 'Patanga', want: 'roshni chahta hai' },
@@ -1088,97 +1011,10 @@ const HI = {
     snail:  { label: 'Ghonga', want: 'apni Raat Rani ke khilne ka intezaar' },
     beetle: { label: 'Beetle', want: 'subah yahan kaai chahta hai' },
   },
-  levels: {
-    '1-1': { name: 'Garam kona',
-      intro: 'Ek patanga garam jagah dhoondh raha hai. Surajmukhi ko kisi bhi khaali dibbe par lagao, phir "Raat hone do" dabao.',
-      hints: ['Raat hone par Surajmukhi ke aas-paas kaun se dibbe chamke?', 'Patange ko chhoone wale dibbe dekho. Kya Surajmukhi unmein se kisi par lag sakta hai?'],
-      success: 'Patanga pankh mod kar baith gaya. Dekha, roshni kahan tak pahunchi?' },
-    '1-2': { name: 'Mendhak ke liye chhaaya',
-      intro: 'Patanga wapas aaya hai, aur saath mein ek mendhak bhi. Mendhak ko thandak aur andhera pasand hai. Kya aap ek ko roshni de sakte ho, bina doosre ko pareshaan kiye?',
-      hints: ['Kya roshni har disha mein failti hai, ya sirf kuch mein?', 'Tirchhe (corner wale) dibbon tak roshni kabhi nahi jaati. Aisi jagah dhoondho jo patange ko chhoye par mendhak ko nahi.'],
-      success: 'Dono khush hain. Roshni kuch padosiyon tak gayi, kuch tak nahi. Kaun se?' },
-    '1-3': { name: 'Roshni aage badhao',
-      intro: 'Yeh purana Surajmukhi saalon se yahin hai aur hilega nahi. Patanga bahut door hai. Aapke paas do Narkat hain.',
-      hints: ['Ek Narkat Surajmukhi ke bilkul bagal mein lagao. Raat mein uske saath kya hota hai?', 'Agar Narkat chamak sakta hai, toh kya woh apni chamak agle Narkat ko de sakta hai?'],
-      success: 'Roshni poora raasta paar kar gayi. Har Narkat ne kya kiya?' },
-    '1-4': { name: 'Pattharon ke aas-paas',
-      intro: 'Do patange alag-alag jagah intezaar kar rahe hain, aur paas mein mendhak so raha hai. Chaar Narkat, ek purana Surajmukhi.',
-      hints: ['Kis patange tak pahunchna zyada mushkil hai? Wahin se shuru karo.', 'Narkaton ka raasta do hisson mein bant sakta hai. Shaakha kahan se nikal sakti hai?'],
-      success: 'Aapne ek roshni ko do raaston mein baant diya, aur mendhak ko jagaya bhi nahi.' },
-    '2-1': { name: 'Judwa Kamal',
-      intro: 'Ek naya beej gira hai: Judwa Kamal, ek dandi par do phool. Patanga do purane Surajmukhiyon ke paas intezaar kar raha hai.',
-      hints: ['Judwa Kamal ko sirf ek Surajmukhi ke bagal mein lagao. Kya woh chamakta hai?', 'Kya koi aisi jagah hai jo dono Surajmukhiyon ko ek saath chhooti ho?'],
-      success: 'Judwa Kamal khil gaya. Sirf ek roshni ke paas woh band raha tha. Aisa kyun?' },
-    '2-2': { name: 'Ghonge ki Raat Rani',
-      intro: 'Is Raat Rani ke neeche ek ghonga rehta hai aur aaj raat iske khilne ka intezaar kar raha hai. Paas mein patange ko thodi garmi chahiye.',
-      hints: ['Narkat ko Raat Rani ke bilkul bagal mein lagao aur raat hone do. Raat Rani kya karti hai?', 'Kya roshni patange tak aise raaste se pahunch sakti hai jo Raat Rani ko na chhoye?'],
-      success: 'Raat Rani chhaaya mein khil gayi, aur patange ko garmi mil gayi. Ab roshni aur chhaaya dono zaroori hain.' },
-    '2-3': { name: 'Do roshniyon ke beech',
-      intro: 'Patanga bagiche ke andar hai, aur uske dono taraf ek-ek mendhak so raha hai. Aapke paas Judwa Kamal aur ek Narkat hai.',
-      hints: ['Judwa Kamal kahan khada ho ki use ek saath do roshniyan milein?', 'Jab Judwa Kamal chamakne lage, kya woh apne bagal wale ko chamkane mein madad kar sakta hai?'],
-      success: 'Judwa Kamal ne dono Surajmukhiyon se roshni pakdi aur aage pahuncha di.' },
-    '2-4': { name: 'Raat ka bagicha',
-      intro: 'Ek kone mein do Surajmukhi, apni Raat Rani ke neeche ghonga, do patange aur ek oonghta mendhak. Ab tak jo seekha, sab use karo.',
-      hints: ['Judwa Kamal ko do chamakte padosi chahiye. Surajmukhiyon ke paas kaun si jagah yeh de sakti hai?', 'Kaun se paudhe Raat Rani se door rehne chahiye?'],
-      success: 'Raat ke bagiche mein har mehmaan khush hai. Ab aap bagiche ka har phool jaante ho.' },
-    '3-1': { name: 'Kaai ko saathi chahiye',
-      intro: 'Jaadui Kaai har raat badalti hai. Beetle subah tak apni jagah par kaai chahta hai. Kaai kahin bhi lagao, beetle ke upar bhi, aur ek raat guzarne do.',
-      hints: ['Ek kaai akeli lagao aur ek raat dekho. Uske saath kya hota hai?', 'Kaai apne aathon padosi ginti hai, corner wale bhi. Agar kisi khaali jagah ke paas teen kaai hon toh?'],
-      success: 'Jahan kaai nahi thi, wahan kaai ug aayi. Us jagah ke kitne padosi the?' },
-    '3-2': { name: 'Tiki rehne wali kaai',
-      intro: 'In beetles ko kaai ka aisa tukda chahiye jo chaar raat baad bhi wahin ho.',
-      hints: ['Ek-ek raat dekho. Kaun si kaai murjhaati hai, aur uske kitne padosi the?', 'Aisi shape try karo jismein har kaai theek teen doosri kaai ko chhooye.'],
-      success: 'Ek shape jo kabhi nahi badalti. Har kaai ke paas bilkul sahi ginti ke padosi hain.' },
-    '3-3': { name: 'Jhapakne wali kaai',
-      intro: 'Beetles ko teen raat baad kaai ki khadi line chahiye, aur mendhak chahte hain ki line ke bagal ki jagah khaali rahe.',
-      hints: ['Ek khadi line lagao aur ek raat dekho. Woh kis shape mein badalti hai?', 'Agar line har raat palatti hai, toh shuru mein use kaise lagao ki teen raat baad khadi ho?'],
-      success: 'Aapki line har raat palti: leti, khadi, leti, khadi. Kuch shapes dil ki dhadkan ki tarah dhadakti hain.' },
-    '3-4': { name: 'Chalne wali kaai',
-      intro: 'Beetles ne apna dera badal liya hai. Unhe chaar raat baad bilkul isi shape mein paanch kaai chahiye. Aapki kaai ko chal kar wahan pahunchna hoga.',
-      hints: ['Beetles wali shape hi lagao aur raat-dar-raat dekho. Kya woh wahin rehti hai?', 'Wahi shape beetles se ek dibba upar aur ek dibba left mein lagao.'],
-      success: 'Aapki kaai khud chal kar bagiche ke paar chali gayi. Paanch kaai aur teen aasaan niyamon ne kuch aisa banaya jo chalta hai.' },
-  },
-  pages: [
-    ['Patange ko yaad hai', 'Jis patange ki aapne madad ki, woh ek ajeeb baat batata hai. Jis raat Lantern bujha, usne ek parchhai ko Lantern ki meenar par chadhte dekha tha, haath mein apni ek chhoti si roshni liye.'],
-    ['Andhere mein ek awaaz', 'Mendhak ne us raat ek naram, pyaari awaaz suni thi: "Ab aaram karo. Koi naya aayega." Mendhak ko pakka yakeen hai ki woh Purane Rakshak the, jo aapse pehle is bagiche ki dekhbhaal karte the.'],
-    ['Narkaton ke beech ek panna', 'Narkaton ke beech aapko purani likhawat wala ek phata panna milta hai: "Jo roshni aage baanti jaaye, woh kabhi kam nahi hoti." Neeche ek chhote Lantern ka nishaan bana hai.'],
-    ['Ullu ka raaz', 'Aakhir ullu bolta hai: "Purane Rakshak mere sabse achhe dost the. Ek sardi ki raat woh bagiche ke sabse purane kone ki taraf gaye aur kabhi wapas nahi aaye." Lantern thoda sa chamakta hai, aur aapko uske sheeshe ke andar khurcha hua ek naksha dikhta hai.'],
-    ['Sikhaaye hue phool', 'Naksha gehre bagiche ki taraf le jaata hai. Judwa Kamal fusfusaate hain ki Purane Rakshak ne unhe bahut pehle lagaya tha, "taaki bagicha faisle lena seekh sake".'],
-    ['Ghonge ki chaabi', 'Jab Raat Rani khilti hai, ghonga aapko woh cheez dikhata hai jiski woh poore saal se hifaazat kar raha tha: patton ke neeche chhupi ek chhoti si chaandi ki chaabi.'],
-    ['Doosra panna', 'Usi likhawat mein ek aur panna: "Maine Lantern ko toda nahi. Maine use aaram karne diya, taaki koi naya use dobara jalaana seekh sake."'],
-    ['Purana darwaaza', 'Aath chingaariyan kaai se dhake ek darwaaze tak raasta roshan karti hain. Chaandi ki chaabi bilkul fit hoti hai. Uske peeche bagiche ka sabse purana kona hai, jahan kehte hain kaai sab kuch yaad rakhti hai.'],
-    ['Kaai ko kya yaad hai', 'Beetles kehte hain ki yeh kaai har us Rakshak ke kadmon ke nishaan sambhaal kar rakhti hai jo kabhi yahan raha. Kuch nishaan ruke hue hain. Kuch jhapakte hain. Aur ek kahin chalta hua lagta hai.'],
-    ['Kaai mein kadam', 'Aap us chalte hue nishaan ke peechhe-peechhe bagiche ke paar jaate ho. Woh ek chapte patthar tak le jaata hai, jis par Lantern ka nishaan bana hai, aur uske upar aakhri panna rakha hai.'],
-    ['Aakhri panna', '"Agar aap yeh padh rahe ho, toh mera saara gyaan ab aapke paas hai. Lantern kabhi toota hi nahi tha. Woh aapka intezaar kar raha tha."'],
-    ['Naya Rakshak', 'Baarahvi chingaari jalti hai aur Bada Lantern jagmaga uthta hai. Uski roshni mein ullu muskurata hai: "Purane Rakshak ko aap par garv hota. Ab yeh bagicha aapka hai, jab tak ek din aap kisi naye ko sikha na do."'],
-  ],
-  chapterStory: [{"recap":"","story":"Pichhli sardi Bada Lantern bujh gaya, aur kisi ko nahi pata kyun. Ullu kehta hai ki jawaab un jaanwaron se shuru hota hai jo us raat jaag rahe the. Par woh tabhi bolenge jab unhe aaram milega.","goal":"Pata lagao us raat Lantern ke paas kaun tha. 4 gawahon ki madad karo aur 4 chingaariyan jalao."},{"recap":"Gawahon ne bataya: meenar par ek parchhai, ek pyaari awaaz \"Koi naya aayega\", Lantern ke nishaan wala panna, aur Lantern ke sheeshe par ek naksha.","story":"Naksha gehre bagiche tak le jaata hai, jahan phool khud faisla karte hain. Roshni bujhne se pehle Purane Rakshak ne yahan kuch chhupaya tha.","goal":"Purane Rakshak ki chhupayi cheez dhoondho aur kaai wala darwaaza kholo. 4 aur jaanwaron ki madad karo, 4 aur chingaariyan jalao."},{"recap":"Dheeru ne aapko chaandi ki chaabi di. Ek panne par likha tha \"Maine Lantern ko toda nahi.\" Chaabi se kaai wala darwaaza khul gaya.","story":"Darwaaze ke peeche Deepvan ka sabse purana kona hai. Yahan ki kaai har Rakshak ko yaad rakhti hai, Purane Rakshak ko bhi. Uski yaad jagao aur jahan woh le jaaye, wahan chalo.","goal":"Purane Rakshak ke kadmon ke peechhe chal kar aakhri panna paao, aur Bada Lantern phir se jalao."}],
-  levelStory: {
-    '1-1': { goal: "Pinku patange ko garmi do.", reward: "Pinku batayega usne us raat kya dekha, aur kaun aur jaag raha tha.", intro: 'Pinku patanga poori raat Bade Lantern ko dhoondhta raha. Uske pankh thande aur thake hue hain. "Bas ek garam jagah de do," woh dheere se kehta hai, "phir main bataunga ki jis raat Lantern bujha, maine kya dekha."',
-      next: 'Pinku ne meenar par ek parchhai dekhi. Par us raat koi aur bhi jaag raha tha: boodha Mendhu mendhak, jo koi awaaz kabhi nahi bhoolta.' },
-    '1-2': { goal: "Mendhu ko thanda-andhera do, aur Pinku ko garmi.", reward: "Mendhu batayega awaaz ne kya kaha, aur kahan kuch chhoda gaya tha.", intro: 'Jis raat Lantern bujha, Mendhu mendhak ne ek awaaz suni thi. Par woh sirf thandi, andheri jagah par hi baat karega. Pinku bhi wapas aaya hai, kaanpta hua. Kya aap dono ki madad kar sakte ho?',
-      next: 'Awaaz ne kaha tha "Koi naya aayega." Kya woh Purane Rakshak the? Mendhu bagiche ke us paar ishaara karta hai: "Wahan dekho jahan roshni nahi pahunchti. Wahan kuch chhoda gaya tha."' },
-    '1-3': { goal: "Roshni ko door wale patange tak pahunchao.", reward: "Chhupa hua panna, jiski likhawat ullu pehchaanta hai.", intro: 'Purane Surajmukhi se bahut door, Narkaton ke paas ek patanga intezaar kar raha hai. Dandiyon ke beech kuch chhupa hai, par itna andhera hai ki dikhta nahi. Roshni ko wahan tak pahunchao.',
-      next: 'Panne par Lantern ka nishaan hai. Use dekhte hi ullu bilkul chup ho jaata hai. "Main yeh likhawat pehchaanta hoon," woh kehta hai, aur pattharon ki taraf ud jaata hai.' },
-    '1-4': { goal: "Ullu ke liye pattharon ko roshan karo.", reward: "Ullu ka raaz: gehre bagiche ka naksha (Chapter 2).", intro: 'Ullu pattharon ke beech baitha hai, uske paas do patange so rahe hain aur Mendhu oongh raha hai. "Mere liye yeh jagah roshan karo," woh kehta hai, "aur main aapko woh raaz bataunga jo maine poore saal chhupa kar rakha."',
-      next: 'Lantern ke sheeshe par bana naksha gehre bagiche ki taraf ishaara karta hai, jahan phool khud faisla karte hain. Purane Rakshak ne wahan kya chhupaya tha?' },
-    '2-1': { goal: "Judwa Kamal ke beej se patange tak roshni pahunchao.", reward: "Phool batayenge ki ek ghonga kaunsa raaz chhupa kar baitha hai.", intro: 'Gehra bagicha andhera aur ajeeb hai. Raaste par Judwa Kamal ka ek akela beej pada hai, jaise kisi ne aapke liye chhoda ho. Do purane Surajmukhiyon ke beech ek patanga baitha dekh raha hai ki aap kya karoge.',
-      next: 'Judwa Kamal fusfusaate hain ki ek ghonga poore saal se Raat Rani ke neeche kuch chhupa kar baitha hai. Woh sirf use dikhayega jo Raat Rani ko khila de.' },
-    '2-2': { goal: "Dheeru ke liye Raat Rani khilao.", reward: "Purane Rakshak ki chhodi hui cheez: chaandi ki chaabi.", intro: 'Jis raat Lantern bujha, tab se Dheeru ghonga Raat Rani ke neeche intezaar kar raha hai. "Jab yeh khilegi," Dheeru dheere se kehta hai, "tab main aapko woh dunga jo Purane Rakshak mere paas chhod gaye the."',
-      next: 'Ek chhoti si chaandi ki chaabi. Par chaabi ko taala chahiye. Do roshniyon ke beech kahin ek aur panna intezaar kar raha hai.' },
-    '2-3': { goal: "Patange ko roshni do, par dono mendhak sote rahein.", reward: "Purane Rakshak ka panna, aur chaabi kahan lagegi.", intro: 'Do purane Surajmukhiyon ke beech ek patanga ek mude hue panne ki hifaazat kar raha hai, aur uske dono taraf ek-ek mendhak so raha hai. Mendhak jaage toh panna ud jaayega. Roshni sirf patange tak pahunchao.',
-      next: '"Maine Lantern ko toda nahi." Toh phir woh bujha kyun? Raat ke bagiche ke us paar, kaai se dhaka ek darwaaza chaandi ki chaabi ka intezaar kar raha hai.' },
-    '2-4': { goal: "Darwaaze par khade sab mehmaanon ko khush karo.", reward: "Chaabi sabse purane kone ka darwaaza kholegi (Chapter 3).", intro: 'Darwaaza raat ke bagiche ke us paar hai, aur use khulta dekhne sab aaye hain: Dheeru, do patange aur ek bahut oonghta mendhak. Sabko khush karo, toh darwaaze tak ka raasta roshan ho jaayega.',
-      next: 'Chaabi ghoomti hai. Darwaaze ke peeche bagiche ka sabse purana kona hai, jahan kaai har Rakshak ko yaad rakhti hai. Purane Rakshak ko bhi.' },
-    '3-1': { goal: "Khaali zameen par kaai ugao.", reward: "Kaai yaad karna shuru karegi aur purane kadmon ke nishaan dikhayegi.", intro: 'Sabse purane kone mein Bholu beetle ek khaali zameen par intezaar kar raha hai. "Yahan kabhi kaai ugti thi," Bholu kehta hai. "Use phir se ugao, toh woh yaad karna shuru karegi."',
-      next: 'Kaai kaanpti hai aur ek nishaan dikhati hai: kadmon ke nishaan. Purane. Par woh mit-te ja rahe hain. Kya aap aisi kaai uga sakte ho jo tiki rahe?' },
-    '3-2': { goal: "Aisi kaai ugao jo kabhi na mite.", reward: "Nishaan tik jaayenge, aur ek nishaan jhapakne lagega.", intro: 'Chaar beetles in kadmon ke nishaanon ko bachana chahte hain. Unhe aisi kaai chahiye jo na aaj mite, na chaar raat baad.',
-      next: 'Ab kaai saaf-saaf yaad rakhti hai. Ek nishaan baar-baar jhapak raha hai, jaise koi ishaara. Kya koi kuch kehna chahta hai?' },
-    '3-3': { goal: "Teesri raat ke baad jhapakte nishaan ko khada rakho.", reward: "Woh aakhri panne ka raasta dikhayega.", intro: 'Jhapakta hua nishaan kahin ishaara karna chahta hai. Beetles chahte hain ki teesri raat ke baad woh khada ho, taaki dikhe ki woh kis taraf ishaara karta hai.',
-      next: 'Woh ek aise nishaan ki taraf ishaara karta hai jo chal raha hai. Apne aap chalta hua, Lantern ke nishaan wale ek chapte patthar ki taraf. Aakhri panna wahin hoga.' },
-    '3-4': { goal: "Apni kaai ko chala kar chapte patthar tak bhejo.", reward: "Aakhri panna, aur Bada Lantern phir se jal uthega.", intro: 'Yahi hai woh pal. Paanch beetles chapte patthar ke paas intezaar kar rahe hain. Apni kaai ko bagiche ke paar chala kar unke paas pahunchao, aur aakhri panna aapka hoga.',
-      next: 'Lantern jal gaya. Par door-door se mehmaan aate rehte hain, har ek ki apni kahani ke saath. Deepvan ko hamesha ek Rakshak ki zaroorat rahegi.' },
-  },
+  levels: {},
+  pages: [],
+  chapterStory: [],
+  levelStory: {},
   wanderIntros: ['Shaam ki hawa ke saath kuch mehmaan aa gaye.', 'Bagiche ke kinaare koi naya intezaar kar raha hai.', 'Hawa badli, aur naye mehmaan uske peechhe aa gaye.', 'Aaj raat jugnu kuch musafiron ko yahan le aaye.'],
   wanderSuccess: ['Sab raat ke liye aaram se baith gaye.', 'Bagicha dheere se gungunata hai. Jald hi koi aur mehmaan aayega.', 'Ab sab aaram kar rahe hain.'],
   wanderHints: ['Kis mehmaan ko khush karna sabse mushkil hai? Usi se shuru karo.', 'Har patange ko chhoone wale chaar dibbe dekho. Wahan kya chamak sakta hai?'],
@@ -1210,7 +1046,9 @@ const UI = {
     shareLit: total => `🏮 Lantern Grove · I lit all ${total} sparks and the Great Lantern shines again. Can you find out why it went dark?`,
     eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · grove ${pos} of ${total}`,
     dotLabel: (id, name, done) => `Grove ${id}: ${name}${done ? ', settled' : ''}`,
-    chLocked: 'Finish the chapter before to open this one', wanderLocked: 'Opens after "Flowers that decide"',
+    chLocked: 'Finish the chapter before to open this one', upNext: 'Up next', nextLocked: name => `Finish "${name}" to open this chapter`,
+    loadFail: 'The next part of the grove could not be reached. Check your connection, then solve the level again or reload.', loadFailTitle: 'The grove could not load', loadFailText: 'The chapters live on the server and could not be fetched. Check your connection and try again. (Opening index.html straight from disk will not work: use a web server, or play-offline.html.)', retry: 'Try again',
+    wanderLocked: 'Opens after "Flowers that decide"',
     clearSpot: 'wants this spot clear', seedLeft: (n, k) => `${n} left<span class="key"> · key ${k}</span>`,
     coach1: '<span class="step-now">Step 1</span>A moth wants a warm place to rest. Your Sunbell seed is already picked. <b>Tap any empty square</b> on the board to plant it.',
     coach2: '<span class="step-now">Step 2</span>Now press <b>Let dusk fall</b> and watch what happens in the dark.',
@@ -1252,7 +1090,7 @@ const UI = {
     tour5: '<b>Then press this button.</b> Night falls, and you watch what each plant does in the dark. That is how you discover their secret rules.',
     tour6: '<b>The grove talks to you here.</b> It tells you what happened and what to try next.',
     tour7: '<b>Stuck? Ask the owl.</b> First it asks you a helpful question. Ask again and it points to a spot on the board.',
-    tour8: '<b>Your mission.</b> Every level you solve sends a spark to the Great Lantern. Collect all 12 to light it again.',
+    tour8: () => `<b>Your mission.</b> Every level you solve sends a spark to the Great Lantern. Collect all ${SPARKS_TOTAL} to light it again.`,
     lsGo: "Let's help", chGo: 'Start the chapter', chBtn: '📜 Chapter story', chPrev: 'So far', chEyebrow: (n, total) => `Chapter ${n} of ${total}`, goalLbl: '🎯 Your goal', rewardLbl: '🎁 What you get', chGoalLbl: '🎯 Chapter mission', nextCh: name => `📜 Next chapter: <b>${name}</b>`, lsBtn: '📖 Level story', lsPrev: 'Last time', whatNext: 'What happens next?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
     tourStory: '<b>The story.</b> Every level you solve opens a new page. Tap your character to read on and find out why the lantern went out.',
     bookTitle: "The Lantern's story", bookSub: 'Every level you solve opens a new page. Read on to find out why the lantern went out.',
@@ -1293,7 +1131,9 @@ const UI = {
     shareLit: total => `🏮 Lantern Grove · Maine saari ${total} chingaariyan jalayi aur Bada Lantern phir se roshan hai. Kya aap jaan paoge woh kyun bujha tha?`,
     eyebrow: (ch, name, pos, total) => `Chapter ${ch} · ${name} · level ${pos} / ${total}`,
     dotLabel: (id, name, done) => `Level ${id}: ${name}${done ? ', poora hua' : ''}`,
-    chLocked: 'Pehle pichhla chapter poora karo', wanderLocked: 'Chapter 2 ("Faisla karne wale phool") ke baad khulega',
+    chLocked: 'Pehle pichhla chapter poora karo', upNext: 'Agla', nextLocked: name => `Pehle "${name}" poora karo, phir yeh chapter khulega`,
+    loadFail: 'Bagiche ka agla hissa nahi mil paaya. Internet check karo, phir level dobara jeeto ya page reload karo.', loadFailTitle: 'Bagicha load nahi hua', loadFailText: 'Chapters server par rakhe hain aur abhi nahi mil paaye. Internet check karke dobara try karo. (index.html ko seedha disk se kholne par yeh nahi chalega: web server use karo, ya play-offline.html kholo.)', retry: 'Dobara try karo',
+    wanderLocked: 'Chapter 2 ("Faisla karne wale phool") ke baad khulega',
     clearSpot: 'chahta hai yeh jagah khaali rahe', seedLeft: (n, k) => `${n} bache<span class="key"> · key ${k}</span>`,
     coach1: '<span class="step-now">Step 1</span>Patange ko garmi (roshni) chahiye. Aapka Surajmukhi beej pehle se chuna hua hai. Board par <b>kisi bhi khaali dibbe par tap karo</b>, beej lag jaayega.',
     coach2: '<span class="step-now">Step 2</span>Ab <b>Raat hone do</b> button dabao aur dekho andhere mein kya hota hai.',
@@ -1335,7 +1175,7 @@ const UI = {
     tour5: '<b>Phir yeh button dabao.</b> Raat hogi, aur aap dekhoge ki andhere mein har paudha kya karta hai. Isi se unke secret niyam pata chalte hain.',
     tour6: '<b>Yahan bagicha aapse baat karta hai.</b> Batata hai kya hua, aur aage kya try karna hai.',
     tour7: '<b>Atak gaye? Ullu se pucho.</b> Pehle woh ek madadgaar sawaal poochta hai. Phir se poocho toh board par sahi jagah dikha deta hai.',
-    tour8: '<b>Aapka mission.</b> Har level jeetne par ek chingaari Bade Lantern tak jaati hai. Saari 12 chingaariyan jodo, Lantern phir se jal uthega.',
+    tour8: () => `<b>Aapka mission.</b> Har level jeetne par ek chingaari Bade Lantern tak jaati hai. Saari ${SPARKS_TOTAL} chingaariyan jodo, Lantern phir se jal uthega.`,
     lsGo: 'Chalo madad karein', chGo: 'Chapter shuru karo', chBtn: '📜 Chapter ki kahani', chPrev: 'Ab tak', chEyebrow: (n, total) => `Chapter ${n} / ${total}`, goalLbl: '🎯 Maqsad', rewardLbl: '🎁 Inaam', chGoalLbl: '🎯 Is chapter ka maqsad', nextCh: name => `📜 Agla chapter: <b>${name}</b>`, lsBtn: '📖 Level ki kahani', lsPrev: 'Pichhle level se', whatNext: 'Aage kya hoga?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
     tourStory: '<b>Kahani.</b> Har level jeetne par kahani ka ek naya panna khulta hai. Apne character par tap karke aage padho aur pata karo Lantern kyun bujha.',
     bookTitle: 'Lantern ki kahani', bookSub: 'Har level jeetne par ek naya panna khulta hai. Aage padho aur jaano Lantern kyun bujha.',
@@ -1356,7 +1196,7 @@ const UI = {
 const hi = () => P.lang === 'hi';
 function t(k, ...a) { const v = (hi() ? UI.hi : UI.en)[k]; return typeof v === 'function' ? v(...a) : v; }
 const pT = (p, f) => (hi() ? HI.plants : PLANTS)[p][f];
-const chName = i => (hi() ? HI.chapters[i] : CHAPTERS[i]).name;
+const chName = i => { const c = hi() ? HI.chapters[i] : CHAPTERS[i]; return c ? c.name : manifestName(i); };   // not fetched yet: chapters.json has the name
 const chReveal = (i, f) => (hi() ? HI.chapters[i] : CHAPTERS[i].reveal)[f];
 const storyT = (i, f) => (hi() ? HI.story : STORY)[i][f];
 const whoT = (w, f) => (hi() ? HI.who : WHO)[w][f];
@@ -1371,6 +1211,77 @@ function lvT(lv, f) {
   }
   return hi() && HI.levels[lv.id] ? HI.levels[lv.id][f] : lv[f];
 }
+
+// ---------- Chapter loading ----------
+// content/chapters.json lists every chapter in order: { "chapters": [{ "id", "name", "hi": { "name" }, "levels": 4, "file": "c1.json" }] }.
+// Each file holds one chapter and its levels (content/README.md explains every field). Only chapters the player
+// has reached are fetched: the first one, then each next one as soon as the one before it is finished.
+// play-offline.html carries the same files inline (window.LANTERN_CONTENT), so it needs no server.
+/*CONTENT*/
+const CONTENT_URL = window.LANTERN_CONTENT_URL || 'content/';   // set window.LANTERN_CONTENT_URL to load from another server
+const contentErr = (what, errs) => console.error(`[LanternGrove] ${what} was skipped:\n - ` + errs.join('\n - '));
+async function getContent(file) {
+  if (window.LANTERN_CONTENT && window.LANTERN_CONTENT[file]) return window.LANTERN_CONTENT[file];
+  const res = await fetch(new URL(file, new URL(CONTENT_URL, location.href)), { cache: 'no-cache' });
+  if (!res.ok) throw new Error(`could not load ${file} (${res.status})`);
+  return res.json();
+}
+// Fills every table for one chapter: its story, then each level's board, story card, story-book page and
+// Hinglish text (English wherever the Hinglish is missing). A broken level is skipped with a console message.
+function addChapter(def) {
+  const h = def.hi || {}, reveal = def.reveal || {};
+  const en = { title: reveal.title || def.name, lede: reveal.lede || '', open: def.open || '', end: def.end || '',
+    recap: def.recap || '', story: def.story || def.open || '', goal: def.goal || 'Help every visitor in this chapter.' };
+  const ch = CHAPTERS.length;
+  CHAPTERS.push({ id: def.id, name: def.name, plants: (def.plants || []).filter(p => PLANTS[p]), reveal: { title: en.title, lede: en.lede } });
+  STORY.push({ open: en.open, end: en.end });
+  CHAPTER_STORY.push({ recap: en.recap, story: en.story, goal: en.goal });
+  HI.chapters.push({ name: h.name || def.name, title: h.title || en.title, lede: h.lede || en.lede });
+  HI.story.push({ open: h.open || en.open, end: h.end || en.end });
+  HI.chapterStory.push({ recap: h.recap || en.recap, story: h.story || en.story, goal: h.goal || en.goal });
+  (def.levels || []).forEach(l => addLevel(l, ch));
+  SPARKS_TOTAL = Math.max(SPARKS_TOTAL, LEVELS.length);
+}
+function addLevel(def, ch) {
+  const { story = {}, page, hi: h = {}, ...board } = def;
+  const lv = Object.assign({ kind: 'light', rocks: [], fixed: [] }, board, { ch });
+  if (lv.kind === 'life' && lv.nights == null) lv.nights = 1;
+  const errs = validateLevel(lv);
+  if (LEVELS.some(l => l.id === lv.id)) errs.push(`id "${lv.id}" is already used`);
+  if (errs.length) return contentErr(`level "${def.id}" in chapter "${CHAPTERS[ch].id}"`, errs);
+  lv.name = lv.name || 'Level ' + lv.id;
+  lv.intro = lv.intro || story.intro || 'New visitors are waiting in the grove.';
+  lv.hints = lv.hints && lv.hints.length ? lv.hints : WANDER_HINTS;
+  lv.success = lv.success || WANDER_SUCCESS[0];
+  const hs = h.story || {};
+  LEVEL_STORY[lv.id] = { goal: story.goal || 'Make every visitor happy.', reward: story.reward || 'One more spark for the Great Lantern.', intro: story.intro || lv.intro, next: story.next || '' };
+  HI.levelStory[lv.id] = { goal: hs.goal || story.goal || 'Sab mehmaanon ko khush karo.', reward: hs.reward || story.reward || 'Bade Lantern ke liye ek aur chingaari.', intro: hs.intro || h.intro || LEVEL_STORY[lv.id].intro, next: hs.next || LEVEL_STORY[lv.id].next };
+  HI.levels[lv.id] = { name: h.name || lv.name, intro: h.intro || lv.intro, hints: h.hints || (lv.hints === WANDER_HINTS ? HI.wanderHints : lv.hints), success: h.success || lv.success };
+  // Story-book pages open one per spark, in order, so every level adds one
+  const pg = page || [lv.name, lv.success];
+  PAGES.push(pg); HI.pages.push(h.page || pg);
+  LEVELS.push(lv);
+}
+// Chapters always join in order, each one once, however often they are asked for
+const chapterLoads = [];
+function loadChapter(i) {
+  if (i < 0 || i >= MANIFEST.length) return Promise.resolve();
+  return chapterLoads[i] || (chapterLoads[i] = loadChapter(i - 1)
+    .then(() => getContent(MANIFEST[i].file))
+    .then(def => addChapter(Object.assign({}, def, { id: MANIFEST[i].id, name: def.name || MANIFEST[i].name })))
+    .catch(e => { chapterLoads[i] = null; throw e; }));
+}
+// Every chapter the player can open right now: the first, each one after a finished chapter, or all when unlocked for testing
+async function loadOpenChapters() {
+  for (let i = 0; i < MANIFEST.length && (i === 0 || P.unlockAll || chapterDone(i - 1)); i++) await loadChapter(i);
+}
+async function loadContent() {
+  const m = await getContent('chapters.json');
+  MANIFEST.push(...m.chapters);
+  SPARKS_TOTAL = MANIFEST.reduce((n, c) => n + (c.levels || 0), 0);
+  await loadOpenChapters();
+}
+const manifestName = i => { const m = MANIFEST[i]; return m ? (hi() && m.hi && m.hi.name) || m.name : ''; };
 
 // ---------- Saved progress (per browser, optional) ----------
 const SAVE_KEY = 'lanternGrove.v1';
@@ -1402,7 +1313,7 @@ const ease = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
 function hex(h) { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
 function mix(a, b, t) { const A = hex(a), B = hex(b); return `rgb(${A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',')})`; }
 function rgba(h, a) { const [r, g, b] = hex(h); return `rgba(${r},${g},${b},${a})`; }
-function chapterDone(i) { return LEVELS.filter(l => l.ch === i).every(l => P.solved[l.id]); }
+function chapterDone(i) { const ls = LEVELS.filter(l => l.ch === i); return ls.length > 0 && ls.every(l => P.solved[l.id]); }   // a chapter not fetched yet is not done
 function chapterOpen(i) { return P.unlockAll || i === 0 || chapterDone(i - 1); }
 function wanderOpen() { return P.unlockAll || chapterDone(1); }
 function goalAt(r, c) { return S.lv.goals.findIndex(g => g[0] === r && g[1] === c); }
@@ -1830,15 +1741,15 @@ const firstOfChapter = ch => LEVELS.findIndex(l => l.ch === ch);
 function openLevelStory(face) {
   S.lsFace = face === 'ch' ? 'ch' : 'lv';
   if (S.lsFace === 'ch') return openChapterFace();
-  const lv = S.lv, idx = S.levelIdx, who = { '1-2': 'toad', '2-2': 'snail', '2-4': 'snail' }[lv.id] || lv.goals[0][3];   // the scene's main character
+  const lv = S.lv, idx = S.levelIdx, who = lv.who || lv.goals[0][3];   // the scene's main character
   const c = lsArtCtx(), k = 96 / 44;
   drawHero(c, P.hero || HEROES[0], 44, 52, 70);
   c.translate(64, 0);
   drawVisitorIcon(c, who, 48, 52, 70 * k);
   $('lsEyebrow').textContent = t('lsEyebrow', idx + 1, chName(lv.ch));
   $('lsTitle').textContent = lvT(lv, 'name');
-  $('lsPrev').hidden = idx === 0;
-  if (idx > 0) $('lsPrev').innerHTML = `<b>${t('lsPrev')}</b>${lsT(LEVELS[idx - 1].id, 'next')}`;
+  $('lsPrev').hidden = idx === 0 || !lsT(LEVELS[idx - 1].id, 'next');
+  if (!$('lsPrev').hidden) $('lsPrev').innerHTML = `<b>${t('lsPrev')}</b>${lsT(LEVELS[idx - 1].id, 'next')}`;
   $('lsText').textContent = lsT(lv.id, 'intro');
   $('lsGoal').hidden = false;
   $('lsGoal').innerHTML = `<p><b>${t('goalLbl')}:</b> ${lsT(lv.id, 'goal')}</p><p><b>${t('rewardLbl')}:</b> ${lsT(lv.id, 'reward')}</p>`;
@@ -1855,7 +1766,7 @@ function lsArtCtx() {
 function openChapterFace() {
   const ch = S.lv.ch;
   drawHero(lsArtCtx(), P.hero || HEROES[0], 80, 52, 76);
-  $('lsEyebrow').textContent = t('chEyebrow', ch + 1, CHAPTERS.length);
+  $('lsEyebrow').textContent = t('chEyebrow', ch + 1, MANIFEST.length);
   $('lsTitle').textContent = chName(ch);
   $('lsPrev').hidden = !chS(ch, 'recap');
   $('lsPrev').innerHTML = `<b>${t('chPrev')}</b>${chS(ch, 'recap')}`;
@@ -2006,9 +1917,11 @@ function evaluate() {
     }
     saveProgress();
     if (!S.wander) {
-      showPageNote(newSpark ? pageNo : 0, lv.id);
       S.win = { id: lv.id, spark: newSpark, page: newSpark ? pageNo : 0, cheer: Math.floor(Math.random() * 4) };
-      setTimeout(() => { if (S.lv === lv && S.solved) openWin(true); }, 1400);   // let the happy creatures show first
+      // Finishing a chapter fetches the next one, so the chapter list and the win card can point to it
+      const next = chapterDone(lv.ch) ? loadChapter(lv.ch + 1).then(renderUI, loadFailed) : Promise.resolve();
+      next.then(() => showPageNote(newSpark ? pageNo : 0, lv.id));
+      setTimeout(() => next.then(() => { if (S.lv === lv && S.solved) openWin(true); }), 1400);   // let the happy creatures show first
     }
   } else {
     sfx.hmm();
@@ -2119,16 +2032,22 @@ function renderUI() {
   const lv = S.lv;
   // chapters
   const nav = $('chapters'); nav.innerHTML = '';
-  CHAPTERS.forEach((ch, i) => {
+  // Chapters appear one at a time: every open chapter, then the next one as a locked "up next" label, nothing beyond
+  for (let i = 0; i < MANIFEST.length; i++) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'chip';
+    if (!chapterOpen(i) || !CHAPTERS[i]) {
+      b.disabled = true; b.classList.add('up-next');
+      b.innerHTML = `🔒 <span class="nm">${chName(i)}</span> <span class="n">${t('upNext')}</span>`;
+      b.title = t('nextLocked', chName(i - 1));
+      nav.appendChild(b);
+      break;
+    }
     const done = LEVELS.filter(l => l.ch === i && P.solved[l.id]).length, total = LEVELS.filter(l => l.ch === i).length;
     b.innerHTML = `<span class="nm">${chName(i)}</span> <span class="n">${done}/${total}</span>`;
-    b.disabled = !chapterOpen(i);
-    if (b.disabled) b.title = t('chLocked');
     b.setAttribute('aria-current', String(!S.wander && lv.ch === i));
     b.onclick = () => { const first = LEVELS.findIndex(l => l.ch === i && !P.solved[l.id]); startLevel(first >= 0 ? first : LEVELS.findIndex(l => l.ch === i)); };
     nav.appendChild(b);
-  });
+  }
   const day = todayStr(), dy = document.createElement('button'); dy.type = 'button'; dy.className = 'chip';
   dy.innerHTML = `${t('dailyName')} <span class="n">${(P.daily || {})[day] ? '✓' : '★'}</span>`;
   dy.disabled = !wanderOpen(); if (dy.disabled) dy.title = t('wanderLocked');
@@ -2259,7 +2178,7 @@ function renderQuest() {
   const inChapter = S.lv && !S.wander;
   $('sparks').replaceChildren(...(inChapter ? sparkRow(S.lv.ch).children : []));
   $('sparks').hidden = !inChapter;
-  $('profSparks').replaceChildren(...CHAPTERS.map((_, i) => {
+  $('profSparks').replaceChildren(...CHAPTERS.filter((_, i) => chapterOpen(i)).map((_, i) => {
     const line = document.createElement('div');
     line.setAttribute('aria-current', String(!!inChapter && S.lv.ch === i));
     line.append(chName(i), sparkRow(i));
@@ -2325,8 +2244,9 @@ function openReveal(ch) {
   const c = CHAPTERS[ch];
   const who = keeperName();
   S.revealCh = ch;
-  $('revealRank').textContent = rankT(ch === 2 ? 3 : ch + 1) + (who ? ' ' + who : '');
-  $('revealStory').textContent = storyT(ch, 'end') + (ch === 2 ? t('finale', who) : '');
+  const last = ch === MANIFEST.length - 1;
+  $('revealRank').textContent = rankT(last ? RANKS.length - 1 : Math.min(ch + 1, RANKS.length - 2)) + (who ? ' ' + who : '');
+  $('revealStory').textContent = storyT(ch, 'end') + (last ? t('finale', who) : '');
   $('revealTitle').textContent = chReveal(ch, 'title');
   $('revealLede').textContent = chReveal(ch, 'lede');
   const list = $('revealList'); list.innerHTML = '';
@@ -2397,7 +2317,7 @@ function openBook(focusPage) {
 function showPageNote(p, id) {
   const box = $('pageNote'); S.pageNote = [p, id];
   box.innerHTML = (p ? `<p>${t('pageNote', pagesT()[p - 1][0])}</p><button type="button" id="pageNoteBtn">${t('pageNoteBtn')}</button>` : '')
-    + `<p class="teaser"><b>${t('whatNext')}</b>${lsT(id, 'next')}</p>`
+    + (lsT(id, 'next') ? `<p class="teaser"><b>${t('whatNext')}</b>${lsT(id, 'next')}</p>` : '')
     + nextChapterNote(id);
   box.hidden = false;
   if (p) $('pageNoteBtn').onclick = () => openBook(p);
@@ -2590,7 +2510,7 @@ $('soundBtn').onclick = () => {
 };
 $('soundBtn').setAttribute('aria-pressed', String(soundOn));
 $('designerBtn').onclick = () => { designerOn = !designerOn; $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow'); renderDesigner(); };
-$('unlockBtn').onclick = () => { P.unlockAll = true; saveProgress(); renderUI(); };
+$('unlockBtn').onclick = () => { P.unlockAll = true; saveProgress(); loadOpenChapters().catch(loadFailed).then(renderUI); };
 $('resetBtn').onclick = () => { closeProfile(); $('confirmOverlay').hidden = false; $('confirmNo').focus(); };
 $('confirmNo').onclick = () => { $('confirmOverlay').hidden = true; };
 $('confirmYes').onclick = () => { $('confirmOverlay').hidden = true; P = Object.assign(loadProgressFresh(), { lang: P.lang }); saveProgress(); startLevel(0); };
@@ -2623,12 +2543,22 @@ window.addEventListener('resize', resize);
 function boot(data) {
   applyLang();
   if (data && data.wander) startWander();
-  else if (data && data.levelIdx != null) startLevel(data.levelIdx);
+  else if (data && data.levelIdx != null && LEVELS[data.levelIdx]) startLevel(data.levelIdx);
   else if (!groveFromHash()) startLevel(resumeIdx());   // a shared link opens its grove instead
   if (data && data.placed && !data.wander) { S.placed = data.placed; renderUI(); }
   requestAnimationFrame(render);
   if (!P.seenStory) openStory();
 }
+// Without the chapters there is nothing to play, so say so plainly; a later chapter failing just leaves the owl to explain
+function loadFailed(err) {
+  console.error('[LanternGrove]', err);
+  if (S.lv) return say(null, () => t('loadFail'));
+  const box = document.createElement('div'); box.className = 'overlay';
+  box.innerHTML = `<div class="sheet" role="alertdialog" aria-labelledby="loadFailTitle"><h2 id="loadFailTitle">${t('loadFailTitle')}</h2><p class="lede">${t('loadFailText')}</p><div class="actions"><button class="primary" type="button">${t('retry')}</button></div></div>`;
+  box.querySelector('button').onclick = () => location.reload();
+  document.body.appendChild(box);
+}
+function start(data) { loadContent().then(() => boot(data), loadFailed); }
 window.claude?.hot?.snapshot?.(() => ({ levelIdx: S.levelIdx, wander: S.wander, placed: S.placed }));
-window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 </script>
