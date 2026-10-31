@@ -1,0 +1,231 @@
+{
+  "id": "c5",
+  "name": "Reeds by the road",
+  "plants": [],
+  "reveal": {
+    "title": "You insulated your wires",
+    "lede": "Wires are wrapped in plastic so current stays on its path instead of spilling into nearby places. That keeps people safe and power going where it is needed."
+  },
+  "open": "The first waystone shines behind you. Ahead, toads sleep in the road's ditches. Chanda asks you to carry the light past them without waking anyone.",
+  "story": "Chanda leads you along the Lantern Road to its second waystone. Toads sleep in the ditches, while travellers wait farther ahead. Find a quiet path for the light.",
+  "recap": "The first waystone is lit, and Chanda found a scrap marked with the Old Keeper's lantern. The road continues past sleeping toads toward another dark waystone.",
+  "goal": "Light the second waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The second waystone glows. Chanda finds a note inside: \"The bees remember me.\" Why did the Old Keeper visit the bees?",
+  "hi": {
+    "name": "Sadak ke Narkat",
+    "title": "Aapne taaron ko surakshit rakha",
+    "lede": "Taaron par plastic chadhaya jaata hai, taaki current apne raaste par rahe aur aas-paas na phaile. Isse log surakshit rehte hain aur bijli sahi jagah pahunchti hai.",
+    "open": "Pehla raahdeep aapke peeche chamak raha hai. Aage sadak ki khaaiyon mein mendhak so rahe hain. Chanda kehti hai ki roshni ko unke paas se le jao, par kisi ki neend na toote.",
+    "story": "Chanda aapko Lantern ki sadak par doosre raahdeep tak le jaati hai. Khaaiyon mein mendhak so rahe hain aur aage raahi intezaar karte hain. Roshni ke liye shaant raasta dhoondo.",
+    "recap": "Pehla raahdeep jal gaya aur Chanda ko Purane Rakshak ke Lantern ke nishaan wala panna mila. Sadak aage soye hue mendhakon aur doosre andhere raahdeep tak jaati hai.",
+    "goal": "Doosra raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Doosra raahdeep chamak utha. Chanda ko andar ek note mila: \"Madhumakkhiyan mujhe yaad hain.\" Purane Rakshak madhumakkhiyon ke paas kyun aaye the?"
+  },
+  "levels": [
+    {
+      "id": "5-1",
+      "name": "The Sleeping Ditch",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "fixed": [[0, 0, "sun"]],
+      "rocks": [],
+      "pouch": { "reed": 1 },
+      "goals": [[1, 1, "on", "moth"], [0, 2, "off", "toad"]],
+      "solution": [[1, 0, "reed"]],
+      "intro": "A moth waits by the ditch, and a toad sleeps nearby. Your Sunbell is already glowing. You have one Reed. Can the moth find warmth while the toad rests?",
+      "hints": [
+        "Which patch touches the Sunbell and the moth?",
+        "Look beside the moth. Which of its neighboring patches stays away from the toad?"
+      ],
+      "success": "The moth found warmth, and the toad slept on.",
+      "story": {
+        "goal": "Warm the moth without waking the toad.",
+        "reward": "Chanda spots the next sleeping ditch.",
+        "intro": "A moth pauses beside a ditch where a toad is curled up for a nap. Chanda wants them both to feel at home.",
+        "next": "A moth waits around the next bend. A toad sleeps beside the easiest-looking path."
+      },
+      "page": ["A Quiet Ditch", "One Reed brought warmth to the moth without disturbing the sleeping toad. Chanda follows the quiet path onward."],
+      "hi": {
+        "name": "Soya hua kinaara",
+        "intro": "Khaai ke paas ek patanga intezaar kar raha hai aur paas hi ek mendhak so raha hai. Surajmukhi pehle se chamak raha hai. Aapke paas ek Narkat hai. Kya patange ko garmahat milegi aur mendhak sota rahega?",
+        "hints": [
+          "Kaunsi jagah Surajmukhi aur patange dono ke paas hai?",
+          "Patange ke paas dekho. Kaunsi jagah mendhak se door rahegi?"
+        ],
+        "success": "Patange ko garmahat mili aur mendhak sota raha.",
+        "story": {
+          "goal": "Mendhak ko jagaye bina patange ko garmahat do.",
+          "reward": "Chanda ko aage ek aur soyi khaai dikhti hai.",
+          "intro": "Khaai ke paas ek patanga ruka hai. Mendhak gol hokar jhapki le raha hai. Chanda chahti hai ki dono aaram se rahen.",
+          "next": "Agle mod par ek patanga intezaar kar raha hai. Sabse aasaan dikhne wale raaste ke paas ek mendhak so raha hai."
+        },
+        "page": ["Shaant khaai", "Ek Narkat se patange ko garmahat mili aur soya mendhak nahi jaaga. Chanda shaant raaste par aage chalti hai."]
+      }
+    },
+    {
+      "id": "5-2",
+      "name": "The Easy Shortcut",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "fixed": [[0, 0, "sun"]],
+      "rocks": [],
+      "pouch": { "reed": 3 },
+      "goals": [[2, 2, "on", "moth"], [0, 2, "off", "toad"]],
+      "solution": [[1, 0, "reed"], [1, 1, "reed"], [2, 1, "reed"]],
+      "intro": "A moth waits around the bend. A toad sleeps beside the short way across the top. You have three Reeds. Which way is quiet enough?",
+      "hints": [
+        "Which way to the moth passes right beside the toad?",
+        "Look at the patch under the toad. Can the light turn down before it gets there?"
+      ],
+      "success": "The light turned down early, and the moth got warm while the toad slept on.",
+      "story": {
+        "goal": "Warm the moth and let the toad sleep.",
+        "reward": "The quiet route leads to a fork.",
+        "intro": "A moth waits around the bend. The toad beside the short path has finally found a quiet place to sleep.",
+        "next": "At the fork, two paths pass a sleepy toad. Two moths are waiting beyond it."
+      },
+      "page": ["The Lower Path", "The shortest-looking route ran right past the toad. Turning down one step early kept it asleep and still reached the moth."],
+      "hi": {
+        "name": "Aasaan shortcut",
+        "intro": "Mod ke paas ek patanga intezaar kar raha hai. Upar ke chhote raaste ke paas ek mendhak so raha hai. Aapke paas teen Narkat hain. Kaunsa raasta shaant hai?",
+        "hints": [
+          "Patange tak kaunsa raasta mendhak ke bilkul paas se jaata hai?",
+          "Mendhak ke neeche wali jagah dekho. Kya roshni wahan pahunchne se pehle neeche mud sakti hai?"
+        ],
+        "success": "Roshni pehle hi neeche mud gayi. Patange ko garmahat mili aur mendhak sota raha.",
+        "story": {
+          "goal": "Patange ko garmahat do aur mendhak ko sone do.",
+          "reward": "Shaant raasta ek fork tak jaata hai.",
+          "intro": "Mod ke paas ek patanga intezaar kar raha hai. Chhote raaste ke paas mendhak ko aakhir ek shaant jagah mil gayi hai.",
+          "next": "Fork par do raaste ek soye mendhak ke paas se jaate hain. Uske aage do patange intezaar karte hain."
+        },
+        "page": ["Neeche ka raasta", "Sabse chhota dikhne wala raasta mendhak ke bilkul paas se jaata tha. Ek kadam pehle neeche mudne se woh sota raha aur patanga bhi garam hua."]
+      }
+    },
+    {
+      "id": "5-3",
+      "name": "Around the Toad",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"]],
+      "rocks": [[3, 0]],
+      "pouch": { "reed": 6 },
+      "goals": [[2, 4, "on", "moth"], [4, 0, "on", "moth"], [1, 3, "off", "toad"]],
+      "solution": [[2, 1, "reed"], [3, 1, "reed"], [3, 2, "reed"], [3, 3, "reed"], [3, 4, "reed"], [4, 1, "reed"]],
+      "intro": "A Sunbell stands at the left of the fork. Two moths wait on different paths. A toad rests near the middle. You have six Reeds. Can one path reach both moths?",
+      "hints": [
+        "Which side of the sleeping toad has room for a path?",
+        "Look along the row below the toad. Where can the light branch toward each moth?"
+      ],
+      "success": "One quiet path reached both moths without lighting the toad's corner.",
+      "story": {
+        "goal": "Reach both moths around the sleeping toad.",
+        "reward": "The travellers point toward the second waystone.",
+        "intro": "A toad rests at the fork while two moths wait on different paths. Chanda hopes one quiet route can help them both.",
+        "next": "The second waystone is close. A rock blocks the upper path, and a moth waits across the ditch."
+      },
+      "page": ["The Fork", "One path passed below the sleeping toad and reached two different places. The second waystone is close."],
+      "hi": {
+        "name": "Mendhak ke paar",
+        "intro": "Fork ke baayi taraf ek Surajmukhi hai. Do patange alag raaston par intezaar karte hain. Beech ke paas ek mendhak aaram kar raha hai. Aapke paas chhe Narkat hain. Kya ek raasta dono tak ja sakta hai?",
+        "hints": [
+          "Soye mendhak ke kis taraf raaste ke liye jagah hai?",
+          "Mendhak ke neeche wali row dekho. Roshni dono patangon ki taraf kahan ja sakti hai?"
+        ],
+        "success": "Ek shaant raasta dono patangon tak gaya aur mendhak ke kone ko andhera rakha.",
+        "story": {
+          "goal": "Soye mendhak se bachkar dono patangon tak jao.",
+          "reward": "Raahi doosre raahdeep ki taraf ishaara karte hain.",
+          "intro": "Fork par ek mendhak aaram kar raha hai aur do patange alag raaston par intezaar karte hain. Chanda chahti hai ki ek shaant raasta dono ki madad kare.",
+          "next": "Doosra raahdeep paas hai. Ek patthar upar ka raasta rokta hai aur khaai ke us paar ek patanga intezaar karta hai."
+        },
+        "page": ["Raaston ka fork", "Ek raasta soye mendhak ke neeche se guzra aur do alag jagahon tak pahuncha. Doosra raahdeep paas hai."]
+      }
+    },
+    {
+      "id": "5-4",
+      "name": "The Blocked Trail",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"]],
+      "rocks": [[0, 3]],
+      "pouch": { "reed": 8 },
+      "goals": [[2, 4, "on", "moth"], [2, 2, "off", "toad"]],
+      "solution": [[3, 0, "reed"], [4, 0, "reed"], [4, 1, "reed"], [4, 2, "reed"], [4, 3, "reed"], [4, 4, "reed"], [3, 4, "reed"]],
+      "intro": "A moth waits beyond the ditch. A toad sleeps in the middle, and a rock blocks the upper trail. You have eight Reeds. Find the long, quiet way around.",
+      "hints": [
+        "Which path stays two steps from the toad?",
+        "The rock closes the upper trail. Which row can carry the light below the ditch?"
+      ],
+      "success": "The long path kept the toad asleep and brought the moth home.",
+      "story": {
+        "goal": "Reach the moth by the quiet lower trail.",
+        "reward": "The second waystone begins to glow.",
+        "intro": "One rock lies across the upper trail. A toad sleeps by the ditch, and a moth waits on the far side.",
+        "next": "One more group waits at the waystone. Two toads want quiet while two moths need warmth."
+      },
+      "page": ["The Long Way", "The upper trail was blocked, so the light followed the lower path around the sleeping toad."],
+      "hi": {
+        "name": "Band raasta",
+        "intro": "Khaai ke us paar ek patanga intezaar karta hai. Beech mein ek mendhak so raha hai aur patthar upar ka raasta rokta hai. Aapke paas aath Narkat hain. Lamba, shaant raasta dhoondo.",
+        "hints": [
+          "Kaunsa raasta mendhak se do kadam door rehta hai?",
+          "Patthar upar ka raasta rokta hai. Kaunsi row khaai ke neeche se roshni le ja sakti hai?"
+        ],
+        "success": "Lambe raaste ne mendhak ko sone diya aur patange ko ghar pahunchaya.",
+        "story": {
+          "goal": "Shaant neeche ke raaste se patange tak jao.",
+          "reward": "Doosra raahdeep chamakne lagta hai.",
+          "intro": "Upar ke raaste par ek patthar pada hai. Khaai ke paas ek mendhak so raha hai aur doosri taraf ek patanga intezaar karta hai.",
+          "next": "Raahdeep par ek samooh aur intezaar karta hai. Do mendhakon ko shaanti aur do patangon ko garmahat chahiye."
+        },
+        "page": ["Lamba raasta", "Upar ka raasta band tha, isliye roshni soye mendhak se bachkar neeche se gayi."]
+      }
+    },
+    {
+      "id": "5-5",
+      "name": "The Second Waystone",
+      "kind": "light",
+      "rows": 6,
+      "cols": 6,
+      "fixed": [[3, 0, "sun"]],
+      "rocks": [[2, 2]],
+      "pouch": { "reed": 6 },
+      "goals": [[0, 3, "on", "moth"], [5, 1, "on", "moth"], [0, 0, "off", "toad"], [1, 4, "off", "toad"]],
+      "solution": [[0, 2, "reed"], [1, 1, "reed"], [1, 2, "reed"], [2, 1, "reed"], [3, 1, "reed"], [4, 1, "reed"]],
+      "intro": "Two moths wait by the second waystone, one high and one low. Two toads sleep near the top. A rock sits in the way. You have six Reeds.",
+      "hints": [
+        "One path can split in two. Where could it branch toward the lower moth?",
+        "Near the top, which patch beside the moth stays away from both toads?"
+      ],
+      "success": "One path split two ways, both moths found warmth, both toads slept on, and the waystone shone.",
+      "story": {
+        "goal": "Help both moths and let both toads sleep.",
+        "reward": "A note from the Old Keeper points to the bees.",
+        "intro": "At the second waystone, one moth waits up high and one waits down low. Two toads have curled up near the top. Chanda asks you to help them all.",
+        "next": "The waystone glows, and Chanda reads a note: the bees remember the Old Keeper. What did they see?"
+      },
+      "page": ["The Bees Remember", "The second waystone lit the road. Inside, Chanda found a note saying the bees remember the Old Keeper."],
+      "hi": {
+        "name": "Doosra raahdeep",
+        "intro": "Doosre raahdeep ke paas do patange hain, ek upar aur ek neeche. Upar ki taraf do mendhak so rahe hain. Raaste mein ek patthar hai. Aapke paas chhe Narkat hain.",
+        "hints": [
+          "Ek raasta do hisson mein bant sakta hai. Neeche wale patange ki taraf woh kahan mud sakta hai?",
+          "Upar patange ke paas kaunsi jagah dono mendhakon se door rehti hai?"
+        ],
+        "success": "Ek raasta do taraf bata, dono patangon ko garmahat mili, dono mendhak sote rahe aur raahdeep chamak utha.",
+        "story": {
+          "goal": "Dono patangon ki madad karo aur mendhakon ko sone do.",
+          "reward": "Purane Rakshak ka note madhumakkhiyon tak le jaata hai.",
+          "intro": "Doosre raahdeep par ek patanga upar aur ek neeche intezaar karta hai. Upar ki taraf do mendhak gol hokar so gaye hain. Chanda sabki madad karna chahti hai.",
+          "next": "Raahdeep chamak utha aur Chanda ne note padha: madhumakkhiyan Purane Rakshak ko yaad karti hain. Unhone kya dekha?"
+        },
+        "page": ["Madhumakkhiyan yaad karti hain", "Doosre raahdeep ne sadak roshan ki. Andar Chanda ko ek note mila, jis mein likha tha ki madhumakkhiyan Purane Rakshak ko yaad karti hain."]
+      }
+    }
+  ]
+}

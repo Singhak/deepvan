@@ -9,6 +9,8 @@ The game fetches `chapters.json` at start, then only the chapters the player has
 
 ## Adding content
 
+New chapters follow the rules in [AUTHORING.md](AUTHORING.md), the plan in [ROADMAP.md](ROADMAP.md) and the world in [STORY_BIBLE.md](STORY_BIBLE.md). This section is only the mechanics.
+
 - **A level:** add it to the `levels` array of its chapter file, then bump that chapter's `levels` count in `chapters.json`.
 - **A chapter:** create `c4.json`, then add an entry to the end of `chapters.json`.
 - **Check and publish:** run `node build.js`. It checks every level, including that each `solution` really solves it, and refuses to build if something is wrong. Then upload this folder with `index.html` to your server. `play-offline.html` gets everything baked in.

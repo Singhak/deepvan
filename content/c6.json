@@ -1,0 +1,231 @@
+{
+  "id": "c6",
+  "name": "The beehive hollow",
+  "plants": [],
+  "reveal": {
+    "title": "You found still lifes",
+    "lede": "In Conway's Game of Life, patterns that never change are called still lifes. The beehive, loaf, boat, tub and block are real examples, named for the shapes they resemble."
+  },
+  "open": "The road ends at a hollow tree. Bees have kept the Old Keeper's note safe. Their Glowmoss holds shapes from long ago, and the bees hope some will stay through winter.",
+  "story": "At the hollow tree, bees have kept another note from the Old Keeper. They ask for Glowmoss shapes that will stay through winter. Help the bees, then follow the note's next clue.",
+  "recap": "Chanda carried light past the sleeping toads. At the second waystone, a note said the bees remember the Old Keeper.",
+  "goal": "Light the third waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The third waystone glows. The bees remember the Old Keeper crossing a bridge that opens with light on both sides. How can one Sunbell reach both arms?",
+  "hi": {
+    "name": "Chhatte wali khoh",
+    "title": "Aapne still lifes dhoondh liye",
+    "lede": "Conway ke Game of Life mein jo patterns kabhi nahi badalte, unhe still lifes kehte hain. Beehive, loaf, boat, tub aur block asli examples hain, jin ke naam unke shapes jaise hain.",
+    "open": "Sadak ek khokhle ped tak pahunchti hai. Madhumakkhiyon ne Purane Rakshak ka note sambhaal kar rakha hai. Unki Jaadui Kaai mein purane shapes hain, aur woh chahti hain ki kuch sardi bhar tik jaayen.",
+    "story": "Khokhle ped mein madhumakkhiyon ne Purane Rakshak ka ek aur note sambhaal rakha hai. Woh aise Jaadui Kaai ke shapes chahti hain jo sardi bhar tike rahen. Unki madad karo, phir note ka agla nishaan dhoondo.",
+    "recap": "Chanda ne soye mendhakon ke paas se roshni pahunchayi. Doosre raahdeep par ek note tha: madhumakkhiyan Purane Rakshak ko yaad karti hain.",
+    "goal": "Teesra raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Teesra raahdeep chamak utha. Madhumakkhiyon ko yaad hai ki Purane Rakshak ek aise pul par gaye the jo dono taraf ki roshni se khulta hai. Ek Surajmukhi dono taraf roshni kaise bhejega?"
+  },
+  "levels": [
+    {
+      "id": "6-1",
+      "name": "The Little Boat",
+      "kind": "life",
+      "rows": 4,
+      "cols": 4,
+      "nights": 1,
+      "fixed": [[1, 1, "moss"], [1, 2, "moss"], [2, 1, "moss"], [2, 3, "moss"]],
+      "pouch": { "moss": 1 },
+      "goals": [[1, 2, "on", "beetle"], [2, 3, "on", "beetle"]],
+      "solution": [[3, 2, "moss"]],
+      "intro": "Four Glowmoss patches make most of a little boat, but its tip is missing. Two beetles rest on the moss and want it to stay. You have one patch.",
+      "hints": [
+        "The old patches nearly make a small boat. Which end looks unfinished?",
+        "Look below the beetles. Where would the boat's pointed tip be?"
+      ],
+      "success": "The tip completed the boat, and the beetles' moss stayed.",
+      "story": {
+        "goal": "Complete the little boat and help the beetles.",
+        "reward": "The bees show you a hollow shape.",
+        "intro": "Two beetles found an old boat-shaped Glowmoss patch in the hollow tree. Its tip is missing, and they ask you to help.",
+        "next": "The bees show you a hollow shape with moss around its edge. A toad hopes to rest in its middle."
+      },
+      "page": ["The Little Boat", "The last patch completed the little boat. By morning, all five Glowmoss patches remained."],
+      "hi": {
+        "name": "Chhoti naav",
+        "intro": "Jaadui Kaai ke chaar patches lagbhag ek chhoti naav banate hain, par uski nok gayab hai. Do beetles kaai par baithe hain aur chahte hain ki woh tiki rahe. Aapke paas ek patch hai.",
+        "hints": [
+          "Purane patches lagbhag ek chhoti naav banate hain. Kaunsa sira adhoora lagta hai?",
+          "Beetles ke neeche dekho. Naav ki nukeeli nok kahan hogi?"
+        ],
+        "success": "Nok ne naav poori kar di aur beetles ki kaai tiki rahi.",
+        "story": {
+          "goal": "Chhoti naav poori karo aur beetles ki madad karo.",
+          "reward": "Madhumakkhiyan ek khaali shape dikhati hain.",
+          "intro": "Do beetles ko khokhle ped mein Jaadui Kaai ki purani naav mili. Uski nok gayab hai, aur woh madad maangte hain.",
+          "next": "Madhumakkhiyan kinaare par kaai wale ek khokhle shape ko dikhati hain. Ek mendhak uske beech mein aaram karna chahta hai."
+        },
+        "page": ["Chhoti naav", "Aakhri patch se chhoti naav poori ho gayi. Subah tak Jaadui Kaai ke paanchon patches tik gaye."]
+      }
+    },
+    {
+      "id": "6-2",
+      "name": "The Open Tub",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 2,
+      "fixed": [[1, 2, "moss"], [2, 1, "moss"]],
+      "pouch": { "moss": 2 },
+      "goals": [[1, 2, "on", "beetle"], [2, 1, "on", "beetle"], [2, 3, "on", "beetle"], [2, 2, "off", "toad"]],
+      "solution": [[2, 3, "moss"], [3, 2, "moss"]],
+      "intro": "Three beetles want Glowmoss around a hollow center for two nights, and a toad rests in the middle. Two patches are already there. You have two more.",
+      "hints": [
+        "Where are the two gaps around the hollow center?",
+        "Look at the top, bottom and sides. Which two patches complete the edge?"
+      ],
+      "success": "Glowmoss stayed around the open center, night after night.",
+      "story": {
+        "goal": "Keep the beetles on the moss and the middle clear.",
+        "reward": "A tiny new footprint appears beside the hollow.",
+        "intro": "Three beetles want a moss shape with an open middle, where a toad likes to rest. The bees have seen it stay through many cold nights.",
+        "next": "A new footprint appears beside the hollow. It begins with three little patches."
+      },
+      "page": ["The Open Center", "Four patches held their places around an open center. The beetles stayed, and the toad rested in the middle."],
+      "hi": {
+        "name": "Khula tub",
+        "intro": "Teen beetles ko do raat tak khaali beech ke aas-paas Jaadui Kaai chahiye, aur beech mein ek mendhak aaram karta hai. Do patches pehle se hain. Aapke paas do aur hain.",
+        "hints": [
+          "Khaali beech ke aas-paas do khaali jagah kahan hain?",
+          "Upar, neeche aur dono taraf dekho. Kaun se do patches kinaara poora karenge?"
+        ],
+        "success": "Khaali beech ke chaaron taraf Jaadui Kaai har raat tiki rahi.",
+        "story": {
+          "goal": "Beetles ko kaai par tikao aur beech khaali rakho.",
+          "reward": "Khaali jagah ke paas ek naya nishaan dikhta hai.",
+          "intro": "Teen beetles ko beech mein khaali jagah wala kaai ka shape chahiye, jahan ek mendhak aaram karta hai. Madhumakkhiyon ne ise kai thandi raaton tak tikte dekha hai.",
+          "next": "Khaali shape ke paas ek naya nishaan dikhta hai. Woh teen chhote patches se shuru hota hai."
+        },
+        "page": ["Khaali beech", "Chaar patches khaali beech ke aas-paas apni jagah par rahe. Beetles wahin rahe aur mendhak beech mein aaram karta raha."]
+      }
+    },
+    {
+      "id": "6-3",
+      "name": "A New Footprint",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 2,
+      "fixed": [],
+      "pouch": { "moss": 3 },
+      "goals": [[1, 1, "on", "beetle"], [2, 2, "on", "beetle"]],
+      "solution": [[1, 1, "moss"], [1, 2, "moss"], [2, 1, "moss"]],
+      "intro": "Two beetles wait at opposite corners of a Glowmoss square they remember. You have only three patches. Can the whole square still be there at dawn?",
+      "hints": [
+        "Which three corners could surround the empty spot?",
+        "Look at the square the beetles want. What could grow in its open corner?"
+      ],
+      "success": "One new patch grew, and the four-corner square stayed.",
+      "story": {
+        "goal": "Grow the square the beetles remember.",
+        "reward": "A dark hollow waits inside the bees' honeycomb.",
+        "intro": "The beetles remember a square footprint, but only three patches remain. They want to see the old shape return and stay.",
+        "next": "The bees point to their honeycomb. Two toads sleep close beside it."
+      },
+      "page": ["A New Footprint", "Three Glowmoss patches made one more grow. Together they formed a square that stayed and stayed."],
+      "hi": {
+        "name": "Naya nishaan",
+        "intro": "Do beetles ek yaad kiye hue Jaadui Kaai square ke aamne-saamne konon par intezaar karte hain. Aapke paas sirf teen patches hain. Kya subah tak poora square ban sakta hai?",
+        "hints": [
+          "Kaun se teen kone khaali jagah ko gher sakte hain?",
+          "Beetles ke square ko dekho. Khaali kone mein kya ug sakta hai?"
+        ],
+        "success": "Ek naya patch uga aur chaar konon wala square tik gaya.",
+        "story": {
+          "goal": "Beetles ka yaad kiya square ugao.",
+          "reward": "Madhumakkhiyon ke chhatte mein ek shaant khaali jagah hai.",
+          "intro": "Beetles ko ek square nishaan yaad hai, par ab sirf teen patches bache hain. Woh purana shape phir se dekhna aur use tikte hue paana chahte hain.",
+          "next": "Madhumakkhiyan apne chhatte ki taraf ishaara karti hain. Uske bilkul paas do mendhak so rahe hain."
+        },
+        "page": ["Naya nishaan", "Jaadui Kaai ke teen patches se ek aur uga. Saath milkar unhone ek aisa square banaya jo tika hi raha."]
+      }
+    },
+    {
+      "id": "6-4",
+      "name": "The Honeycomb",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 3,
+      "fixed": [[1, 2, "moss"], [1, 3, "moss"], [2, 1, "moss"]],
+      "pouch": { "moss": 3 },
+      "goals": [[1, 2, "on", "beetle"], [2, 1, "on", "beetle"], [3, 3, "on", "beetle"], [1, 4, "off", "toad"], [4, 2, "off", "toad"]],
+      "solution": [[2, 4, "moss"], [3, 2, "moss"], [3, 3, "moss"]],
+      "intro": "Three beetles wait on the bees' Glowmoss honeycomb. Two toads sleep close beside it. You have three patches. Which shape stays and leaves the toads in peace?",
+      "hints": [
+        "The old patches could grow into more than one lasting shape. Which shapes would reach a toad?",
+        "Look at the toad below. Which shape keeps its spot empty and still covers all three beetles?"
+      ],
+      "success": "The honeycomb settled into its six-sided shape, and both toads slept on.",
+      "story": {
+        "goal": "Make the honeycomb stay and let the toads sleep.",
+        "reward": "The bees share one more old shape.",
+        "intro": "The bees show you their honeycomb in the Glowmoss. Two toads have curled up right next to it, and they hope the moss stays away.",
+        "next": "One last shape waits for winter. It looks like a little loaf, and a toad wants to rest inside it."
+      },
+      "page": ["The Bees' Shape", "A loaf would have stayed too, but it would have grown onto a toad. The six-sided honeycomb stayed and kept clear of them both."],
+      "hi": {
+        "name": "Madhumakkhiyon ka chhatta",
+        "intro": "Teen beetles madhumakkhiyon ke Jaadui Kaai wale chhatte par intezaar karte hain. Uske paas do mendhak so rahe hain. Aapke paas teen patches hain. Kaunsa shape tikega aur mendhakon ko chain dega?",
+        "hints": [
+          "Purane patches se ek se zyada tikne wale shapes ban sakte hain. Kaun se shapes mendhak tak pahunchenge?",
+          "Neeche wale mendhak ko dekho. Kaunsa shape uski jagah khaali rakhega aur teeno beetles tak bhi pahunchega?"
+        ],
+        "success": "Chhatta apne chhe kone wale shape mein tik gaya aur dono mendhak sote rahe.",
+        "story": {
+          "goal": "Chhatte ko tikao aur mendhakon ko sone do.",
+          "reward": "Madhumakkhiyan ek aur purana shape dikhati hain.",
+          "intro": "Madhumakkhiyan Jaadui Kaai mein apna chhatta dikhati hain. Uske bilkul paas do mendhak gol hokar so gaye hain, aur chahte hain ki kaai unse door rahe.",
+          "next": "Sardi ke liye ek aakhri shape hai. Woh chhote loaf jaisa dikhta hai, aur ek mendhak uske andar aaram karna chahta hai."
+        },
+        "page": ["Madhumakkhiyon ka shape", "Loaf bhi tik jaata, par woh ek mendhak par ug jaata. Chhe kone wala chhatta tika raha aur dono mendhakon se door raha."]
+      }
+    },
+    {
+      "id": "6-5",
+      "name": "The Winter Loaf",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 2,
+      "fixed": [[1, 3, "moss"], [2, 4, "moss"], [3, 2, "moss"], [3, 4, "moss"]],
+      "pouch": { "moss": 3 },
+      "goals": [[1, 2, "on", "beetle"], [2, 1, "on", "beetle"], [3, 4, "on", "beetle"], [2, 2, "off", "toad"], [3, 1, "off", "toad"], [4, 2, "off", "toad"]],
+      "solution": [[1, 2, "moss"], [2, 1, "moss"], [4, 3, "moss"]],
+      "intro": "Three beetles want a Glowmoss loaf that stays through winter. One toad rests in its hollow, and two more sleep beside it. You have three patches.",
+      "hints": [
+        "The beetles show two of the loaf's corners. Where is the third piece missing?",
+        "Look below the loaf, between the toads. Which patch closes its round end?"
+      ],
+      "success": "The loaf stayed whole, every beetle found its place, and all three toads slept on.",
+      "story": {
+        "goal": "Help the beetles and let all three toads sleep.",
+        "reward": "The bees remember where the Old Keeper went next.",
+        "intro": "The bees remember one last shape from the Old Keeper's visits. Three beetles want to rest on its moss, while three toads ask for quiet corners.",
+        "next": "The bees remember the Old Keeper crossing toward a bridge with two arms. Chanda is ready to lead you there."
+      },
+      "page": ["The Winter Shape", "The loaf of Glowmoss stayed, with a toad asleep in its hollow. The bees remember the Old Keeper leaving toward a bridge with two arms."],
+      "hi": {
+        "name": "Sardi ka loaf",
+        "intro": "Teen beetles ko aisa Jaadui Kaai ka loaf chahiye jo sardi bhar tike. Ek mendhak uske khaali beech mein aaram karta hai aur do uske paas so rahe hain. Aapke paas teen patches hain.",
+        "hints": [
+          "Beetles loaf ke do kone dikhate hain. Teesra hissa kahan gayab hai?",
+          "Loaf ke neeche, mendhakon ke beech dekho. Kaunsa patch uska gol sira band karega?"
+        ],
+        "success": "Loaf poora tika raha, har beetle ko apni jagah mili aur teeno mendhak sote rahe.",
+        "story": {
+          "goal": "Beetles ki madad karo aur teeno mendhakon ko sone do.",
+          "reward": "Madhumakkhiyon ko yaad hai Purane Rakshak aage kahan gaye.",
+          "intro": "Madhumakkhiyon ko Purane Rakshak ki mulaqat ka ek aakhri shape yaad hai. Teen beetles uski kaai par aaram karna chahte hain aur teen mendhakon ko shaant kone chahiye.",
+          "next": "Madhumakkhiyon ko yaad hai ki Purane Rakshak do baahon wale pul ki taraf gaye. Chanda aapko wahan le jaane ke liye taiyaar hai."
+        },
+        "page": ["Sardi ka shape", "Jaadui Kaai ka loaf tika raha aur uske khaali beech mein ek mendhak sota raha. Madhumakkhiyon ko yaad hai ki Purane Rakshak do baahon wale pul ki taraf gaye."]
+      }
+    }
+  ]
+}

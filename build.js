@@ -1,12 +1,14 @@
 // Builds the playable files from game.src.html, engine.js and content/:  node build.js
 //  index.html        engine inlined; fetches content/ from the server, one chapter at a time as each one opens
 //  play-offline.html one self-contained file (engine and every content file inlined) to share or open anywhere
-// Every chapter and level is checked first; the build stops if anything is broken.
+// Every chapter and level is checked first (engine.js: playable; lint.js: follows content/AUTHORING.md);
+// the build stops if anything is broken.
 const fs = require('fs');
 const path = require('path');
 const here = f => path.join(__dirname, f);
 const read = f => fs.readFileSync(here(f), 'utf8');
 const { validateLevel } = require('./engine.js');
+const { lintContent } = require('./lint.js');
 
 const engineSrc = read('engine.js');
 const engine = engineSrc.slice(engineSrc.indexOf('// ENGINE START'), engineSrc.indexOf('// ENGINE END') + '// ENGINE END'.length);
@@ -43,6 +45,12 @@ chapters.forEach((m, i) => {
     levels++;
   });
 });
+// The design rules in content/AUTHORING.md (curve, structure, text); only worth running on playable levels
+if (!errors.length) {
+  const lint = lintContent(content);
+  errors.push(...lint.errors);
+  if (lint.warnings.length) console.warn('Warnings (the build still runs):\n - ' + lint.warnings.join('\n - '));
+}
 if (errors.length) {
   console.error('content/ has problems, nothing was built:\n - ' + errors.join('\n - '));
   process.exit(1);

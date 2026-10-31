@@ -1,0 +1,231 @@
+{
+  "id": "c4",
+  "name": "The lantern road",
+  "plants": [],
+  "reveal": {
+    "title": "You built a power grid",
+    "lede": "One source can send power down branching wires to many places. Real power grids do the same, carrying electricity from power stations to homes across a town."
+  },
+  "open": "\"See that road of little lights? Every waystone on it is dark,\" says the owl. \"Chanda the firefly has walked it. Let's follow her to the first bend.\"",
+  "story": "The Lantern Road begins beyond Deepvan. Chanda knows its bends, but its waystones are dark and travellers are waiting. Help the first groups find a warm place, and follow the Old Keeper's trail.",
+  "recap": "The Great Lantern shines again. Its light reaches beyond Deepvan and shows the Lantern Road, lined with dark waystones.",
+  "goal": "Light the first waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The first waystone glows. Chanda finds a scrap inside, marked with the Old Keeper's lantern. Did the Old Keeper walk this road?",
+  "hi": {
+    "name": "Lantern ki sadak",
+    "title": "Aapne power grid banaya",
+    "lede": "Ek source se power kai raaston mein bantkar alag-alag jagah tak pahunch sakti hai. Asli power grids bhi power station se bijli ko shehar ke gharon tak le jaate hain.",
+    "open": "\"Woh chhote lanternon wali sadak dekh rahe ho? Uske saare raahdeep bujhe hain,\" Ullu kehta hai. \"Chanda jugnu us par chal chuki hai. Chalo, uske saath pehle mod tak chalein.\"",
+    "story": "Lantern ki sadak Deepvan ke baahar shuru hoti hai. Chanda ko iske mod pata hain, par raahdeep bujhe hain aur raahi intezaar kar rahe hain. Pehle samooh ko garam jagah do aur Purane Rakshak ke nishaan dhoondo.",
+    "recap": "Bada Lantern phir jal raha hai. Uski roshni Deepvan ke paar pahunchi aur Lantern ki sadak dikhayi, jiske raahdeep andhere mein hain.",
+    "goal": "Pehla raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Pehla raahdeep chamak utha. Chanda ko andar ek chhota panna mila, jis par Purane Rakshak ka Lantern bana hai. Kya Purane Rakshak is sadak par aaye the?"
+  },
+  "levels": [
+    {
+      "id": "4-1",
+      "name": "At the first bend",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "fixed": [[1, 1, "sun"]],
+      "rocks": [],
+      "pouch": { "reed": 1 },
+      "goals": [[0, 2, "on", "moth"], [2, 2, "on", "moth"]],
+      "solution": [[1, 2, "reed"]],
+      "intro": "Chanda has found two moths at the first bend. One Sunbell is already growing nearby. You have one Reed. Which patch could help both?",
+      "hints": [
+        "Which empty patch touches both moths?",
+        "Look between the two moths. Which patch also touches the Sunbell?"
+      ],
+      "success": "One Reed helped both moths find a warm patch.",
+      "story": {
+        "goal": "Warm both moths at the bend.",
+        "reward": "The first travellers point down the road.",
+        "intro": "Chanda the firefly waits at the bend with two moths. They each want a warm place before they travel on.",
+        "next": "More moths are waiting across a long ditch. Chanda knows a way around it."
+      },
+      "page": ["The first bend", "Two moths found warmth beside the first waystone. Chanda says the road carries on past a wide ditch."],
+      "hi": {
+        "name": "Pehla mod",
+        "intro": "Chanda ko pehle mod par do patange mile hain. Paas mein ek Surajmukhi pehle se uga hai. Aapke paas ek Narkat hai. Kaunsi jagah dono ki madad karegi?",
+        "hints": [
+          "Kaunsi khaali jagah dono patangon ko chhooti hai?",
+          "Dono patangon ke beech dekho. Kaunsi jagah Surajmukhi ko bhi chhooti hai?"
+        ],
+        "success": "Ek Narkat ne dono patangon ko garam jagah dila di.",
+        "story": {
+          "goal": "Mod par dono patangon ko garam jagah do.",
+          "reward": "Pehle raahi sadak ki taraf ishaara karte hain.",
+          "intro": "Chanda jugnu mod par do patangon ke saath intezaar karti hai. Aage jaane se pehle dono ko ek garam jagah chahiye.",
+          "next": "Lambi khaai ke us paar aur patange intezaar kar rahe hain. Chanda ko uske paar jaane ka raasta pata hai."
+        },
+        "page": ["Pehla mod", "Pehle raahdeep ke paas do patangon ko garmahat mili. Chanda kehti hai ki sadak ek chaudi khaai ke paar bhi jaati hai."]
+      }
+    },
+    {
+      "id": "4-2",
+      "name": "Across the ditch",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"]],
+      "rocks": [],
+      "pouch": { "reed": 5 },
+      "goals": [[0, 3, "on", "moth"], [4, 3, "on", "moth"]],
+      "solution": [[2, 1, "reed"], [2, 2, "reed"], [2, 3, "reed"], [1, 3, "reed"], [3, 3, "reed"]],
+      "intro": "A Sunbell marks the path. Two moths wait on the far side of the ditch, one above the other. You have five Reeds.",
+      "hints": [
+        "Which row can carry the light toward both moths?",
+        "Look where the path could split. Which patches lead from there to each moth?"
+      ],
+      "success": "One path reached the ditch, then light took two branches.",
+      "story": {
+        "goal": "Reach the moths across the ditch.",
+        "reward": "The travellers show Chanda a fork in the road.",
+        "intro": "Two moths wait on the far bank. Chanda wants them to rest before the long walk to the first waystone.",
+        "next": "The road crosses a line of stepping stones. A snail is sleeping there, under a Shadefern."
+      },
+      "page": ["The far bank", "The light reached both sides of the ditch. On the road ahead, one path becomes two."],
+      "hi": {
+        "name": "Khaai ke us paar",
+        "intro": "Ek Surajmukhi raasta dikha raha hai. Khaai ke paar do patange intezaar kar rahe hain, ek upar aur ek neeche. Aapke paas paanch Narkat hain.",
+        "hints": [
+          "Kaunsi row dono patangon ki taraf roshni le ja sakti hai?",
+          "Jahan raasta bant sakta hai wahan dekho. Wahan se kaunsi jagah dono patangon tak jaati hai?"
+        ],
+        "success": "Ek raasta khaai tak gaya, phir roshni do taraf banti hai.",
+        "story": {
+          "goal": "Khaai ke paar patangon tak pahunchao.",
+          "reward": "Raahi Chanda ko sadak ka ek fork dikhate hain.",
+          "intro": "Do patange khaai ke us paar intezaar kar rahe hain. Chanda chahti hai ki pehle raahdeep tak lambi chaal se pehle dono aaram karein.",
+          "next": "Aage sadak kuch pattharon ke upar se guzarti hai. Wahan ek ghonga Raat Rani ke neeche so raha hai."
+        },
+        "page": ["Doosra kinaara", "Roshni khaai ke dono taraf pahunchi. Aage sadak ek jagah par do raaston mein bant-ti hai."]
+      }
+    },
+    {
+      "id": "4-3",
+      "name": "Over the stepping stones",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"], [2, 3, "fern"]],
+      "rocks": [[1, 2]],
+      "pouch": { "reed": 7 },
+      "goals": [[0, 3, "on", "moth"], [4, 3, "on", "moth"], [2, 3, "on", "snail"]],
+      "solution": [[2, 1, "reed"], [1, 1, "reed"], [0, 1, "reed"], [0, 2, "reed"], [3, 1, "reed"], [4, 1, "reed"], [4, 2, "reed"]],
+      "intro": "A snail sleeps under a Shadefern by the stepping stones, and two moths wait beyond it. You have seven Reeds. Can the moths get warm while the snail sleeps on?",
+      "hints": [
+        "What happens to the snail's Shadefern if the light passes right beside it?",
+        "Look at the patch next to the Sunbell. Could the path split there, before it reaches the stones?"
+      ],
+      "success": "The light split early and went around the stones. The snail's Shadefern bloomed in the dark.",
+      "story": {
+        "goal": "Warm the moths and let the snail sleep.",
+        "reward": "Past the stones, Chanda finds the road again.",
+        "intro": "At the stepping stones, a snail is asleep under a Shadefern. Two moths wait on the far side, one up the bank and one down, and they are getting cold.",
+        "next": "The first waystone is close now. Two moths are resting near toads who want to keep their corner dark."
+      },
+      "page": ["The stepping stones", "The light split before the stones and went around them. The snail slept on in the shade, and the moths flew on toward the first waystone."],
+      "hi": {
+        "name": "Pattharon ke upar se",
+        "intro": "Pattharon ke paas ek ghonga Raat Rani ke neeche so raha hai, aur aage do patange intezaar kar rahe hain. Aapke paas saat Narkat hain. Kya patange garam ho sakte hain aur ghonga sota rahe?",
+        "hints": [
+          "Agar roshni Raat Rani ke bilkul paas se guzre, toh ghonge ke phool ka kya hoga?",
+          "Surajmukhi ke paas wali jagah dekho. Kya raasta pattharon se pehle hi bant sakta hai?"
+        ],
+        "success": "Roshni pehle hi bant gayi aur pattharon ke aas-paas se gayi. Ghonge ki Raat Rani andhere mein khil uthi.",
+        "story": {
+          "goal": "Patangon ko garam rakho aur ghonge ko sone do.",
+          "reward": "Pattharon ke paar Chanda ko phir sadak mil jaati hai.",
+          "intro": "Pattharon ke paas ek ghonga Raat Rani ke neeche so raha hai. Do patange us paar intezaar kar rahe hain, ek upar aur ek neeche, aur unhe thand lag rahi hai.",
+          "next": "Pehla raahdeep ab paas hai. Do patange aise mendhakon ke paas aaram kar rahe hain jinhe apna kona andhera chahiye."
+        },
+        "page": ["Patthar ke raaste", "Roshni pattharon se pehle bant gayi aur unke aas-paas se gayi. Ghonga chhaon mein sota raha, aur patange pehle raahdeep ki taraf ud gaye."]
+      }
+    },
+    {
+      "id": "4-4",
+      "name": "Quiet by the path",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 0, "sun"]],
+      "rocks": [],
+      "pouch": { "reed": 5 },
+      "goals": [[0, 2, "on", "moth"], [4, 2, "on", "moth"], [1, 3, "off", "toad"], [3, 3, "off", "toad"]],
+      "solution": [[0, 1, "reed"], [1, 1, "reed"], [2, 1, "reed"], [3, 1, "reed"], [4, 1, "reed"]],
+      "intro": "Two moths wait near sleeping toads. A Sunbell glows at the start of the path. You have five Reeds, but the toads want their spots dark.",
+      "hints": [
+        "Which patches next to the toads must stay dark, even if the path there looks short?",
+        "Look at the column next to the Sunbell. Can the path run up and down there and reach each moth from the side?"
+      ],
+      "success": "The path hugged the edge, so both moths got warm and the toads stayed in the dark.",
+      "story": {
+        "goal": "Warm the moths and let the toads sleep.",
+        "reward": "Chanda spots the first dark waystone.",
+        "intro": "The first waystone is nearly in sight. Two moths are cold, but Mendhu's friends are asleep nearby and want the night to stay quiet.",
+        "next": "Chanda leads five groups to the waystone. They all need a place to rest before it can shine."
+      },
+      "page": ["A quiet corner", "The moths found warmth without waking the toads nearby. Chanda can see the first waystone."],
+      "hi": {
+        "name": "Raaste ke paas khamoshi",
+        "intro": "Do patange soye hue mendhakon ke paas hi intezaar kar rahe hain. Raaste ke shuru mein ek Surajmukhi chamak raha hai. Aapke paas paanch Narkat hain, par mendhakon ki jagah andheri rehni chahiye.",
+        "hints": [
+          "Mendhakon ke bagal wali kaunsi jagah andheri rehni chahiye, chahe wahan se raasta chhota lage?",
+          "Surajmukhi ke bagal wala column dekho. Kya raasta wahan upar-neeche jaakar har patange tak bagal se pahunch sakta hai?"
+        ],
+        "success": "Raasta kinaare se gaya, dono patange garam hue aur mendhak andhere mein sote rahe.",
+        "story": {
+          "goal": "Patangon ko garam rakho aur mendhakon ko sone do.",
+          "reward": "Chanda ko pehla andhera raahdeep dikh raha hai.",
+          "intro": "Pehla raahdeep nazar aane wala hai. Do patangon ko thand lag rahi hai, par unke paas Mendhu ke dost so rahe hain aur raat shaant rehni chahiye.",
+          "next": "Chanda paanch samoohon ko raahdeep tak laati hai. Chamakne se pehle sabko aaram ki jagah chahiye."
+        },
+        "page": ["Shaant kona", "Patangon ko garmahat mili aur paas ke mendhak jaage nahi. Chanda ko pehla raahdeep dikh raha hai."]
+      }
+    },
+    {
+      "id": "4-5",
+      "name": "Five groups at dusk",
+      "kind": "light",
+      "rows": 6,
+      "cols": 6,
+      "fixed": [[2, 2, "sun"], [4, 1, "fern"]],
+      "rocks": [[3, 4]],
+      "pouch": { "reed": 8 },
+      "goals": [[2, 0, "on", "moth"], [5, 1, "on", "moth"], [5, 5, "on", "moth"], [2, 4, "off", "toad"], [4, 1, "on", "snail"]],
+      "solution": [[2, 1, "reed"], [3, 2, "reed"], [3, 3, "reed"], [4, 3, "reed"], [5, 3, "reed"], [5, 2, "reed"], [5, 4, "reed"]],
+      "intro": "Five groups wait around the first waystone. Three moths need warmth, a toad wants quiet, and a snail sleeps under its Shadefern. You have eight Reeds.",
+      "hints": [
+        "Which paths from the Sunbell would wake the toad or the snail?",
+        "Look along the bottom row. Where could one path split to reach two moths at once?"
+      ],
+      "success": "One Sunbell, three branches, and everyone settled: warm moths, a sleeping toad, a snail in the shade.",
+      "story": {
+        "goal": "Settle all five groups at the waystone.",
+        "reward": "A page with the Old Keeper's mark opens.",
+        "intro": "Chanda brings five groups to the first waystone. Three moths need a little warmth, while a toad and a snail nearby hope for a quiet, dark corner.",
+        "next": "The waystone glows. Inside, Chanda finds a scrap marked with the Old Keeper's lantern. Did the Old Keeper walk this road?"
+      },
+      "page": ["The first waystone", "Five groups found a place to rest. Inside the glowing waystone, Chanda finds a scrap marked with the Old Keeper's lantern."],
+      "hi": {
+        "name": "Shaam ko paanch samooh",
+        "intro": "Pehle raahdeep ke paas paanch samooh intezaar kar rahe hain. Teen patangon ko garmahat chahiye, ek mendhak ko shaanti, aur ek ghonga apni Raat Rani ke neeche so raha hai. Aapke paas aath Narkat hain.",
+        "hints": [
+          "Surajmukhi se kaunse raaste mendhak ya ghonge ko jaga denge?",
+          "Sabse neeche wali row dekho. Ek raasta kahan bantkar ek saath do patangon tak pahunch sakta hai?"
+        ],
+        "success": "Ek Surajmukhi, teen raaste, aur sab aaram se: patange garam, mendhak soya hua, ghonga chhaon mein.",
+        "story": {
+          "goal": "Raahdeep par paanchon samoohon ko aaram do.",
+          "reward": "Purane Rakshak ke nishaan wala panna khulta hai.",
+          "intro": "Chanda paanch samoohon ko pehle raahdeep tak laati hai. Teen patangon ko thodi garmahat chahiye, aur paas ke mendhak aur ghonge ko shaant, andhera kona.",
+          "next": "Raahdeep chamak utha. Andar Chanda ko Purane Rakshak ke Lantern ke nishaan wala panna milta hai. Kya Purane Rakshak is sadak par aaye the?"
+        },
+        "page": ["Pehla raahdeep", "Paanch samoohon ko aaram ki jagah mili. Chamak-te raahdeep ke andar Chanda ko Purane Rakshak ke Lantern ka nishaan wala panna milta hai."]
+      }
+    }
+  ]
+}

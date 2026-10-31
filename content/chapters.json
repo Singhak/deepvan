@@ -20,6 +20,27 @@
       "hi": { "name": "Yaad rakhne wali kaai" },
       "levels": 4,
       "file": "c3.json"
+    },
+    {
+      "id": "c4",
+      "name": "The lantern road",
+      "hi": { "name": "Lantern ki sadak" },
+      "levels": 5,
+      "file": "c4.json"
+    },
+    {
+      "id": "c5",
+      "name": "Reeds by the road",
+      "hi": { "name": "Sadak ke Narkat" },
+      "levels": 5,
+      "file": "c5.json"
+    },
+    {
+      "id": "c6",
+      "name": "The beehive hollow",
+      "hi": { "name": "Chhatte wali khoh" },
+      "levels": 5,
+      "file": "c6.json"
     }
   ]
 }
