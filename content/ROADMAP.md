@@ -14,10 +14,10 @@ Status: `planned` (row is ready) → `drafted` (an agent wrote it and the build 
 | c4 | The lantern road / Lantern ki sadak | 2 | light | L-BRANCH | drafted |
 | c5 | Reeds by the road / Sadak ke Narkat | 2 | light | L-INSULATE | drafted |
 | c6 | The beehive hollow / Chhatte wali khoh | 2 | life | G-STILL | drafted |
-| c7 | Two-armed bridge / Do haathon wala pul | 2 | light | L-SPLIT | planned |
-| c8 | The quiet waystone / Chup raahdeep | 2 | mixed: light, light, life, life, light | L-NAND | planned |
-| c9 | Ripples / Lehrein | 3 | life | G-BLINK | planned |
-| c10 | Where the sun sits / Suraj kahan baithe | 3 | light | L-SOURCE | planned |
+| c7 | Two-armed bridge / Do haathon wala pul | 2 | light | L-SPLIT | drafted |
+| c8 | The quiet waystone / Chup raahdeep | 2 | mixed: light, light, life, life, light | L-NAND | drafted |
+| c9 | Ripples / Lehrein | 3 | life | G-BLINK | drafted |
+| c10 | Where the sun sits / Suraj kahan baithe | 3 | light | L-SOURCE | drafted |
 | c11 | The ferry crossing / Naav ka paar | 3 | life | G-GLIDE | planned |
 | c12 | Mirror pools / Aaina taal | 3 | light | L-CHAIN | planned |
 | c13 | The glass waystone / Kaanch ka raahdeep | 3 | mixed: life, life, light, light, life | G-CLEAR | planned |
