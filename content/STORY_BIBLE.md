@@ -45,6 +45,7 @@ A chapter may add **one** new named creature, and adds them here in the same com
 | Dheeru | A snail | Dheeru ghonga | Guarded the silver key under a Raat Rani for a year (2-2). |
 | Bholu | A beetle | Bholu beetle | Waits on bare ground in the oldest corner (3-1), where the moss first remembers. |
 | Chanda | A firefly | Chanda jugnu | Walked the Lantern Road and guides the new Keeper along it (c4). |
+| Neelu | A kingfisher | Neelu kilkila | Lives on the Glass River and guides the new Keeper through book 3 (c9). Has watched the river's lights go out every night. Met the Old Keeper on the bank, and remembers them counting nights on the mud bar. |
 
 ## Words
 
