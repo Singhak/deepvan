@@ -37,7 +37,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 
 .app {
-  max-width: 1120px;
+  max-width: 1320px;
   margin: 0 auto;
   padding-block: 10px 14px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -49,7 +49,6 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 
 /* Header */
 .top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
-.top .chapters { order: 3; flex-basis: 100%; }   /* brand + actions share row one; chapters get row two */
 .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
 .brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.45rem; line-height: 1.1; margin: 0; letter-spacing: 0.01em; }
 .brand h1 .h1-tag { font-family: var(--font-body, inherit); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-left: 6px; vertical-align: 3px; white-space: nowrap; }
@@ -73,16 +72,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .ghost .count { display: inline-block; min-width: 1.4em; padding: 0 5px; margin-left: 4px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.78rem; text-align: center; font-variant-numeric: tabular-nums; }
 
 /* Stage */
-.stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
-@media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
-/* Wide screens: goal and wishes sit beside the board instead of under it, filling the space the board leaves */
-@media (min-width: 861px) {
-  .board-col { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 20px; }
-  .board-col > .level-head { grid-column: 1 / -1; }
-  .board-col > .board-wrap { grid-row: 2 / span 2; }
-  .board-col > .goal-label { grid-column: 2; grid-row: 2; }
-  .board-col > .wishes { grid-column: 2; grid-row: 3; align-self: start; flex-direction: column; align-items: flex-start; }
-}
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); gap: 22px; align-items: start; }
+@media (max-width: 1199px) { .stage { grid-template-columns: minmax(0, 1fr); } }
 .board-col { min-width: 0; display: grid; gap: 8px; }
 .level-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 6px 16px; }
 .eyebrow { margin: 0 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
@@ -211,25 +202,41 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .step-now { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; vertical-align: 2px; }
 .pulse { animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 196, 94, 0.55); } 50% { box-shadow: 0 0 0 7px rgba(255, 196, 94, 0); } }
-.quest {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center;
-  padding: 6px 12px 6px 8px; border-radius: 16px; border: 1px solid var(--line);
-  background: linear-gradient(90deg, rgba(255, 196, 94, 0.09), transparent 60%), var(--panel);
+/* Header: the quest shrinks to a small lantern and its sparks; the rest lives in the profile sheet */
+.top .brand { margin-right: 0; }
+.quest { display: flex; align-items: center; gap: 8px; margin-right: auto; min-width: 0; }
+.quest-lantern { width: 26px; height: 31px; flex: none; }
+.quest .sparks { gap: 4px; flex-wrap: nowrap; }
+.quest .spark { width: 10px; height: 10px; border-radius: 2px; }
+.quest-n { font-size: 0.8rem; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ch-pick { position: relative; }
+.ch-btn { color: var(--ink); background: var(--panel-2); border-color: #4a5390; }
+.ch-btn::after { content: ""; width: 6px; height: 6px; border: solid currentColor; border-width: 0 2px 2px 0; transform: translateY(-2px) rotate(45deg); }
+.ch-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; min-width: 250px; flex-direction: column; flex-wrap: nowrap;
+  padding: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
 }
-.quest-lantern { width: 44px; height: 52px; }
-/* Quest text flows in two short rows: title + sparks, then progress + story button */
-.quest > div { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; }
-.quest > div > .eyebrow { flex-basis: 100%; }
-.quest h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; line-height: 1.2; }
-.quest .eyebrow { color: var(--amber); }
+.ch-menu .chip { justify-content: space-between; border-color: transparent; padding: 8px 12px; }
+.prof-btn { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: #161b38; }
+.prof-btn canvas { width: 34px; height: 34px; }
+.prof-btn .dot-new { position: absolute; top: -1px; right: -1px; width: 11px; height: 11px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 0 2px var(--night); }
+.prof-sheet { width: min(460px, 100%); }
+.prof-id { display: flex; align-items: center; gap: 14px; }
+.prof-id .eyebrow { color: var(--amber); }
+.prof-sheet h2 { font-size: 1.3rem; }
+.prof-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.prof-links .story-link { margin-top: 0; }
+.prof-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+.prof-row .goal-label { margin: 0; }
+.prof-sparks { display: grid; gap: 8px; background: #161b38; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.prof-sparks > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 0.86rem; font-weight: 700; color: var(--muted); }
+.prof-sparks > div[aria-current="true"] { color: var(--ink); }
+.prof-sparks .sparks { flex: none; }
 .sparks { display: flex; flex-wrap: wrap; gap: 5px; margin: 0; }
 .spark { width: 13px; height: 13px; transform: rotate(45deg); border-radius: 3px; border: 1.5px solid #59609a; }
 .spark.lit { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 8px rgba(255, 196, 94, 0.7); }
 .spark.new { animation: sparkIn 1.4s ease-out 2; }
 @keyframes sparkIn { 0% { transform: rotate(45deg) scale(2.2); } 100% { transform: rotate(45deg) scale(1); } }
-.quest .small { margin: 0; }
-.quest .story-link { margin-top: 0; padding: 3px 12px; font-size: 0.82rem; }
-.quest .hero-btn canvas { width: 36px; height: 36px; }
 .story-sheet { text-align: center; justify-items: center; }
 .story-sheet .story-art { width: 120px; height: 140px; }
 .story-line { margin: 0; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.45; max-width: 34ch; text-wrap: balance; }
@@ -345,19 +352,34 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 }
 /* Phones: keep the header and quest card short so the board sits near the top */
 @media (max-width: 600px) {
+  .app { gap: 10px; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
   .brand p { display: none; }
   .brand h1 { font-size: 1.25rem; }
   .top { gap: 8px 10px; }
-  .top .chapters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .top .chapters::-webkit-scrollbar { display: none; }
+  .brand h1 .h1-tag { display: none; }
   .chip { flex: none; }
   .top-actions { gap: 6px; }
   .top-actions .ghost, .top-actions .lang-switch button { padding: 4px 9px; font-size: 0.8rem; }
-  .quest { grid-template-columns: minmax(0, 1fr) auto; padding: 8px 10px; }
-  .quest-lantern { display: none; }
-  .quest h3 { font-size: 1rem; }
-  .quest .small { font-size: 0.76rem; line-height: 1.35; }
+  .top-actions .ghost, .top-actions .lang-switch button { min-height: 40px; }
   .level-head h2 { font-size: 1.2rem; }
+  .stage { gap: 14px; }
+  .board-col { gap: 10px; }
+  .board-wrap { margin-inline: auto; }
+  #board { border-radius: 14px; }
+  .chip { min-height: 36px; }
+  .actions button { min-height: 48px; }
+  .owl { min-height: 44px; }
+}
+@media (min-width: 1200px) {
+  .board-col {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "head" "goal" "wishes" "board";
+    gap: 10px;
+  }
+  .board-col > .level-head { grid-area: head; }
+  .board-col > .goal-label { grid-area: goal; max-width: 640px; margin-inline: auto; }
+  .board-col > .wishes { grid-area: wishes; justify-content: center; max-width: 760px; margin-inline: auto; }
+  .board-col > .board-wrap { grid-area: board; margin-inline: auto; }
 }
 </style>
 
@@ -371,21 +393,13 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <path d="M12.5 15h9v12h-9z" fill="#ffd77a"/>
         <path d="M13 4h8M17 4v5" stroke="#e7b862" stroke-width="1.5" fill="none" stroke-linecap="round"/>
       </svg>
-      <div>
-        <h1>Deepvan <span class="h1-tag">Roshni ka Raaz</span></h1>
-        <p data-t="tagline">Every plant follows a hidden rule. Watch, guess, try again.</p>
-      </div>
+      <h1>Deepvan <span class="h1-tag">Roshni ka Raaz</span></h1>
     </div>
-    <nav class="chapters" id="chapters" aria-label="Chapters"></nav>
-    <div class="top-actions">
-      <div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div>
-      <button class="ghost" id="helpBtn" type="button" data-t="helpBtn">How to play</button>
-      <button class="ghost" id="journalBtn" type="button"><span data-t="journal">Journal</span><span class="count" id="journalCount">0</span></button>
-      <button class="ghost" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+    <div class="ch-pick">
+      <button class="chip ch-btn" id="chBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="chapters"></button>
+      <nav class="chapters ch-menu" id="chapters" aria-label="Chapters" hidden></nav>
     </div>
-  </header>
-
-  <section class="quest" id="quest" aria-label="Your quest">
+    <div class="quest" id="quest">
       <svg class="quest-lantern" viewBox="0 0 64 76" aria-hidden="true">
         <defs><radialGradient id="qlG" cx="50%" cy="56%" r="50%"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.5" stop-color="#ffc45e"/><stop offset="1" stop-color="#ff9e3d" stop-opacity="0"/></radialGradient></defs>
         <circle id="qlGlow" cx="32" cy="44" r="31" fill="url(#qlG)" opacity="0.1"/>
@@ -394,15 +408,14 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <path d="M22 29h20v22H22zM32 29v22M22 40h20" fill="none" stroke="#6d5634" stroke-width="1.4"/>
         <path d="M25 8h14M32 8v10" stroke="#c99a52" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       </svg>
-    <div>
-      <p class="eyebrow" id="rank"></p>
-      <h3 id="questTitle">Relight the Great Lantern</h3>
-      <div class="sparks" id="sparks"></div>
-      <p class="small" id="questText"></p>
-      <button class="story-link" id="bookBtn" type="button"></button>
+      <div class="sparks" id="sparks" aria-hidden="true"></div>
+      <span class="quest-n" id="questText"></span>
     </div>
-    <button class="hero-btn" id="heroBtn" type="button"><canvas id="heroAv" aria-hidden="true"></canvas><span data-t="heroChange">Change</span></button>
-  </section>
+    <div class="top-actions">
+      <button class="ghost" id="journalBtn" type="button"><span data-t="journal">Journal</span><span class="count" id="journalCount">0</span></button>
+      <button class="prof-btn" id="profileBtn" type="button"><canvas id="profAv" aria-hidden="true"></canvas><span class="dot-new" id="profNew" hidden></span></button>
+    </div>
+  </header>
 
   <main class="stage">
     <section class="board-col">
@@ -460,10 +473,33 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 
   <footer class="foot">
     <span data-t="proto">Prototype · no timers, no lives, no wrong answers</span>
-    <button class="linkish" id="designerBtn" type="button">Show designer view</button>
-    <button class="linkish" id="unlockBtn" type="button">Open all chapters (for playtesting)</button>
-    <button class="linkish" id="resetBtn" type="button" data-t="reset">Start over</button>
+    <button class="linkish dev-only" id="designerBtn" type="button">Show designer view</button>
+    <button class="linkish dev-only" id="unlockBtn" type="button">Open all chapters (for playtesting)</button>
   </footer>
+</div>
+
+<div class="overlay" id="profileOverlay" hidden>
+  <div class="sheet prof-sheet" role="dialog" aria-modal="true" aria-labelledby="questTitle">
+    <div class="sheet-head">
+      <div class="prof-id">
+        <button class="hero-btn" id="heroBtn" type="button"><canvas id="heroAv" aria-hidden="true"></canvas><span data-t="heroChange">Change</span></button>
+        <div>
+          <p class="eyebrow" id="rank"></p>
+          <h2 id="questTitle">Relight the Great Lantern</h2>
+          <p class="sub" id="questWhy"></p>
+        </div>
+      </div>
+      <button class="ghost close-x" id="profileClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="prof-sparks" id="profSparks"></div>
+    <div class="prof-links">
+      <button class="story-link" id="bookBtn" type="button"></button>
+      <button class="ghost" id="helpBtn" type="button" data-t="helpBtn">How to play</button>
+    </div>
+    <div class="prof-row"><p class="goal-label" data-t="profLang">Language</p><div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div></div>
+    <div class="prof-row"><p class="goal-label" data-t="profSound">Sound</p><button class="ghost" id="soundBtn" type="button" aria-pressed="true">Sound on</button></div>
+    <div class="prof-row"><button class="linkish" id="resetBtn" type="button" data-t="reset">Start over</button></div>
+  </div>
 </div>
 
 <div class="overlay" id="journalOverlay" hidden>
@@ -960,14 +996,15 @@ const UI = {
     tour7: '<b>Stuck? Ask the owl.</b> First it asks you a helpful question. Ask again and it points to a spot on the board.',
     tour8: '<b>Your mission.</b> Every level you solve sends a spark to the Great Lantern. Collect all 12 to light it again.',
     lsGo: "Let's help", chGo: 'Start the chapter', chBtn: '📜 Chapter story', chPrev: 'So far', chEyebrow: (n, total) => `Chapter ${n} of ${total}`, goalLbl: '🎯 Your goal', rewardLbl: '🎁 What you get', chGoalLbl: '🎯 Chapter mission', nextCh: name => `📜 Next chapter: <b>${name}</b>`, lsBtn: '📖 Level story', lsPrev: 'Last time', whatNext: 'What happens next?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
-    tourStory: '<b>The story.</b> Every level you solve opens a new page. Read on to find out why the lantern went out.',
+    tourStory: '<b>The story.</b> Every level you solve opens a new page. Tap your character to read on and find out why the lantern went out.',
     bookTitle: "The Lantern's story", bookSub: 'Every level you solve opens a new page. Read on to find out why the lantern went out.',
     mystery: '🔍 The mystery: why did the Great Lantern go out?', bookStart: 'How it began', pageNum: n => `Page ${n}`,
     pageNext: 'Solve the next level to open this page.', pageLocked: 'Still hidden.',
     bookBtn: (n, total) => `📜 Read the story · ${n} of ${total} pages`, newBadge: 'New',
     pageNote: title => `📜 A new page of the story has opened: <b>${title}</b>`, pageNoteBtn: 'Read it',
     tour9: '<b>Your journal.</b> Write down what you figure out about each plant, in your own words.',
-    tour10: '<b>Change the language any time:</b> English or Hinglish. Now try it yourself!',
+    tour10: '<b>Tap your character</b> to change the language (English or Hinglish), the sound, or to see how to play. Now try it yourself!',
+    profAria: 'Your profile and settings', profLang: 'Language', profSound: 'Sound',
     legend: { moth: 'wants light on its square', toad: 'wants shade, no light', snail: 'wants its fern to flower', beetle: 'wants moss on its square' },
     confirmTitle: 'Start the grove over?', confirmLede: 'This clears your solved groves and journal notes on this device.', confirmNo: 'Keep my grove', reset: 'Start over',
     proto: 'Prototype · no timers, no lives, no wrong answers', designerShow: 'Show designer view', designerHide: 'Hide designer view',
@@ -1042,14 +1079,15 @@ const UI = {
     tour7: '<b>Atak gaye? Ullu se pucho.</b> Pehle woh ek madadgaar sawaal poochta hai. Phir se poocho toh board par sahi jagah dikha deta hai.',
     tour8: '<b>Aapka mission.</b> Har level jeetne par ek chingaari Bade Lantern tak jaati hai. Saari 12 chingaariyan jodo, Lantern phir se jal uthega.',
     lsGo: 'Chalo madad karein', chGo: 'Chapter shuru karo', chBtn: '📜 Chapter ki kahani', chPrev: 'Ab tak', chEyebrow: (n, total) => `Chapter ${n} / ${total}`, goalLbl: '🎯 Maqsad', rewardLbl: '🎁 Inaam', chGoalLbl: '🎯 Is chapter ka maqsad', nextCh: name => `📜 Agla chapter: <b>${name}</b>`, lsBtn: '📖 Level ki kahani', lsPrev: 'Pichhle level se', whatNext: 'Aage kya hoga?', lsEyebrow: (n, name) => `Level ${n} · ${name}`,
-    tourStory: '<b>Kahani.</b> Har level jeetne par kahani ka ek naya panna khulta hai. Aage padho aur pata karo Lantern kyun bujha.',
+    tourStory: '<b>Kahani.</b> Har level jeetne par kahani ka ek naya panna khulta hai. Apne character par tap karke aage padho aur pata karo Lantern kyun bujha.',
     bookTitle: 'Lantern ki kahani', bookSub: 'Har level jeetne par ek naya panna khulta hai. Aage padho aur jaano Lantern kyun bujha.',
     mystery: '🔍 Raaz: Bada Lantern kyun bujha?', bookStart: 'Shuruaat', pageNum: n => `Panna ${n}`,
     pageNext: 'Agla level jeeto, yeh panna khul jaayega.', pageLocked: 'Abhi chhupa hua hai.',
     bookBtn: (n, total) => `📜 Kahani padho · ${n}/${total} panne`, newBadge: 'Naya',
     pageNote: title => `📜 Kahani ka naya panna khula: <b>${title}</b>`, pageNoteBtn: 'Padho',
     tour9: '<b>Aapki diary.</b> Har paudhe ke baare mein jo samajh aaye, apne shabdon mein yahan likho.',
-    tour10: '<b>Bhasha kabhi bhi badlo:</b> English ya Hinglish. Ab khud try karo!',
+    tour10: '<b>Apne character par tap karo</b> bhasha (English ya Hinglish), awaaz badalne ya kaise khelein dekhne ke liye. Ab khud try karo!',
+    profAria: 'Aapki profile aur settings', profLang: 'Bhasha', profSound: 'Awaaz',
     legend: { moth: 'apne dibbe par roshni chahta hai', toad: 'andhera chahta hai, roshni nahi', snail: 'chahta hai uski Raat Rani khile', beetle: 'apne dibbe par kaai (moss) chahta hai' },
     confirmTitle: 'Bagicha shuru se khelein?', confirmLede: 'Isse is device par aapke jeete hue level aur diary ke notes mit jaayenge.', confirmNo: 'Mera bagicha rakho', reset: 'Shuru se khelo',
     proto: 'Prototype · na timer, na lives, na galat jawaab', designerShow: 'Designer view dikhao', designerHide: 'Designer view chhupao',
@@ -1333,6 +1371,8 @@ function renderHeroPick(box) {
 }
 function renderHeroBtn() {
   heroCanvas($('heroAv'), P.hero || HEROES[0], 48);
+  heroCanvas($('profAv'), P.hero || HEROES[0], 34);
+  $('profileBtn').setAttribute('aria-label', t('profAria'));
   $('heroBtn').setAttribute('aria-label', t('heroAria', heroName(P.hero || HEROES[0])));
 }
 function openHero() { renderHeroPick($('heroPick2')); $('heroOverlay').hidden = false; $('heroDone').focus(); }
@@ -1346,13 +1386,9 @@ const flies = Array.from({ length: 18 }, () => ({ x: Math.random(), y: Math.rand
 let geo = { W: 600, H: 600, cs: 100, ox: 0, oy: 0, dpr: 1 };
 function resize() {
   if (!S.lv) return;
-  const wrap = $('boardWrap'), col = wrap.parentElement;
-  // Fit the board into the viewport height too, so the goal and wishes stay on screen without scrolling.
-  // On wide screens the wishes sit beside the board, so leave them a column and keep only the footer below.
+  const col = $('boardWrap').parentElement;
   const wide = matchMedia('(min-width: 861px)').matches;
-  const below = wide ? document.querySelector('.foot').offsetHeight + 30
-    : col.getBoundingClientRect().bottom - wrap.getBoundingClientRect().bottom + 12;
-  const availH = Math.max(260, window.innerHeight - (wrap.getBoundingClientRect().top + window.scrollY) - below);
+  const availH = 640;
   const availW = (col.clientWidth || 600) - (wide ? 250 : 0);
   const W = Math.min(availW, 640, availH / (0.94 * S.lv.rows / S.lv.cols + 0.06));
   const pad = Math.max(10, W * 0.03);
@@ -1682,7 +1718,7 @@ function evaluate() {
     S.solved = true; S.burstUntil = performance.now() + 4000; sfx.glad();
     const newSpark = !S.wander && !P.solved[lv.id];
     const pageNo = sparkCount() + 1;
-    if (newSpark) S.newSpark = pageNo;
+    if (newSpark) S.newSpark = lv.id;
     const firstTry = lv.id === '1-1' && S.attempts === 1;
     say(null, () => lvT(lv, 'success') + (newSpark ? t('newSpark') : '') + (firstTry ? t('pressNext') : ''));
     logEvent(`solved ${lv.id || 'wander d' + P.d} in ${S.attempts} ${S.attempts === 1 ? 'try' : 'tries'}, ${S.hints} hints, ${Math.round((Date.now() - S.startedAt) / 1000)}s`);
@@ -1834,9 +1870,13 @@ function renderUI() {
   w.disabled = !wanderOpen(); if (w.disabled) w.title = t('wanderLocked');
   w.setAttribute('aria-current', String(S.wander && !S.challenge));
   w.onclick = startWander; nav.appendChild(w);
+  const cur = nav.querySelector('[aria-current="true"]');
+  $('chBtn').innerHTML = cur ? cur.innerHTML : t('linkName');
 
   // heading + dots
   const dots = $('dots'); dots.innerHTML = '';
+  $('eyebrow').hidden = false;
+  document.querySelector('.board-col .goal-label').hidden = S.wander || lv.ch > 0;   // the wishes explain themselves after chapter 1
   if (S.challenge) {
     $('eyebrow').textContent = S.challenge.daily ? t('eyebrowDaily', S.challenge.daily) : t('eyebrowLink');
   } else if (S.wander) {
@@ -1844,6 +1884,7 @@ function renderUI() {
   } else {
     const chLevels = LEVELS.filter(l => l.ch === lv.ch), pos = chLevels.indexOf(lv) + 1;
     $('eyebrow').textContent = t('eyebrow', lv.ch + 1, chName(lv.ch), pos, chLevels.length);
+    $('eyebrow').hidden = true;   // the chapter button and the dots already say this
     chLevels.forEach(l => {
       const d = document.createElement('button'); d.type = 'button'; d.className = 'dot' + (P.solved[l.id] ? ' done' : '');
       d.setAttribute('aria-label', t('dotLabel', l.id, lvT(l, 'name'), P.solved[l.id]));
@@ -1932,16 +1973,32 @@ function renderQuest() {
   const n = sparkCount(), who = keeperName(), done = n >= SPARKS_TOTAL;
   $('rank').textContent = t('yourQuest') + ' · ' + rankT(rankIndex()) + (who ? ' ' + who : '');
   $('questTitle').textContent = t(done ? 'questDone' : 'questTitle');
-  $('questText').textContent = done ? t('questDoneText', P.wanderCount) : t('questText', n, SPARKS_TOTAL);
-  $('quest').title = done ? '' : t('questWhy');
-  const sp = $('sparks'); sp.innerHTML = '';
-  for (let i = 1; i <= SPARKS_TOTAL; i++) {
-    const d = document.createElement('i');
-    d.className = 'spark' + (i <= n ? ' lit' : '') + (S.newSpark === i ? ' new' : '');
-    sp.appendChild(d);
-  }
+  $('questText').textContent = t('questText', n, SPARKS_TOTAL);
+  $('questWhy').textContent = done ? t('questDoneText', P.wanderCount) : t('questWhy');
+  $('quest').title = t('questWhy');
+  // One diamond per level, grouped by chapter. The header shows only the current chapter so it never outgrows the row;
+  // the profile sheet shows every chapter.
+  const sparkRow = ch => {
+    const row = document.createElement('div'); row.className = 'sparks';
+    LEVELS.filter(l => l.ch === ch).forEach(l => {
+      const d = document.createElement('i');
+      d.className = 'spark' + (P.solved[l.id] ? ' lit' : '') + (S.newSpark === l.id ? ' new' : '');
+      row.appendChild(d);
+    });
+    return row;
+  };
+  const inChapter = S.lv && !S.wander;
+  $('sparks').replaceChildren(...(inChapter ? sparkRow(S.lv.ch).children : []));
+  $('sparks').hidden = !inChapter;
+  $('profSparks').replaceChildren(...CHAPTERS.map((_, i) => {
+    const line = document.createElement('div');
+    line.setAttribute('aria-current', String(!!inChapter && S.lv.ch === i));
+    line.append(chName(i), sparkRow(i));
+    return line;
+  }));
   S.newSpark = null;
   $('bookBtn').innerHTML = t('bookBtn', n, SPARKS_TOTAL) + (n > (P.storyRead || 0) ? `<span class="new">${t('newBadge')}</span>` : '');
+  $('profNew').hidden = !(n > (P.storyRead || 0));
   const k = n / SPARKS_TOTAL;
   $('qlGlow').setAttribute('opacity', String(0.08 + 0.8 * k));
   $('qlPane').setAttribute('opacity', String(0.12 + 0.88 * k));
@@ -2135,8 +2192,8 @@ function renderLegend() {
 // ---------- Guided tour: points at each control in turn ----------
 const TOUR = [
   ['tour1', () => $('boardWrap')], ['tour2', () => $('wishes')], ['tour3', () => $('pouch')], ['tour4', () => $('boardWrap')],
-  ['tour5', () => $('duskBtn')], ['tour6', () => $('voice')], ['tour7', () => $('owlBtn')], ['tour8', () => document.querySelector('.quest')],
-  ['tourStory', () => $('bookBtn')], ['tour9', () => $('journalBtn')], ['tour10', () => document.querySelector('.top .lang-switch')],
+  ['tour5', () => $('duskBtn')], ['tour6', () => $('voice')], ['tour7', () => $('owlBtn')], ['tour8', () => $('quest')],
+  ['tourStory', () => $('profileBtn')], ['tour9', () => $('journalBtn')], ['tour10', () => $('profileBtn')],
 ];
 let tourSteps = [], tourI = 0;
 function startTour() {
@@ -2215,7 +2272,17 @@ function setLang(lang) {
 function closeHelp() { $('helpOverlay').hidden = true; if (!P.seenHelp) { P.seenHelp = true; saveProgress(); } }
 
 // ---------- Wiring ----------
-$('helpBtn').onclick = openHelp;
+// Profile sheet: identity, story and settings that don't need to sit on the main screen
+function closeProfile() { $('profileOverlay').hidden = true; }
+$('profileBtn').onclick = () => { $('profileOverlay').hidden = false; $('profileClose').focus(); };
+$('profileClose').onclick = closeProfile;
+$('helpBtn').onclick = () => { closeProfile(); openHelp(); };
+// Chapter picker: one button in the header, the full chapter list on demand
+function setChMenu(open) { $('chapters').hidden = !open; $('chBtn').setAttribute('aria-expanded', String(open)); }
+$('chBtn').onclick = () => setChMenu($('chapters').hidden);
+$('chapters').addEventListener('click', e => { if (e.target.closest('.chip')) setChMenu(false); });
+document.addEventListener('click', e => { if (!e.target.closest('.ch-pick')) setChMenu(false); });
+if (!/[?&]dev\b/.test(location.search)) document.querySelectorAll('.dev-only').forEach(el => (el.hidden = true));
 $('storyNext').onclick = storyNext;
 $('storySkip').onclick = finishStory;
 $('keeperName').addEventListener('keydown', e => { if (e.key === 'Enter') storyNext(); });
@@ -2235,9 +2302,9 @@ window.addEventListener('hashchange', () => { if (groveFromHash()) canvas.focus(
 $('owlBtn').onclick = askOwl;
 $('journalBtn').onclick = () => openJournal();
 $('journalClose').onclick = () => { $('journalOverlay').hidden = true; };
-$('bookBtn').onclick = () => openBook();
+$('bookBtn').onclick = () => { closeProfile(); openBook(); };
 $('lsBtn').onclick = () => openLevelStory('lv');
-$('heroBtn').onclick = openHero;
+$('heroBtn').onclick = () => { closeProfile(); openHero(); };
 $('heroDone').onclick = closeHero;
 $('heroOverlay').addEventListener('click', e => { if (e.target.id === 'heroOverlay') closeHero(); });
 $('lsCh').onclick = () => openLevelStory('ch');
@@ -2255,7 +2322,7 @@ $('soundBtn').onclick = () => {
 $('soundBtn').setAttribute('aria-pressed', String(soundOn));
 $('designerBtn').onclick = () => { designerOn = !designerOn; $('designerBtn').textContent = t(designerOn ? 'designerHide' : 'designerShow'); renderDesigner(); };
 $('unlockBtn').onclick = () => { P.unlockAll = true; saveProgress(); renderUI(); };
-$('resetBtn').onclick = () => { $('confirmOverlay').hidden = false; $('confirmNo').focus(); };
+$('resetBtn').onclick = () => { closeProfile(); $('confirmOverlay').hidden = false; $('confirmNo').focus(); };
 $('confirmNo').onclick = () => { $('confirmOverlay').hidden = true; };
 $('confirmYes').onclick = () => { $('confirmOverlay').hidden = true; P = Object.assign(loadProgressFresh(), { lang: P.lang }); saveProgress(); startLevel(0); };
 function resumeIdx() { const i = LEVELS.findIndex(l => !P.solved[l.id] && chapterOpen(l.ch)); return i >= 0 ? i : 0; }
@@ -2268,7 +2335,7 @@ document.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Escape') S.revealThenNext = false;
-  if (e.key === 'Escape') ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay'].forEach(id => ($(id).hidden = true));
+  if (e.key === 'Escape') { setChMenu(false); ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay'].forEach(id => ($(id).hidden = true)); }
   if (e.key === 'Escape' && !$('helpOverlay').hidden) closeHelp();
   if (e.key === 'Escape' && !$('winOverlay').hidden) return closeWin(false);
   if (e.key === 'Escape' && !$('heroOverlay').hidden) return closeHero();
@@ -2276,7 +2343,7 @@ document.addEventListener('keydown', e => {
 });
 $('helpOverlay').addEventListener('click', e => { if (e.target.id === 'helpOverlay') closeHelp(); });
 $('levelOverlay').addEventListener('click', e => { if (e.target.id === 'levelOverlay') closeLevelStory(); });
-['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
+['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
 if (window.ResizeObserver) new ResizeObserver(() => resize()).observe($('boardWrap').parentElement);
 window.addEventListener('resize', resize);
 
