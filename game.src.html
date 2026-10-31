@@ -42,6 +42,11 @@ body {
   font-size: 15px;
   line-height: 1.5;
 }
+/* Seasons tint the sky only, so every board reads the same all year */
+[data-season="frost"] body { background: radial-gradient(1200px 600px at 70% -10%, #2a3f66 0%, transparent 60%), var(--night); }
+[data-season="bloom"] body { background: radial-gradient(1200px 600px at 70% -10%, #3a2c5c 0%, transparent 60%), var(--night); }
+[data-season="firefly"] body { background: radial-gradient(1200px 600px at 70% -10%, #1f3d4a 0%, transparent 60%), var(--night); }
+[data-season="harvest"] body { background: radial-gradient(1200px 600px at 70% -10%, #40304a 0%, transparent 60%), var(--night); }
 button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
 
@@ -909,6 +914,10 @@ const UI = {
     eyebrowDaily: d => `Daily grove · ${d} · the same puzzle for everyone today`, eyebrowLink: 'Shared grove · the same puzzle your friend played',
     streakLbl: n => `${n}-day streak`, nextDaily: (h, m) => `Next grove in ${h}h ${m}m.`, beatFriend: n => `Your friend settled it in ${n} ${n === 1 ? 'dusk' : 'dusks'}. Can you beat that?`, chStars: n => `${n}★`,
     dailyIntro: "Today's grove is the same for everyone who plays it. Settle every visitor in as few dusks as you can, then share how you did.",
+    weeklyName: "This week's grove", eyebrowWeekly: w => `Weekly grove · ${w} · a tougher puzzle, the same for everyone this week`,
+    weeklyIntro: "This week's grove is harder than the daily one, and everyone gets the same puzzle until the week turns. Take your time.",
+    nextWeekly: d => `A new weekly grove in ${d} ${d === 1 ? 'day' : 'days'}.`, weeklyBest: n => `Your best this week: ${n} ${n === 1 ? 'dusk' : 'dusks'}.`,
+    mastered: 'Gold lantern', masteredTitle: name => `Every star in "${name}"`, masteredText: 'This chapter now carries a gold lantern on your map. Only the most careful keepers earn one.',
     linkIntro: 'A friend sent you this grove. Plant seeds from your pouch, then let dusk fall and see who settles.',
     shareBtn: 'Share this grove', stuckBtn: 'Ask a friend for help', stuckShare: (lv, ch) => `🏮 Lantern Grove · I'm stuck on "${lv}" (${ch}). Any ideas? 🦉`, skipBtn: 'Skip this grove', skipSaid: 'No problem. Some groves click later. The path ahead is open.', mileLbl: ['Spark-gatherer', 'Lantern-lighter', 'Waystone-walker', 'Road-keeper', 'Lantern master', 'Keeper of the Great Lantern'], mileNew: name => `New title: ${name}`, mileGlow: 'Your hero now glows a little brighter.', shareWin: 'Share my progress', copied: 'Copied! Paste it to a friend.',
     shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\nEvery visitor settled in ${n} ${n === 1 ? 'dusk' : 'dusks'}, ${h ? `${h} owl ${h === 1 ? 'hint' : 'hints'}` : 'no owl hints'}. Can you do it?`,
@@ -1000,6 +1009,10 @@ const UI = {
     eyebrowDaily: d => `Roz ka bagicha · ${d} · aaj sabke liye yahi puzzle`, eyebrowLink: 'Share kiya hua bagicha · wahi puzzle jo aapke dost ne khela',
     streakLbl: n => `${n} din ka streak`, nextDaily: (h, m) => `Agla bagicha ${h} ghante ${m} minute mein.`, beatFriend: n => `Aapke dost ne ${n} raat mein kar diya. Isse kam mein kar sakte ho?`, chStars: n => `${n}★`,
     dailyIntro: 'Aaj ka bagicha har khilaadi ke liye ek jaisa hai. Kam se kam raaton mein sab mehmaanon ko khush karo, phir dosto ko batao.',
+    weeklyName: 'Is hafte ka bagicha', eyebrowWeekly: w => `Hafte ka bagicha · ${w} · thoda mushkil, poore hafte sabke liye yahi`,
+    weeklyIntro: 'Is hafte ka bagicha roz wale se mushkil hai, aur hafta badalne tak sabko yahi puzzle milta hai. Aaram se socho.',
+    nextWeekly: d => `Naya hafte ka bagicha ${d} din mein.`, weeklyBest: n => `Is hafte aapka best: ${n} raat.`,
+    mastered: 'Sunehra lantern', masteredTitle: name => `"${name}" ke saare sitaare`, masteredText: 'Ab is chapter par aapke map mein sunehra lantern hai. Yeh sirf sabse dhyaan se khelne walon ko milta hai.',
     linkIntro: 'Aapke dost ne yeh bagicha bheja hai. Thaili se beej lagao, phir raat hone do aur dekho kaun khush hota hai.',
     shareBtn: 'Yeh bagicha share karo', stuckBtn: 'Dost se madad maango', stuckShare: (lv, ch) => `🏮 Lantern Grove · Main "${lv}" (${ch}) mein atka hoon. Koi idea? 🦉`, skipBtn: 'Yeh bagicha chhodo', skipSaid: 'Koi baat nahi. Kuch bagiche baad mein samajh aate hain. Aage ka raasta khula hai.', mileLbl: ['Chingaari-batore', 'Lantern-jagane wale', 'Raahdeep-musafir', 'Sadak ke rakshak', 'Lantern ustaad', 'Bade Lantern ke Rakshak'], mileNew: name => `Naya khitaab: ${name}`, mileGlow: 'Aapka hero ab thoda zyada chamak raha hai.', shareWin: 'Apni progress share karo', copied: 'Copy ho gaya! Dost ko bhejo.',
     shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\n${n} raat mein sab mehmaan khush, ${h ? `ullu ke ${h} hint` : 'bina ullu ki madad'}. Tum kar sakte ho?`,
@@ -1685,13 +1698,16 @@ function startWander() {
 function startGrove(lv, challenge) {
   lv.successIdx = P.wanderCount % WANDER_SUCCESS.length;
   S.wander = true; S.challenge = challenge; S.lv = lv; beginLevel();
-  if (challenge) { say(null, () => t(challenge.daily ? 'dailyIntro' : 'linkIntro') + (challenge.beat ? ' ' + t('beatFriend', challenge.beat) : '')); return; }
+  if (challenge) { say(null, () => t(challengeKind(challenge) + 'Intro') + (challenge.beat ? ' ' + t('beatFriend', challenge.beat) : '')); return; }
   const wi = Math.floor(Math.random() * WANDER_INTROS.length);
   say(null, () => (hi() ? HI.wanderIntros : WANDER_INTROS)[wi]);
 }
 
 // ---------- Shareable groves: the same difficulty and seed make the same puzzle on every device ----------
-const DAILY_D = 3;
+const DAILY_D = 3, WEEKLY_D = 6;
+function challengeKind(c) { return c.daily ? 'daily' : c.weekly ? 'weekly' : 'link'; }
+// The hash a challenge travels as: daily=2026-10-30, weekly=2026-W44, or grove=<d>-<seed>
+function challengeHash(c, lv) { return c && c.daily ? 'daily=' + c.daily : c && c.weekly ? 'weekly=' + c.weekly : `grove=${lv.d}-${lv.seed}`; }
 // Streak: consecutive days with a solved daily, counting back from today (or from yesterday while today is still open)
 function dailyStreak() {
   const done = P.daily || {}, d = new Date();
@@ -1704,18 +1720,30 @@ function dailyStreak() {
 function untilTomorrow() { const n = new Date(), m = Math.ceil((new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1) - n) / 60000); return [Math.floor(m / 60), m % 60]; }
 // 3 stars: at most 2 tries and no owl hints; 2: at most 1 hint or 4 tries; otherwise 1
 function starsFor(attempts, hints) { return attempts <= 2 && hints === 0 ? 3 : hints <= 1 || attempts <= 4 ? 2 : 1; }
+function chapterMastered(ch) { const ls = LEVELS.filter(l => l.ch === ch); return ls.length > 0 && ls.every(l => (P.stars || {})[l.id] === 3); }
 function starTotal(ch) { return LEVELS.filter(l => l.ch === ch).reduce((n, l) => n + ((P.stars || {})[l.id] || 0), 0); }
 function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
+// ISO week, e.g. 2026-W44: weeks start on Monday and belong to the year holding their Thursday
+function weekStr() {
+  const n = new Date(), d = new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate())), wd = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - wd);
+  const wk = Math.ceil(((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 86400000 + 1) / 7);
+  return `${d.getUTCFullYear()}-W${String(wk).padStart(2, '0')}`;
+}
+function daysToMonday() { return 8 - (new Date().getDay() || 7); }
 function seedOf(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
 function makeGrove(d, seed) {
   const lv = generateLevel(d, seed) || generateLevel(1, seed + 1);
   return Object.assign(lv, { d, seed });
 }
 function startDaily(day) { startGrove(makeGrove(DAILY_D, seedOf('daily-' + day)), { daily: day }); }
+function startWeekly(wk) { startGrove(makeGrove(WEEKLY_D, seedOf('weekly-' + wk)), { weekly: wk }); }
 // #daily=2026-10-30 or #grove=3-123456
 function groveFromHash() {
   const h = new URLSearchParams(location.hash.slice(1)), day = h.get('daily') || '', beat = clamp(+h.get('s') || 0, 0, 99);
   if (/^\d{4}-\d{2}-\d{2}$/.test(day)) { startDaily(day); if (beat) S.challenge.beat = beat; return true; }
+  const wk = h.get('weekly') || '';
+  if (/^\d{4}-W\d{2}$/.test(wk)) { startWeekly(wk); if (beat) S.challenge.beat = beat; return true; }
   const m = /^(\d{1,2})-(\d{1,10})$/.exec(h.get('grove') || '');
   if (!m) return false;
   startGrove(makeGrove(clamp(+m[1], 1, 10), +m[2] >>> 0), { link: true, beat });
@@ -1725,8 +1753,8 @@ function groveFromHash() {
 function pageLink(hash) { return /^https?:$/.test(location.protocol) ? location.href.split('#')[0] + (hash ? '#' + hash : '') : ''; }
 function shareGrove() {
   const lv = S.lv, c = S.challenge, trail = S.trail.map(f => (f >= 1 ? '🌕' : f > 0 ? '🌗' : '🌑')).join('');
-  const where = c && c.daily ? `${t('dailyName')} ${c.daily}` : t(c ? 'linkName' : 'wanderName');
-  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink((c && c.daily ? 'daily=' + c.daily : `grove=${lv.d}-${lv.seed}`) + '&s=' + S.trail.length), $('shareBtn'));
+  const where = c && c.daily ? `${t('dailyName')} ${c.daily}` : c && c.weekly ? `${t('weeklyName')} ${c.weekly}` : t(c ? 'linkName' : 'wanderName');
+  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink(challengeHash(c, lv) + '&s=' + S.trail.length), $('shareBtn'));
 }
 function shareProgress() {
   const n = sparkCount();
@@ -1752,7 +1780,7 @@ async function share(text, url, btn) {
 }
 function shareStuck() {
   const lv = S.lv, name = S.wander ? t('wanderName') : lvT(lv, 'name'), ch = S.wander ? '' : chName(lv.ch);
-  const link = S.challenge && S.challenge.daily ? 'daily=' + S.challenge.daily : lv.generated ? `grove=${lv.d}-${lv.seed}` : '';
+  const link = S.challenge || lv.generated ? challengeHash(S.challenge, lv) : '';
   share(t('stuckShare', name, ch).replace(' ()', ''), pageLink(link), $('stuckBtn'));
 }
 // A grove can be skipped after real effort: nothing is lost, and the story goes on without a star
@@ -1822,13 +1850,21 @@ function evaluate() {
     say(null, () => lvT(lv, 'success') + (newSpark ? t('newSpark') : '') + (firstTry ? t('pressNext') : ''));
     logEvent(`solved ${lv.id || 'wander d' + P.d} in ${S.attempts} ${S.attempts === 1 ? 'try' : 'tries'}, ${S.hints} hints, ${Math.round((Date.now() - S.startedAt) / 1000)}s`);
     S.stars = starsFor(S.attempts, S.hints);
+    const wasMastered = !S.wander && chapterMastered(lv.ch);
     if (lv.id) { P.stars = P.stars || {}; P.stars[lv.id] = Math.max(P.stars[lv.id] || 0, S.stars); }
+    const masteredNow = !S.wander && !wasMastered && chapterMastered(lv.ch);
     if (S.challenge) {
       // Shared puzzles don't move the hidden difficulty; remember the best daily score
       const day = S.challenge.daily, best = (P.daily || {})[day];
       if (day) {
         P.daily = Object.assign(P.daily || {}, { [day]: best ? Math.min(best, S.attempts) : S.attempts });
         if (day === todayStr()) { const [h, m] = untilTomorrow(); setTimeout(() => say(null, () => `🔥 ${t('streakLbl', dailyStreak())} · ${t('nextDaily', h, m)}`), 1800); }
+      }
+      const wk = S.challenge.weekly;
+      if (wk) {
+        const wb = (P.weekly || {})[wk];
+        P.weekly = Object.assign(P.weekly || {}, { [wk]: wb ? Math.min(wb, S.attempts) : S.attempts });
+        if (wk === weekStr()) setTimeout(() => say(null, () => `${t('weeklyBest', P.weekly[wk])} ${t('nextWeekly', daysToMonday())}`), 1800);
       }
     } else if (S.wander) {
       P.wanderCount++;
@@ -1843,7 +1879,7 @@ function evaluate() {
     }
     saveProgress();
     if (!S.wander) {
-      S.win = { id: lv.id, spark: newSpark, page: newSpark ? pageNo : 0, cheer: Math.floor(Math.random() * 4) };
+      S.win = { id: lv.id, spark: newSpark, page: newSpark ? pageNo : 0, cheer: Math.floor(Math.random() * 4), mastered: masteredNow };
       // Finishing a chapter fetches the next one, so the chapter list and the win card can point to it
       const next = chapterDone(lv.ch) ? loadChapter(lv.ch + 1).then(renderUI, loadFailed) : Promise.resolve();
       next.then(() => showPageNote(newSpark ? pageNo : 0, lv.id));
@@ -2032,7 +2068,8 @@ function renderUI() {
       break;
     }
     const done = LEVELS.filter(l => l.ch === i && P.solved[l.id]).length, total = LEVELS.filter(l => l.ch === i).length;
-    b.innerHTML = `<span class="nm">${chName(i)}</span> <span class="n">${done}/${total}${starTotal(i) ? ' · ' + t('chStars', starTotal(i)) : ''}</span>`;
+    b.innerHTML = `<span class="nm">${chName(i)}</span> <span class="n">${done}/${total}${starTotal(i) ? ' · ' + t('chStars', starTotal(i)) : ''}${chapterMastered(i) ? ' 🏮' : ''}</span>`;
+    if (chapterMastered(i)) b.title = t('mastered');
     b.setAttribute('aria-current', String(!S.wander && lv.ch === i));
     b.onclick = () => { const first = LEVELS.findIndex(l => l.ch === i && !P.solved[l.id]); startLevel(first >= 0 ? first : LEVELS.findIndex(l => l.ch === i)); };
     nav.appendChild(b);
@@ -2042,6 +2079,11 @@ function renderUI() {
   dy.disabled = !wanderOpen(); if (dy.disabled) dy.title = t('wanderLocked');
   dy.setAttribute('aria-current', String(!!S.challenge && S.challenge.daily === day));
   dy.onclick = () => startDaily(day); nav.appendChild(dy);
+  const wk = weekStr(), wb = document.createElement('button'); wb.type = 'button'; wb.className = 'chip';
+  wb.innerHTML = `${t('weeklyName')} <span class="n">${(P.weekly || {})[wk] ? '✓' : '★'}</span>`;
+  wb.disabled = !wanderOpen(); if (wb.disabled) wb.title = t('wanderLocked');
+  wb.setAttribute('aria-current', String(!!S.challenge && S.challenge.weekly === wk));
+  wb.onclick = () => startWeekly(wk); nav.appendChild(wb);
   const w = document.createElement('button'); w.type = 'button'; w.className = 'chip';
   w.innerHTML = `${t('wanderName')} <span class="n">${P.wanderCount}</span>`;
   w.disabled = !wanderOpen(); if (w.disabled) w.title = t('wanderLocked');
@@ -2055,7 +2097,7 @@ function renderUI() {
   $('eyebrow').hidden = false;
   document.querySelector('.board-col .goal-label').hidden = S.wander || lv.ch > 0;   // the wishes explain themselves after chapter 1
   if (S.challenge) {
-    $('eyebrow').textContent = S.challenge.daily ? t('eyebrowDaily', S.challenge.daily) : t('eyebrowLink');
+    $('eyebrow').textContent = S.challenge.daily ? t('eyebrowDaily', S.challenge.daily) : S.challenge.weekly ? t('eyebrowWeekly', S.challenge.weekly) : t('eyebrowLink');
   } else if (S.wander) {
     $('eyebrow').textContent = t('eyebrowWander', P.wanderCount + 1);
   } else {
@@ -2070,7 +2112,7 @@ function renderUI() {
       dots.appendChild(d);
     });
   }
-  $('levelName').textContent = S.challenge ? t(S.challenge.daily ? 'dailyName' : 'linkName') : lvT(lv, 'name');
+  $('levelName').textContent = S.challenge ? t(challengeKind(S.challenge) + 'Name') : lvT(lv, 'name');
   $('lsBtn').hidden = S.wander; $('lsBtn').textContent = t('lsBtn');
   $('goalLine').hidden = S.wander;
   if (!S.wander) $('goalLine').innerHTML = `<b>${t('goalLbl')}:</b> ${lsT(lv.id, 'goal')}`;
@@ -2336,6 +2378,7 @@ function openWin(fresh) {
   const mi = milestones().indexOf(n), mb = $('winMile');
   mb.hidden = !(w.spark && mi >= 0);
   if (!mb.hidden) mb.innerHTML = `<b>🏅 ${t('mileNew', t('mileLbl')[mi])}</b><p>${t('mileGlow')}</p>`;
+  if (w.mastered) { if (mb.hidden) mb.innerHTML = ''; mb.hidden = false; mb.innerHTML += `<b>🏮 ${t('masteredTitle', chName(lv.ch))}</b><p>${t('masteredText')}</p>`; }
   $('winGot').innerHTML = `<b>${t('gotLbl')}</b><p>${lsT(lv.id, 'reward')}</p>` + (w.page ? `<p>${t('newPage', pagesT()[w.page - 1][0])}</p>` : '');
   let tName, tGoal, unlock = '';
   if (!nx) { [tName, tGoal] = t('wanderTarget'); }
@@ -2544,7 +2587,10 @@ if (window.ResizeObserver) new ResizeObserver(() => {
 }).observe($('dock'));
 window.addEventListener('resize', resize);
 
+// Frost (Dec–Feb), bloom (Mar–May), firefly (Jun–Aug), harvest (Sep–Nov)
+function season() { return ['frost', 'bloom', 'firefly', 'harvest'][Math.floor(((new Date().getMonth() + 1) % 12) / 3)]; }
 function boot(data) {
+  document.documentElement.dataset.season = season();
   applyLang();
   if (data && data.wander) startWander();
   else if (data && data.levelIdx != null && LEVELS[data.levelIdx]) startLevel(data.levelIdx);
