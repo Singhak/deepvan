@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Deepvan</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,6 +24,7 @@
   color-scheme: dark;
 }
 html, body { height: 100%; }
+body { margin: 0; }
 [hidden] { display: none !important; }
 body {
   background: radial-gradient(1200px 600px at 70% -10%, #252c5a 0%, transparent 60%), var(--night);
@@ -37,24 +39,26 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .app {
   max-width: 1120px;
   margin: 0 auto;
-  padding-block: 18px 40px;
+  padding-block: 10px 14px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: grid;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
 }
 
 /* Header */
-.top { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 22px; }
+.top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.top .chapters { order: 3; flex-basis: 100%; }   /* brand + actions share row one; chapters get row two */
 .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
-.brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.7rem; line-height: 1.1; margin: 0; letter-spacing: 0.01em; }
+.brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.45rem; line-height: 1.1; margin: 0; letter-spacing: 0.01em; }
 .brand h1 .h1-tag { font-family: var(--font-body, inherit); font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-left: 6px; vertical-align: 3px; white-space: nowrap; }
-.brand p { margin: 0; color: var(--muted); font-size: 0.85rem; }
-.lantern { width: 34px; height: 40px; flex: none; }
+.brand p { margin: 0; color: var(--muted); font-size: 0.8rem; }
+.lantern { width: 28px; height: 33px; flex: none; }
 .chapters { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
   border: 1px solid var(--line); background: transparent; border-radius: 999px;
-  padding: 6px 13px; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+  padding: 4px 12px; font-size: 0.82rem; font-weight: 700; color: var(--muted);
   display: inline-flex; align-items: center; gap: 7px;
 }
 .chip[aria-current="true"] { background: var(--panel-2); color: var(--ink); border-color: #4a5390; }
@@ -62,7 +66,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .chip .n { font-variant-numeric: tabular-nums; color: var(--amber); font-weight: 800; }
 .top-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .top > * { min-width: 0; }
-.ghost { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 7px 12px; font-weight: 700; font-size: 0.88rem; }
+.ghost { border: 1px solid var(--line); background: var(--panel); border-radius: 10px; padding: 5px 12px; font-weight: 700; font-size: 0.88rem; }
 .close-x { flex: none; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border-radius: 50%; color: var(--muted); }
 .close-x:hover { color: var(--ink); border-color: #4a5390; }
 .close-x svg { width: 18px; height: 18px; }
@@ -71,16 +75,28 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 /* Stage */
 .stage { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; align-items: start; }
 @media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
-.board-col { min-width: 0; display: grid; gap: 12px; }
+/* Wide screens: goal and wishes sit beside the board instead of under it, filling the space the board leaves */
+@media (min-width: 861px) {
+  .board-col { grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 20px; }
+  .board-col > .level-head { grid-column: 1 / -1; }
+  .board-col > .board-wrap { grid-row: 2 / span 2; }
+  .board-col > .goal-label { grid-column: 2; grid-row: 2; }
+  .board-col > .wishes { grid-column: 2; grid-row: 3; align-self: start; flex-direction: column; align-items: flex-start; }
+}
+.board-col { min-width: 0; display: grid; gap: 8px; }
 .level-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 6px 16px; }
 .eyebrow { margin: 0 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
-.level-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.55rem; line-height: 1.15; text-wrap: balance; }
+/* Title and its story button share a row; eyebrow and goal line span full width */
+.level-head > div:first-child { display: flex; flex-wrap: wrap; align-items: center; gap: 0 12px; }
+.level-head > div:first-child > .eyebrow, .level-head .goal-line { flex-basis: 100%; }
+.level-head .goal-line { order: 1; }
+.level-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; line-height: 1.15; text-wrap: balance; }
 .dots { display: flex; gap: 6px; }
 .dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #59609a; background: transparent; padding: 0; }
 .dot.done { background: var(--amber); border-color: var(--amber); }
 .dot[aria-current="true"] { box-shadow: 0 0 0 3px rgba(255, 196, 94, 0.3); border-color: var(--amber); }
-.board-wrap { position: relative; width: 100%; max-width: 640px; }
-#board { display: block; width: 100%; height: auto; border-radius: 20px; touch-action: manipulation; cursor: pointer; }
+.board-wrap { position: relative; width: fit-content; max-width: 100%; }
+#board { display: block; max-width: 100%; height: auto; border-radius: 20px; touch-action: manipulation; cursor: pointer; }
 .night-count {
   position: absolute; top: 12px; right: 12px; padding: 4px 11px; border-radius: 99px;
   background: rgba(10, 13, 30, 0.75); font-weight: 800; font-size: 0.82rem; font-variant-numeric: tabular-nums;
@@ -90,6 +106,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 7px; border-radius: 99px;
   background: var(--panel); border: 1px solid var(--line); font-size: 0.84rem; color: var(--muted);
 }
+.wish em { font-style: normal; font-weight: 800; color: var(--amber); font-variant-numeric: tabular-nums; }
 .wish i { width: 10px; height: 10px; border-radius: 50%; background: #4b5285; flex: none; }
 .wish.on i { background: var(--amber); }
 .wish.off i { background: var(--fern); }
@@ -98,8 +115,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .wish.sad::after { content: "waiting"; font-size: 0.72rem; font-weight: 800; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
 
 /* Side column */
-.side { display: grid; gap: 14px; min-width: 0; }
-.voice { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; min-height: 108px; }
+.side { display: grid; gap: 12px; min-width: 0; }
+.voice { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; min-height: 90px; }
 .speaker { font-size: 0.74rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--amber); }
 .voice p { margin: 4px 0 0; font-size: 1rem; line-height: 1.55; }
 .voice.owl .speaker { color: var(--fern); }
@@ -136,7 +153,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .discover button { border: 0; background: var(--fern); color: #032622; border-radius: 10px; padding: 7px 12px; font-weight: 800; }
 
 /* Footer + designer view */
-.foot { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 0.82rem; border-top: 1px solid var(--line); padding-top: 14px; }
+.foot { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 8px; }
 .linkish { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: 0.82rem; }
 .designer { background: #0c1022; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; font-size: 0.85rem; display: grid; gap: 10px; }
 .designer h3 { margin: 0; font-size: 0.78rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--fern); }
@@ -195,19 +212,24 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .pulse { animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 196, 94, 0.55); } 50% { box-shadow: 0 0 0 7px rgba(255, 196, 94, 0); } }
 .quest {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center;
-  padding: 12px 18px 12px 12px; border-radius: 18px; border: 1px solid var(--line);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center;
+  padding: 6px 12px 6px 8px; border-radius: 16px; border: 1px solid var(--line);
   background: linear-gradient(90deg, rgba(255, 196, 94, 0.09), transparent 60%), var(--panel);
 }
-.quest-lantern { width: 64px; height: 76px; }
-.quest h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.25rem; line-height: 1.2; }
+.quest-lantern { width: 44px; height: 52px; }
+/* Quest text flows in two short rows: title + sparks, then progress + story button */
+.quest > div { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 12px; }
+.quest > div > .eyebrow { flex-basis: 100%; }
+.quest h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.1rem; line-height: 1.2; }
 .quest .eyebrow { color: var(--amber); }
-.sparks { display: flex; flex-wrap: wrap; gap: 5px; margin: 7px 0 5px; }
+.sparks { display: flex; flex-wrap: wrap; gap: 5px; margin: 0; }
 .spark { width: 13px; height: 13px; transform: rotate(45deg); border-radius: 3px; border: 1.5px solid #59609a; }
 .spark.lit { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 8px rgba(255, 196, 94, 0.7); }
 .spark.new { animation: sparkIn 1.4s ease-out 2; }
 @keyframes sparkIn { 0% { transform: rotate(45deg) scale(2.2); } 100% { transform: rotate(45deg) scale(1); } }
 .quest .small { margin: 0; }
+.quest .story-link { margin-top: 0; padding: 3px 12px; font-size: 0.82rem; }
+.quest .hero-btn canvas { width: 36px; height: 36px; }
 .story-sheet { text-align: center; justify-items: center; }
 .story-sheet .story-art { width: 120px; height: 140px; }
 .story-line { margin: 0; font-family: var(--font-display); font-size: 1.3rem; line-height: 1.45; max-width: 34ch; text-wrap: balance; }
@@ -284,7 +306,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .book-page.locked .num { color: var(--muted); }
 .book-page.latest { outline: 2px solid var(--amber); }
 /* Level story card */
-.ls-btn { margin-top: 6px; padding: 4px 12px; font-size: 0.82rem; }
+.ls-btn { margin-top: 0; padding: 3px 12px; font-size: 0.8rem; }
 .level-sheet { width: min(540px, 100%); text-align: center; justify-items: center; }
 .level-sheet #lsArt { width: 160px; height: 96px; border-radius: 22px; background: #2a305a; }
 .level-sheet .kicker { color: var(--amber); }
@@ -303,7 +325,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   .level-sheet .story-beat { font-size: 1.02rem; }
   .level-sheet .actions { bottom: -18px; padding-bottom: 18px; margin-bottom: -18px; }
 }
-.goal-line { margin: 4px 0 0; font-size: 0.92rem; color: var(--muted); }
+.goal-line { margin: 2px 0 0; font-size: 0.92rem; color: var(--muted); }
 .goal-line b { color: var(--amber); }
 .page-note .next-ch { margin: 10px 0 0; padding-top: 10px; border-top: 1px dashed #5b4a7a; }
 .page-note .teaser b { display: block; color: var(--amber); }
@@ -320,6 +342,22 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .sheet-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
 @media (prefers-reduced-motion: reduce) {
   .owl.nudge svg, .pulse, .spark.new { animation: none; }
+}
+/* Phones: keep the header and quest card short so the board sits near the top */
+@media (max-width: 600px) {
+  .brand p { display: none; }
+  .brand h1 { font-size: 1.25rem; }
+  .top { gap: 8px 10px; }
+  .top .chapters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .top .chapters::-webkit-scrollbar { display: none; }
+  .chip { flex: none; }
+  .top-actions { gap: 6px; }
+  .top-actions .ghost, .top-actions .lang-switch button { padding: 4px 9px; font-size: 0.8rem; }
+  .quest { grid-template-columns: minmax(0, 1fr) auto; padding: 8px 10px; }
+  .quest-lantern { display: none; }
+  .quest h3 { font-size: 1rem; }
+  .quest .small { font-size: 0.76rem; line-height: 1.35; }
+  .level-head h2 { font-size: 1.2rem; }
 }
 </style>
 
@@ -347,7 +385,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     </div>
   </header>
 
-  <section class="quest" aria-label="Your quest">
+  <section class="quest" id="quest" aria-label="Your quest">
       <svg class="quest-lantern" viewBox="0 0 64 76" aria-hidden="true">
         <defs><radialGradient id="qlG" cx="50%" cy="56%" r="50%"><stop offset="0" stop-color="#fff1b8"/><stop offset="0.5" stop-color="#ffc45e"/><stop offset="1" stop-color="#ff9e3d" stop-opacity="0"/></radialGradient></defs>
         <circle id="qlGlow" cx="32" cy="44" r="31" fill="url(#qlG)" opacity="0.1"/>
@@ -858,7 +896,8 @@ const UI = {
     tagline: 'Every plant follows a hidden rule. Watch, guess, try again.',
     helpBtn: 'How to play', journal: 'Journal', soundOn: 'Sound on', soundOff: 'Sound off',
     yourQuest: 'Your quest', questTitle: 'Relight the Great Lantern', questDone: 'The Great Lantern is lit',
-    questText: (n, total) => `${n} of ${total} sparks. Each visitor you settle sends one spark to the lantern.`,
+    questText: (n, total) => `${n} / ${total} sparks`,
+    questWhy: 'Each grove you finish sends one spark to the lantern.',
     questDoneText: w => `Wandering visitors still find their way here. You have helped ${w} of them so far.`,
     goal: 'Goal: make every visitor happy', pouch: 'Seed pouch',
     tipLight: "Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.",
@@ -939,7 +978,8 @@ const UI = {
     tagline: 'Har paudha ek chhupa hua niyam maanta hai. Dekho, socho, phir try karo.',
     helpBtn: 'Kaise khelein', journal: 'Diary', soundOn: 'Awaaz on', soundOff: 'Awaaz off',
     yourQuest: 'Aapka mission', questTitle: 'Bade Lantern ko phir se jalao', questDone: 'Bada Lantern jal utha',
-    questText: (n, total) => `${total} mein se ${n} chingaari. Har level jeetne par ek chingaari Lantern tak udti hai.`,
+    questText: (n, total) => `${n} / ${total} chingaari`,
+    questWhy: 'Har level jeetne par ek chingaari Bade Lantern tak udti hai.',
     questDoneText: w => `Bhatakte mehmaan ab bhi yahan aate hain. Ab tak aapne ${w} ki madad ki hai.`,
     goal: 'Lakshya: har jaanwar ko khush karo', pouch: 'Beej ki thaili',
     tipLight: 'Khaali dibbe par tap karo, beej lag jaayega. Lage hue beej par tap karo, wapas uth jaayega. Saare beej lagana zaroori nahi.',
@@ -1306,13 +1346,21 @@ const flies = Array.from({ length: 18 }, () => ({ x: Math.random(), y: Math.rand
 let geo = { W: 600, H: 600, cs: 100, ox: 0, oy: 0, dpr: 1 };
 function resize() {
   if (!S.lv) return;
-  const wrap = $('boardWrap'), W = Math.min(wrap.clientWidth || 600, 640);
+  const wrap = $('boardWrap'), col = wrap.parentElement;
+  // Fit the board into the viewport height too, so the goal and wishes stay on screen without scrolling.
+  // On wide screens the wishes sit beside the board, so leave them a column and keep only the footer below.
+  const wide = matchMedia('(min-width: 861px)').matches;
+  const below = wide ? document.querySelector('.foot').offsetHeight + 30
+    : col.getBoundingClientRect().bottom - wrap.getBoundingClientRect().bottom + 12;
+  const availH = Math.max(260, window.innerHeight - (wrap.getBoundingClientRect().top + window.scrollY) - below);
+  const availW = (col.clientWidth || 600) - (wide ? 250 : 0);
+  const W = Math.min(availW, 640, availH / (0.94 * S.lv.rows / S.lv.cols + 0.06));
   const pad = Math.max(10, W * 0.03);
   const cs = (W - pad * 2) / S.lv.cols;
   const H = cs * S.lv.rows + pad * 2;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-  canvas.style.height = H + 'px';
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   geo = { W, H, cs, ox: pad, oy: pad, dpr };
 }
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1811,13 +1859,21 @@ function renderUI() {
 
   // wishes
   const wishes = $('wishes'); wishes.innerHTML = '';
+  // Visitors with the same wish share one pill ("Beetle ×4") so the list stays short.
+  const groups = new Map();
   lv.goals.forEach(([r, c, want, who], i) => {
+    const k = who + '|' + want, g = groups.get(k) || { want, who, idx: [] };
+    g.idx.push(i); groups.set(k, g);
+  });
+  groups.forEach(({ want, who, idx }) => {
     const el = document.createElement('span');
     let cls = 'wish ' + want;
-    if (S.mode === 'night' && S.goalState) cls += S.goalState[i] ? ' happy' : ' sad';
+    if (S.mode === 'night' && S.goalState) cls += idx.every(i => S.goalState[i]) ? ' happy' : ' sad';
     el.className = cls;
     const text = lv.kind === 'life' && want === 'off' ? t('clearSpot') : whoT(who, 'want');
-    el.innerHTML = `<i></i><span><b>${whoT(who, 'label')}</b> · ${text}</span>`;
+    const n = idx.length, met = S.mode === 'night' && S.goalState ? idx.filter(i => S.goalState[i]).length : 0;
+    const count = n < 2 ? '' : ` <em>${S.mode === 'night' && S.goalState && met < n ? met + '/' + n : '×' + n}</em>`;
+    el.innerHTML = `<i></i><span><b>${whoT(who, 'label')}</b>${count} · ${text}</span>`;
     wishes.appendChild(el);
   });
 
@@ -1877,6 +1933,7 @@ function renderQuest() {
   $('rank').textContent = t('yourQuest') + ' · ' + rankT(rankIndex()) + (who ? ' ' + who : '');
   $('questTitle').textContent = t(done ? 'questDone' : 'questTitle');
   $('questText').textContent = done ? t('questDoneText', P.wanderCount) : t('questText', n, SPARKS_TOTAL);
+  $('quest').title = done ? '' : t('questWhy');
   const sp = $('sparks'); sp.innerHTML = '';
   for (let i = 1; i <= SPARKS_TOTAL; i++) {
     const d = document.createElement('i');
@@ -2220,7 +2277,7 @@ document.addEventListener('keydown', e => {
 $('helpOverlay').addEventListener('click', e => { if (e.target.id === 'helpOverlay') closeHelp(); });
 $('levelOverlay').addEventListener('click', e => { if (e.target.id === 'levelOverlay') closeLevelStory(); });
 ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
-if (window.ResizeObserver) new ResizeObserver(() => resize()).observe($('boardWrap'));
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe($('boardWrap').parentElement);
 window.addEventListener('resize', resize);
 
 function boot(data) {
