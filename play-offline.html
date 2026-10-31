@@ -298,6 +298,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .win-sheet #winHero { width: 96px; height: 96px; animation: hop 0.6s ease-in-out 5 alternate; }
 @keyframes hop { from { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-4px) scale(1.04, 0.96); } to { transform: translateY(-22px) scale(0.97, 1.03); } }
 .win-sheet h2 { font-size: 2rem; color: var(--amber); }
+.win-mile { text-align: center; border-color: var(--amber); }
+.win-mile b { color: var(--amber); }
 .win-meter { width: 100%; display: grid; gap: 6px; }
 .win-meter p { margin: 0; font-weight: 700; }
 .win-meter .plus { display: inline-block; margin-left: 6px; padding: 1px 9px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.8rem; animation: pop 0.5s 0.6s both; }
@@ -604,6 +606,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <button class="secondary wide" id="dayBtn" type="button" hidden>Back to daylight</button>
         <button class="primary next wide" id="nextBtn" type="button" hidden>Next grove</button>
         <button class="secondary wide" id="shareBtn" type="button" hidden>Share this grove</button>
+        <button class="secondary wide" id="stuckBtn" type="button" hidden>Ask a friend for help</button>
+        <button class="linkish wide" id="skipBtn" type="button" hidden>Skip this grove</button>
       </div>
       <button class="owl" id="owlBtn" type="button">
         <svg viewBox="0 0 40 40" aria-hidden="true">
@@ -726,6 +730,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     <p class="kicker" id="winKicker"></p>
     <h2 id="winTitle"></h2>
     <div class="win-meter"><p id="winMeterText"></p><div class="win-bar"><span id="winBar"></span></div></div>
+    <div class="win-box win-mile" id="winMile" hidden></div>
     <div class="win-box" id="winGot"></div>
     <div class="win-box win-target" id="winTarget"></div>
     <div class="actions"><button class="secondary" id="winStay" type="button"></button><button class="secondary" id="winShare" type="button" hidden></button><button class="primary wide" id="winNext" type="button"></button></div>
@@ -1087,7 +1092,7 @@ const UI = {
     streakLbl: n => `${n}-day streak`, nextDaily: (h, m) => `Next grove in ${h}h ${m}m.`, beatFriend: n => `Your friend settled it in ${n} ${n === 1 ? 'dusk' : 'dusks'}. Can you beat that?`, chStars: n => `${n}★`,
     dailyIntro: "Today's grove is the same for everyone who plays it. Settle every visitor in as few dusks as you can, then share how you did.",
     linkIntro: 'A friend sent you this grove. Plant seeds from your pouch, then let dusk fall and see who settles.',
-    shareBtn: 'Share this grove', shareWin: 'Share my progress', copied: 'Copied! Paste it to a friend.',
+    shareBtn: 'Share this grove', stuckBtn: 'Ask a friend for help', stuckShare: (lv, ch) => `🏮 Lantern Grove · I'm stuck on "${lv}" (${ch}). Any ideas? 🦉`, skipBtn: 'Skip this grove', skipSaid: 'No problem. Some groves click later. The path ahead is open.', mileLbl: ['Spark-gatherer', 'Lantern-lighter', 'Waystone-walker', 'Road-keeper', 'Lantern master', 'Keeper of the Great Lantern'], mileNew: name => `New title: ${name}`, mileGlow: 'Your hero now glows a little brighter.', shareWin: 'Share my progress', copied: 'Copied! Paste it to a friend.',
     shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\nEvery visitor settled in ${n} ${n === 1 ? 'dusk' : 'dusks'}, ${h ? `${h} owl ${h === 1 ? 'hint' : 'hints'}` : 'no owl hints'}. Can you do it?`,
     shareCh: (name, n, total) => `🏮 Lantern Grove · I finished "${name}" and lit ${n} of ${total} sparks in the Great Lantern.`,
     shareLit: total => `🏮 Lantern Grove · I lit all ${total} sparks and the Great Lantern shines again. Can you find out why it went dark?`,
@@ -1178,7 +1183,7 @@ const UI = {
     streakLbl: n => `${n} din ka streak`, nextDaily: (h, m) => `Agla bagicha ${h} ghante ${m} minute mein.`, beatFriend: n => `Aapke dost ne ${n} raat mein kar diya. Isse kam mein kar sakte ho?`, chStars: n => `${n}★`,
     dailyIntro: 'Aaj ka bagicha har khilaadi ke liye ek jaisa hai. Kam se kam raaton mein sab mehmaanon ko khush karo, phir dosto ko batao.',
     linkIntro: 'Aapke dost ne yeh bagicha bheja hai. Thaili se beej lagao, phir raat hone do aur dekho kaun khush hota hai.',
-    shareBtn: 'Yeh bagicha share karo', shareWin: 'Apni progress share karo', copied: 'Copy ho gaya! Dost ko bhejo.',
+    shareBtn: 'Yeh bagicha share karo', stuckBtn: 'Dost se madad maango', stuckShare: (lv, ch) => `🏮 Lantern Grove · Main "${lv}" (${ch}) mein atka hoon. Koi idea? 🦉`, skipBtn: 'Yeh bagicha chhodo', skipSaid: 'Koi baat nahi. Kuch bagiche baad mein samajh aate hain. Aage ka raasta khula hai.', mileLbl: ['Chingaari-batore', 'Lantern-jagane wale', 'Raahdeep-musafir', 'Sadak ke rakshak', 'Lantern ustaad', 'Bade Lantern ke Rakshak'], mileNew: name => `Naya khitaab: ${name}`, mileGlow: 'Aapka hero ab thoda zyada chamak raha hai.', shareWin: 'Apni progress share karo', copied: 'Copy ho gaya! Dost ko bhejo.',
     shareGrove: (where, trail, n, h) => `🏮 Lantern Grove · ${where}\n${trail}\n${n} raat mein sab mehmaan khush, ${h ? `ullu ke ${h} hint` : 'bina ullu ki madad'}. Tum kar sakte ho?`,
     shareCh: (name, n, total) => `🏮 Lantern Grove · Maine "${name}" poora kiya aur Bade Lantern mein ${total} mein se ${n} chingaariyan jalayi.`,
     shareLit: total => `🏮 Lantern Grove · Maine saari ${total} chingaariyan jalayi aur Bada Lantern phir se roshan hai. Kya aap jaan paoge woh kyun bujha tha?`,
@@ -1537,6 +1542,9 @@ function drawVisitorIcon(c, who, cx, cy, size) {
   drawVisitor(c, who, cx - dx * s, cy - dy * s, s, 1, 0);
 }
 // The player's character, drawn in a 100-unit box centred on (x, y)
+// Titles earned by lighting sparks; each one also makes the hero glow a little brighter
+function milestones() { return [5, 10, 20, 30, 40, SPARKS_TOTAL].filter((m, i, a) => m <= SPARKS_TOTAL && a.indexOf(m) === i); }
+function milestoneTier(n) { return milestones().filter(m => n >= m).length; }
 const HEROES = ['firefly', 'squirrel', 'fox', 'turtle'];
 function drawHero(c, kind, x, y, s) {
   c.save(); c.translate(x, y); c.scale(s / 100, s / 100);
@@ -1581,6 +1589,12 @@ function heroCanvas(cv, kind, cssPx) {
   const px = Math.min(window.devicePixelRatio || 1, 2);
   cv.width = cssPx * px; cv.height = cssPx * px;
   const c = cv.getContext('2d'); c.setTransform(px, 0, 0, px, 0, 0); c.clearRect(0, 0, cssPx, cssPx);
+  const tier = milestoneTier(sparkCount());
+  if (tier) {
+    const g = c.createRadialGradient(cssPx / 2, cssPx * 0.54, cssPx * 0.1, cssPx / 2, cssPx * 0.54, cssPx * 0.5);
+    g.addColorStop(0, `rgba(255,196,94,${0.12 + 0.07 * tier})`); g.addColorStop(1, 'rgba(255,196,94,0)');
+    c.fillStyle = g; c.fillRect(0, 0, cssPx, cssPx);
+  }
   drawHero(c, kind, cssPx / 2, cssPx * 0.54, cssPx * 0.86);
 }
 const heroName = k => t('heroes')[k];
@@ -1917,6 +1931,24 @@ async function share(text, url, btn) {
   if (!ok) { say(null, () => full); return; }
   const was = btn.textContent; btn.textContent = t('copied');
   setTimeout(() => { if (btn.textContent === t('copied')) btn.textContent = was; }, 2200);
+}
+function shareStuck() {
+  const lv = S.lv, name = S.wander ? t('wanderName') : lvT(lv, 'name'), ch = S.wander ? '' : chName(lv.ch);
+  const link = S.challenge && S.challenge.daily ? 'daily=' + S.challenge.daily : lv.generated ? `grove=${lv.d}-${lv.seed}` : '';
+  share(t('stuckShare', name, ch).replace(' ()', ''), pageLink(link), $('stuckBtn'));
+}
+// A grove can be skipped after real effort: nothing is lost, and the story goes on without a star
+function canSkip() { return !S.wander && !S.solved && S.attempts >= 5 && S.hints >= 3; }
+function skipLevel() {
+  const lv = S.lv;
+  if (!canSkip()) return;
+  P.solved[lv.id] = true; P.skipped = Object.assign(P.skipped || {}, { [lv.id]: true });
+  logEvent(`skipped ${lv.id} after ${S.attempts} tries, ${S.hints} hints`);
+  let reveal = false;
+  if (chapterDone(lv.ch) && !P.revealed[lv.ch]) { P.revealed[lv.ch] = true; S.pendingReveal = lv.ch; reveal = true; }
+  saveProgress();
+  const go = () => { say(null, () => t('skipSaid')); if (reveal) { const ch = S.pendingReveal; S.pendingReveal = null; S.revealThenNext = true; openReveal(ch); } else nextLevel(); };
+  (chapterDone(lv.ch) ? loadChapter(lv.ch + 1) : Promise.resolve()).then(go, loadFailed);
 }
 function beginLevel() {
   Object.assign(S, { placed: {}, mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
@@ -2273,6 +2305,8 @@ function renderUI() {
   $('dayBtn').textContent = t(S.solved ? 'replant' : 'back');
   $('nextBtn').hidden = !S.solved;
   $('nextBtn').textContent = t(S.wander ? 'nextVisitor' : 'nextGrove');
+  $('stuckBtn').hidden = S.solved || S.attempts < 3; $('stuckBtn').textContent = t('stuckBtn');
+  $('skipBtn').hidden = !canSkip(); $('skipBtn').textContent = t('skipBtn');
   $('shareBtn').hidden = !(S.solved && lv.generated); $('shareBtn').textContent = t('shareBtn');
   $('pouchTip').textContent = t(life ? 'tipLife' : 'tipLight');
 
@@ -2481,6 +2515,9 @@ function openWin(fresh) {
   const bar = $('winBar'), pct = k => Math.round(100 * k / SPARKS_TOTAL) + '%';
   if (fresh) { bar.style.width = pct(w.spark ? n - 1 : n); requestAnimationFrame(() => requestAnimationFrame(() => (bar.style.width = pct(n)))); }
   else bar.style.width = pct(n);
+  const mi = milestones().indexOf(n), mb = $('winMile');
+  mb.hidden = !(w.spark && mi >= 0);
+  if (!mb.hidden) mb.innerHTML = `<b>🏅 ${t('mileNew', t('mileLbl')[mi])}</b><p>${t('mileGlow')}</p>`;
   $('winGot').innerHTML = `<b>${t('gotLbl')}</b><p>${lsT(lv.id, 'reward')}</p>` + (w.page ? `<p>${t('newPage', pagesT()[w.page - 1][0])}</p>` : '');
   let tName, tGoal, unlock = '';
   if (!nx) { [tName, tGoal] = t('wanderTarget'); }
@@ -2632,6 +2669,8 @@ $('dayBtn').onclick = () => { toDay(); say(null, () => t(S.solved ? 'dayAgainSol
 document.querySelectorAll('[data-lang]').forEach(b => { b.onclick = () => setLang(b.dataset.lang); });
 $('nextBtn').onclick = nextLevel;
 $('shareBtn').onclick = shareGrove;
+$('stuckBtn').onclick = shareStuck;
+$('skipBtn').onclick = skipLevel;
 $('winShare').onclick = shareProgress;
 window.addEventListener('hashchange', () => { if (groveFromHash()) canvas.focus({ preventScroll: true }); });
 $('owlBtn').onclick = askOwl;
