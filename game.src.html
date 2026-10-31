@@ -229,6 +229,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .legend span { font-size: 0.86rem; color: var(--muted); }
 .note { margin: 0; color: var(--muted); }
 .note b { color: var(--ink); }
+.glance .ico { width: 44px; flex: none; text-align: center; font-size: 1.7rem; line-height: 44px; }
 .step-now { display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 99px; background: var(--amber); color: var(--amber-ink); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; vertical-align: 2px; }
 .pulse { animation: pulse 1.6s ease-in-out infinite; }
 @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 196, 94, 0.55); } 50% { box-shadow: 0 0 0 7px rgba(255, 196, 94, 0); } }
@@ -661,6 +662,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     <div class="prof-links">
       <button class="story-link" id="bookBtn" type="button"></button>
       <button class="ghost" id="helpBtn" type="button" data-t="helpBtn">How to play</button>
+      <button class="ghost" id="aboutBtn" type="button" data-t="aboutBtn">About the game</button>
     </div>
     <div class="prof-row"><p class="goal-label" data-t="profLang">Language</p><div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div></div>
     <div class="prof-row"><p class="goal-label" data-t="profSound">Sound</p><button class="ghost" id="soundBtn" type="button" aria-pressed="true">Sound on</button></div>
@@ -730,6 +732,33 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
     <div class="legend" id="legend"></div>
     <p class="note" data-t="helpNote"><b>Each plant follows a secret rule.</b> Nobody tells you the rules: working them out is the game. You can't lose, and you can try as many times as you like. Stuck? Ask the owl.</p>
     <div class="actions"><button class="secondary" id="helpClose" type="button" data-t="helpStart">Just let me play</button><button class="primary" id="tourBtn" type="button" data-t="tourStart">Show me step by step</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="aboutOverlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div class="sheet-top">
+      <h2 id="aboutTitle" data-t="aboutTitle">About Deepvan</h2>
+      <div class="lang-switch" role="group" aria-label="Language / Bhasha"><button type="button" data-lang="en">English</button><button type="button" data-lang="hi">Hinglish</button></div>
+    </div>
+    <p class="lede" data-t="aboutTag"><b>A calm puzzle game about the secret logic of nature.</b></p>
+    <p class="note" data-t="aboutPromise">Play at your own pace. There are no timers, no lost lives, and nothing you do here can't be undone.</p>
+    <p class="goal-label" data-t="aboutHow">How it works</p>
+    <ol class="steps">
+      <li><span data-t="about1"><b>Listen to the visitors.</b> Moths want warm light, toads want shade, snails wait for their Shadefern to flower, and beetles hope for moss by morning.</span></li>
+      <li><span data-t="about2"><b>Plant and watch.</b> Choose seeds from your pouch and press "Let dusk fall". Watch how light travels and moss grows in the dark.</span></li>
+      <li><span data-t="about3"><b>Work out the rules.</b> Nobody tells you what each plant does. Finding out by trying things is the heart of the puzzle.</span></li>
+    </ol>
+    <p class="goal-label" data-t="aboutSci">The science underneath</p>
+    <p class="note" data-t="aboutSciText">As you guide travellers along the Lantern Road, you aren't only gardening: you are quietly building <b>circuits, logic gates and living patterns</b>. Finish a chapter to see the real science behind what you made, in your Journal.</p>
+    <p class="goal-label" data-t="aboutGlance">At a glance</p>
+    <div class="legend glance">
+      <div><span class="ico" aria-hidden="true">🌱</span><div data-t="glance1"></div></div>
+      <div><span class="ico" aria-hidden="true">🦉</span><div data-t="glance2"></div></div>
+      <div><span class="ico" aria-hidden="true">📅</span><div data-t="glance3"></div></div>
+    </div>
+    <p class="note" data-t="aboutEnd"><em>Take a breath, plant a seed, and let dusk fall.</em></p>
+    <div class="actions"><button class="secondary" id="aboutHelp" type="button" data-t="helpBtn">How to play</button><button class="primary" id="aboutClose" type="button" data-t="aboutGo">Back to the grove</button></div>
   </div>
 </div>
 
@@ -975,6 +1004,20 @@ const UI = {
     help3: '<b>Press "Let dusk fall"</b> and watch what your plants do in the dark.',
     helpNote: "<b>Each plant follows a secret rule.</b> Nobody tells you the rules: working them out is the game. You can't lose, and you can try as many times as you like. Stuck? Ask the owl.",
     helpStart: 'Just let me play', tourStart: 'Show me step by step',
+    aboutBtn: 'About the game', aboutTitle: 'About Deepvan', aboutGo: 'Back to the grove',
+    aboutTag: '<b>A calm puzzle game about the secret logic of nature.</b>',
+    aboutPromise: "Play at your own pace. There are no timers, no lost lives, and nothing you do here can't be undone.",
+    aboutHow: 'How it works',
+    about1: '<b>Listen to the visitors.</b> Moths want warm light, toads want shade, snails wait for their Shadefern to flower, and beetles hope for moss by morning.',
+    about2: '<b>Plant and watch.</b> Choose seeds from your pouch and press "Let dusk fall". Watch how light travels and moss grows in the dark.',
+    about3: '<b>Work out the rules.</b> Nobody tells you what each plant does. Finding out by trying things is the heart of the puzzle.',
+    aboutSci: 'The science underneath',
+    aboutSciText: "As you guide travellers along the Lantern Road, you aren't only gardening: you are quietly building <b>circuits, logic gates and living patterns</b>. Finish a chapter to see the real science behind what you made, in your Journal.",
+    aboutGlance: 'At a glance',
+    glance1: '<b>Experiment freely</b><span>There is no game over. Plant, let dusk fall, watch, and change anything you like.</span>',
+    glance2: '<b>The owl is your guide</b><span>Stuck? The owl first asks you a helpful question. Ask again and it points to a spot.</span>',
+    glance3: "<b>Daily, weekly and friends' groves</b><span>A new grove each day, the same for everyone, and a harder one each week. Keep a streak, or send a friend your moon trail (🌕🌗🌑). It shows how close each dusk came, not the answer.</span>",
+    aboutEnd: '<em>Take a breath, plant a seed, and let dusk fall.</em>',
     tourCount: (i, n) => `Step ${i} of ${n}`, tourNext: 'Next', tourBack: 'Back', tourDone: 'Start playing', tourSkip: 'Skip',
     tour1: '<b>This is your grove.</b> Each square is a patch of soil where you can plant a seed.',
     tour2: '<b>These are your visitors</b> and what each one wants. Make every one of them happy to finish the level.',
@@ -1072,6 +1115,20 @@ const UI = {
     help3: '<b>"Raat hone do" dabao</b> aur dekho andhere mein aapke paudhe kya karte hain.',
     helpNote: '<b>Har paudha ek secret niyam maanta hai.</b> Koi niyam nahi batata: unhe khud dhoondhna hi game hai. Aap haar nahi sakte, jitni baar chaho try karo. Atak gaye? Ullu se pucho.',
     helpStart: 'Seedha khelo', tourStart: 'Step-by-step dikhao',
+    aboutBtn: 'Game ke baare mein', aboutTitle: 'Deepvan ke baare mein', aboutGo: 'Bagiche mein wapas',
+    aboutTag: '<b>Kudrat ke chhupe niyamon par bana ek shaant puzzle game.</b>',
+    aboutPromise: 'Aaram se, apni raftaar se khelo. Yahan koi timer nahi, koi haar nahi, aur har galti wapas theek ho sakti hai.',
+    aboutHow: 'Game kaise chalta hai',
+    about1: '<b>Mehmaanon ki suno.</b> Patangon ko garam roshni chahiye, mendhak andhera dhoondhte hain, ghonge Raat Rani ke khilne ka intezaar karte hain, aur beetle subah tak kaai chahte hain.',
+    about2: '<b>Lagao aur dekho.</b> Thaili se beej chuno aur "Raat hone do" dabao. Dekho andhere mein roshni kaise aage badhti hai aur kaai kaise phailti hai.',
+    about3: '<b>Niyam khud khojo.</b> Koi nahi batayega ki kaun sa paudha kya karta hai. Try karke unke chhupe niyam samajhna hi is game ka asli mazaa hai.',
+    aboutSci: 'Iske peeche ki science',
+    aboutSciText: 'Jab aap Lantern ki sadak par musafiron ki madad karte ho, toh aap sirf baaghbani nahi kar rahe: aap chupke se <b>circuits, logic gates aur jeete-jaagte patterns</b> bana rahe ho. Chapter poora karo aur apni Diary mein dekho ki asal mein kya banaya.',
+    aboutGlance: 'Ek nazar mein',
+    glance1: '<b>Befikar hokar try karo</b><span>Yahan game over nahi hota. Lagao, raat hone do, dekho, aur jo chaho badal do.</span>',
+    glance2: '<b>Ullu aapka saathi hai</b><span>Atak gaye? Ullu pehle ek kaam ka sawaal poochta hai. Dobara pucho toh sahi jagah dikhata hai.</span>',
+    glance3: '<b>Roz, hafte aur doston ke bagiche</b><span>Har din ek naya bagicha, sabke liye wahi, aur har hafte ek thoda mushkil. Streak banao, ya dost ko apni chaand wali lakeer (🌕🌗🌑) bhejo. Usme sirf dikhta hai ki har raat kitne paas pahunche, jawab nahi.</span>',
+    aboutEnd: '<em>Ek gehri saans lo, ek beej lagao, aur raat hone do.</em>',
     tourCount: (i, n) => `Step ${i} / ${n}`, tourNext: 'Aage', tourBack: 'Peeche', tourDone: 'Khelna shuru karo', tourSkip: 'Chhodo',
     tour1: '<b>Yeh aapka bagicha hai.</b> Har dibba zameen ka ek tukda hai, jahan aap beej laga sakte ho.',
     tour2: '<b>Yeh aapke mehmaan (jaanwar) hain</b> aur unki ichha. Sabko khush karoge toh level poora hoga.',
@@ -2648,7 +2705,9 @@ function closeProfile() { $('profileOverlay').hidden = true; }
 $('profileBtn').onclick = () => { $('profileOverlay').hidden = false; $('profileClose').focus(); };
 $('profileClose').onclick = closeProfile;
 $('helpBtn').onclick = () => { closeProfile(); openHelp(); };
-// Chapter picker: one button in the header, the full chapter list on demand
+$('aboutBtn').onclick = () => { closeProfile(); $('aboutOverlay').hidden = false; $('aboutClose').focus(); };
+$('aboutClose').onclick = () => { $('aboutOverlay').hidden = true; };
+$('aboutHelp').onclick = () => { $('aboutOverlay').hidden = true; openHelp(); };// Chapter picker: one button in the header, the full chapter list on demand
 function setChMenu(open) { $('chapters').hidden = !open; $('chBtn').setAttribute('aria-expanded', String(open)); }
 $('chBtn').onclick = () => setChMenu($('chapters').hidden);
 $('mapBtn').onclick = openMap;
@@ -2714,7 +2773,7 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape') S.revealThenNext = false;
   if (e.key === 'Escape' && !$('mapOverlay').hidden) return closeMap();
-  if (e.key === 'Escape') { setChMenu(false); ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay'].forEach(id => ($(id).hidden = true)); }
+  if (e.key === 'Escape') { setChMenu(false); ['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay', 'aboutOverlay'].forEach(id => ($(id).hidden = true)); }
   if (e.key === 'Escape' && !$('helpOverlay').hidden) closeHelp();
   if (e.key === 'Escape' && !$('winOverlay').hidden) return closeWin(false);
   if (e.key === 'Escape' && !$('heroOverlay').hidden) return closeHero();
@@ -2722,7 +2781,7 @@ document.addEventListener('keydown', e => {
 });
 $('helpOverlay').addEventListener('click', e => { if (e.target.id === 'helpOverlay') closeHelp(); });
 $('levelOverlay').addEventListener('click', e => { if (e.target.id === 'levelOverlay') closeLevelStory(); });
-['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
+['journalOverlay', 'revealOverlay', 'confirmOverlay', 'bookOverlay', 'profileOverlay', 'aboutOverlay'].forEach(id => $(id).addEventListener('click', e => { if (e.target.id === id) $(id).hidden = true; }));
 if (window.ResizeObserver) new ResizeObserver(() => resize()).observe($('boardWrap').parentElement);
 // The phone dock floats over the page, so the page keeps that much room free at the bottom
 if (window.ResizeObserver) new ResizeObserver(() => {
