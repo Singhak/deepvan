@@ -1,0 +1,231 @@
+{
+  "id": "c9",
+  "name": "Ripples",
+  "plants": [],
+  "reveal": {
+    "title": "You found oscillators",
+    "lede": "Shapes that change and come back again and again are called oscillators. The blinker, toad and beacon are real Game of Life oscillators. The clock in a computer is an oscillator too: it ticks billions of times a second and keeps every part in step."
+  },
+  "open": "The Glass River runs wide and slow. Glowmoss grows on its bank in rings, like ripples, and changes night by night. A kingfisher is watching from a reed.",
+  "story": "The Old Keeper's letter led here, to the Glass River. On its bank, Glowmoss grows in ripples that never stay the same two nights running. Neelu the kingfisher knows this river well and will show you the way.",
+  "recap": "At the quiet waystone, the Old Keeper's letter said: \"I've gone to the Glass River. Its lights go out every night, and I want to know why.\"",
+  "goal": "Light the river's first waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The river's first waystone glows. Neelu looks out over the water. \"The river's lights are bright at dusk,\" Neelu says, \"but by morning they are gone. Why?\"",
+  "hi": {
+    "name": "Lehrein",
+    "title": "Aapne oscillators dhoondh liye",
+    "lede": "Jo shapes badalte hain aur baar baar waapas aate hain, unhe oscillators kehte hain. Blinker, toad aur beacon Game of Life ke asli oscillators hain. Computer ki ghadi bhi ek oscillator hai: woh ek second mein arabon baar tick karti hai aur har hisse ko ek saath chalati hai.",
+    "open": "Kaanch ki nadi chaudi aur dheemi behti hai. Uske kinaare Jaadui Kaai leheron jaise gol gol ugti hai aur har raat badalti hai. Ek kilkila Narkat par baitha dekh raha hai.",
+    "story": "Purane Rakshak ki chitthi yahan le aayi, Kaanch ki nadi tak. Kinaare par Jaadui Kaai aisi leheron mein ugti hai jo do raat lagataar ek jaisi nahi rehti. Neelu kilkila is nadi ko achhe se jaanta hai aur aapko raasta dikhayega.",
+    "recap": "Chup raahdeep par Purane Rakshak ki chitthi mein likha tha: \"Main Kaanch ki nadi ja raha hoon. Uski roshniyan har raat bujh jaati hain, aur main jaanna chahta hoon kyun.\"",
+    "goal": "Nadi ka pehla raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Nadi ka pehla raahdeep chamak utha. Neelu paani ki taraf dekhta hai. \"Shaam ko nadi ki roshniyan chamakti hain,\" Neelu kehta hai, \"par subah tak gayab ho jaati hain. Kyun?\""
+  },
+  "levels": [
+    {
+      "id": "9-1",
+      "name": "Neelu's Ripple",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 1,
+      "fixed": [[2, 1, "moss"], [2, 2, "moss"], [3, 0, "moss"], [3, 1, "moss"], [3, 2, "moss"]],
+      "pouch": { "moss": 1 },
+      "goals": [[1, 2, "on", "beetle"], [3, 3, "on", "beetle"]],
+      "solution": [[2, 3, "moss"]],
+      "intro": "A ripple of Glowmoss lies on the mud. Two beetles wait on bare spots near it and want moss under them after one night. You have one patch.",
+      "hints": [
+        "The ripple on the mud looks almost whole. Where is it missing a piece?",
+        "Look at the right end of the top row. What could one more patch there do in a night?"
+      ],
+      "success": "The ripple rolled over in the night, and moss reached both beetles.",
+      "story": {
+        "goal": "Bring moss to both beetles by dawn.",
+        "reward": "Neelu tells you about the river's lights.",
+        "intro": "A kingfisher named Neelu lands on a reed. \"I met the Old Keeper on this bank,\" Neelu says. Two beetles want to sleep on the Glowmoss here, but it never stays where it was.",
+        "next": "Neelu flies to two square stones in the shallows. Moss grows on them, and two beetles wait where the stones nearly touch."
+      },
+      "page": ["Neelu of the River", "Neelu the kingfisher has lived on the Glass River for many years, and has watched its lights go out every night. Neelu met the Old Keeper here, on this very bank."],
+      "hi": {
+        "name": "Neelu ki leher",
+        "intro": "Keechad par Jaadui Kaai ki ek leher hai. Do beetles uske paas khaali jagah par baithe hain aur ek raat baad apne neeche kaai chahte hain. Aapke paas ek patch hai.",
+        "hints": [
+          "Keechad wali leher lagbhag poori dikhti hai. Uska kaunsa tukda gayab hai?",
+          "Upar wali line ke daayein sire ko dekho. Wahan ek patch ek raat mein kya kar sakta hai?"
+        ],
+        "success": "Raat mein leher palat gayi aur kaai dono beetles tak pahunch gayi.",
+        "story": {
+          "goal": "Subah tak dono beetles tak kaai pahunchao.",
+          "reward": "Neelu aapko nadi ki roshniyon ke baare mein batata hai.",
+          "intro": "Neelu naam ka ek kilkila Narkat par aakar baithta hai. \"Main Purane Rakshak se isi kinaare par mila tha,\" Neelu kehta hai. Do beetles yahan ki Jaadui Kaai par sona chahte hain, par woh kabhi ek jagah nahi tikti.",
+          "next": "Neelu uthle paani mein do chaukor pattharon tak udta hai. Un par kaai ugi hai, aur jahan patthar lagbhag milte hain wahan do beetles intezaar kar rahe hain."
+        },
+        "page": ["Nadi ka Neelu", "Neelu kilkila kai saalon se Kaanch ki nadi par rehta hai aur usne har raat uski roshniyan bujhte dekhi hain. Neelu Purane Rakshak se yahin, isi kinaare par mila tha."]
+      }
+    },
+    {
+      "id": "9-2",
+      "name": "Two Square Stones",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 2,
+      "fixed": [[1, 1, "moss"], [1, 2, "moss"], [2, 1, "moss"], [3, 4, "moss"], [4, 3, "moss"], [4, 4, "moss"]],
+      "pouch": { "moss": 2 },
+      "goals": [[2, 2, "on", "beetle"], [3, 3, "on", "beetle"]],
+      "solution": [[2, 2, "moss"], [3, 3, "moss"]],
+      "intro": "Two beetles wait where two mossy stones nearly touch. They want moss under them when the second night ends. You have two patches.",
+      "hints": [
+        "Each stone has a corner without moss. What happens to the corners where the stones meet?",
+        "Look at the two beetles in the middle. Will their spots have moss after the first night, the second, or both?"
+      ],
+      "success": "The middle corners went dark on the first night and lit again on the second.",
+      "story": {
+        "goal": "Give both beetles moss after two nights.",
+        "reward": "Neelu shows you a still pool upstream.",
+        "intro": "In the shallows, two square stones are covered in Glowmoss. Where they nearly touch, the moss flickers. Two beetles want to rest on those middle corners when the second night is over.",
+        "next": "Upstream is a still pool. A toad rests inside a ring of moss there, and a line of moss rocks beside it."
+      },
+      "page": ["Two Square Stones", "Two squares of Glowmoss met at one corner. Night after night, the corners where they met went dark and lit again, like a slow wink."],
+      "hi": {
+        "name": "Do chaukor patthar",
+        "intro": "Do beetles wahan intezaar karte hain jahan kaai wale do patthar lagbhag milte hain. Woh doosri raat ke baad apne neeche kaai chahte hain. Aapke paas do patches hain.",
+        "hints": [
+          "Har patthar ke ek kone mein kaai nahi hai. Jahan patthar milte hain, un konon ka kya hota hai?",
+          "Beech ke do beetles ko dekho. Unki jagah par pehli raat ke baad kaai hogi, doosri ke baad, ya dono?"
+        ],
+        "success": "Beech ke kone pehli raat andhere ho gaye aur doosri raat phir chamak uthe.",
+        "story": {
+          "goal": "Do raat baad dono beetles ko kaai do.",
+          "reward": "Neelu aapko upar ki taraf ek shaant taal dikhata hai.",
+          "intro": "Uthle paani mein do chaukor pattharon par Jaadui Kaai ugi hai. Jahan woh lagbhag milte hain, wahan kaai jhilmilati hai. Doosri raat khatam hone par do beetles un beech ke konon par aaram karna chahte hain.",
+          "next": "Upar ki taraf ek shaant taal hai. Wahan ek mendhak kaai ke gol ghere ke andar aaram karta hai, aur paas mein kaai ki ek line jhoolti hai."
+        },
+        "page": ["Do chaukor patthar", "Jaadui Kaai ke do square ek kone par mile. Har raat jahan woh mile the woh kone andhere hote aur phir chamak uthte, jaise dheere se aankh maarna."]
+      }
+    },
+    {
+      "id": "9-3",
+      "name": "The Still Pool",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 3,
+      "fixed": [[0, 1, "moss"], [1, 0, "moss"], [2, 1, "moss"], [3, 4, "moss"], [5, 4, "moss"]],
+      "pouch": { "moss": 2 },
+      "goals": [[1, 0, "on", "beetle"], [1, 1, "off", "toad"], [4, 3, "on", "beetle"]],
+      "solution": [[1, 2, "moss"], [4, 4, "moss"]],
+      "intro": "A toad rests in a ring of Glowmoss and a beetle sits on the ring. Another beetle waits by a broken line of moss. Both want moss after three nights. You have two patches.",
+      "hints": [
+        "Both moss shapes have a gap. Which one should stay still, and which one should move?",
+        "Look at the gap in the ring and the gap in the line. Where will each shape be on the third dawn?"
+      ],
+      "success": "The ring stayed still around the toad, and the line rocked over to reach the beetle.",
+      "story": {
+        "goal": "Help the toad and both beetles by the pool.",
+        "reward": "Neelu spots a toad on the mud bar.",
+        "intro": "By a still pool, an old toad likes to rest inside a ring of Glowmoss. Nearby, a line of moss rocks like a reed in the current. Two beetles want moss at dawn, and the toad wants peace.",
+        "next": "On a mud bar, a toad has fallen asleep right on top of some moss. Three beetles wait close by."
+      },
+      "page": ["The Still Pool", "Some moss shapes never move, like the ring around the toad. Others rock back and forth every night, like the line beside it. Neelu says the river has both."],
+      "hi": {
+        "name": "Shaant taal",
+        "intro": "Ek mendhak Jaadui Kaai ke gol ghere mein aaram karta hai aur ek beetle ghere par baitha hai. Doosra beetle kaai ki tooti line ke paas hai. Dono ko teen raat baad kaai chahiye. Aapke paas do patches hain.",
+        "hints": [
+          "Dono kaai ke shapes mein ek khaali jagah hai. Kaunsa shape tika rahe, aur kaunsa hile?",
+          "Ghere ki khaali jagah aur line ki khaali jagah dekho. Teesri subah har shape kahan hoga?"
+        ],
+        "success": "Ghera mendhak ke chaaron taraf tika raha, aur line jhool kar beetle tak pahunch gayi.",
+        "story": {
+          "goal": "Taal ke paas mendhak aur dono beetles ki madad karo.",
+          "reward": "Neelu ko keechad ke teele par ek mendhak dikhta hai.",
+          "intro": "Ek shaant taal ke paas ek boodha mendhak Jaadui Kaai ke gol ghere mein aaram karna pasand karta hai. Paas mein kaai ki ek line dhaara mein Narkat ki tarah jhoolti hai. Do beetles ko subah kaai chahiye, aur mendhak ko shaanti.",
+          "next": "Keechad ke ek teele par ek mendhak kaai ke theek upar so gaya hai. Paas mein teen beetles intezaar kar rahe hain."
+        },
+        "page": ["Shaant taal", "Kuch kaai ke shapes kabhi nahi hilte, jaise mendhak ke aas-paas ka ghera. Kuch har raat aage peeche jhoolte hain, jaise uske paas wali line. Neelu kehta hai nadi mein dono hain."]
+      }
+    },
+    {
+      "id": "9-4",
+      "name": "The Toad on the Moss",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 5,
+      "fixed": [[2, 1, "moss"], [2, 4, "moss"], [3, 1, "moss"], [3, 4, "moss"]],
+      "pouch": { "moss": 2 },
+      "goals": [[2, 1, "off", "toad"], [2, 2, "on", "beetle"], [3, 2, "on", "beetle"], [3, 3, "on", "beetle"]],
+      "solution": [[1, 3, "moss"], [4, 2, "moss"]],
+      "intro": "A toad sleeps on Glowmoss and wants to wake on bare mud after five nights. Three beetles wait on bare mud beside it. You have two patches.",
+      "hints": [
+        "You can only add moss, never take it away. Can adding moss make the toad's moss leave?",
+        "Look above and below the four patches. Which ripple from the first riverbank could they become?"
+      ],
+      "success": "Two new patches made a ripple, and after five nights the toad woke on bare mud.",
+      "story": {
+        "goal": "Clear the toad's spot and bring moss to three beetles.",
+        "reward": "Neelu remembers the Old Keeper on this bar.",
+        "intro": "On a mud bar, a toad has fallen asleep on a patch of Glowmoss. It wants to wake on bare mud in five nights. Three beetles are hoping the moss comes their way instead.",
+        "next": "Neelu remembers the Old Keeper sitting on this bar, counting nights. Just ahead, the river's first waystone stands dark among the ripples."
+      },
+      "page": ["Counting Nights", "At dusk the moss lay under the toad. One night later it had moved to the beetles, and the next night it came back. Counting the nights told us where it would be."],
+      "hi": {
+        "name": "Kaai par mendhak",
+        "intro": "Ek mendhak Jaadui Kaai par so raha hai aur paanch raat baad khaali keechad par jaagna chahta hai. Teen beetles uske paas khaali keechad par hain. Aapke paas do patches hain.",
+        "hints": [
+          "Aap sirf kaai laga sakte ho, hata nahi sakte. Kya kaai lagane se mendhak ke neeche ki kaai ja sakti hai?",
+          "Chaar patches ke upar aur neeche dekho. Pehle kinaare ki kaunsi leher yeh ban sakte hain?"
+        ],
+        "success": "Do naye patches se leher bani, aur paanch raat baad mendhak khaali keechad par jaaga.",
+        "story": {
+          "goal": "Mendhak ki jagah khaali karo aur teen beetles tak kaai lao.",
+          "reward": "Neelu ko is teele par Purane Rakshak yaad aate hain.",
+          "intro": "Keechad ke ek teele par ek mendhak Jaadui Kaai ke patch par so gaya hai. Woh paanch raat baad khaali keechad par jaagna chahta hai. Teen beetles chahte hain ki kaai unki taraf aaye.",
+          "next": "Neelu ko yaad hai ki Purane Rakshak isi teele par baith kar raatein gin rahe the. Aage leheron ke beech nadi ka pehla raahdeep andhera khada hai."
+        },
+        "page": ["Raatein ginna", "Shaam ko kaai mendhak ke neeche thi. Ek raat baad woh beetles ki taraf chali gayi, aur agli raat waapas aa gayi. Raatein gin kar pata chala ki woh kahan hogi."]
+      }
+    },
+    {
+      "id": "9-5",
+      "name": "The River Waystone",
+      "kind": "life",
+      "rows": 7,
+      "cols": 7,
+      "nights": 3,
+      "fixed": [[1, 2, "moss"], [1, 3, "moss"], [2, 0, "moss"], [2, 1, "moss"], [5, 5, "moss"], [5, 6, "moss"]],
+      "pouch": { "moss": 3 },
+      "goals": [[1, 0, "on", "beetle"], [2, 1, "off", "toad"], [2, 3, "on", "beetle"], [5, 6, "off", "toad"], [6, 5, "on", "beetle"]],
+      "solution": [[1, 1, "moss"], [2, 2, "moss"], [5, 4, "moss"]],
+      "intro": "Two broken ripples lie by the dark waystone. Three beetles want moss and two toads want bare mud after three nights. You have three patches.",
+      "hints": [
+        "Two ripples are unfinished here. Which shapes have you seen on this river before?",
+        "Look at the gaps in the top ripple and the end of the bottom line. Where will each be on the third dawn?"
+      ],
+      "success": "Both ripples rocked three times, and every beetle and toad woke where it wanted. The waystone glows.",
+      "story": {
+        "goal": "Set both ripples right and light the waystone.",
+        "reward": "The river's first waystone lights up.",
+        "intro": "The river's first waystone stands dark on the bank. Two ripples of Glowmoss rock beside it. Three beetles and two toads are waiting, and Neelu watches from a branch.",
+        "next": "Downstream, the river runs shallow over a line of stepping stones. Neelu says light could cross there, if a Sunbell sat in just the right place."
+      },
+      "page": ["The River's First Waystone", "Two ripples rocked in time, and the waystone lit. Neelu says the river's own lights shine every dusk and are gone by morning. The Old Keeper came here to learn why."],
+      "hi": {
+        "name": "Nadi ka raahdeep",
+        "intro": "Andhere raahdeep ke paas do adhoori lehrein hain. Teen beetles ko kaai aur do mendhakon ko khaali keechad chahiye, teen raat baad. Aapke paas teen patches hain.",
+        "hints": [
+          "Yahan do lehrein adhoori hain. Inme se kaunse shapes aapne is nadi par pehle dekhe hain?",
+          "Upar wali leher ki khaali jagah aur neeche wali line ka sira dekho. Teesri subah har ek kahan hogi?"
+        ],
+        "success": "Dono lehrein teen baar jhooli, aur har beetle aur mendhak wahin jaaga jahan woh chahta tha. Raahdeep chamak utha.",
+        "story": {
+          "goal": "Dono leheron ko sahi karo aur raahdeep jalao.",
+          "reward": "Nadi ka pehla raahdeep jal uthta hai.",
+          "intro": "Nadi ka pehla raahdeep kinaare par andhera khada hai. Uske paas Jaadui Kaai ki do lehrein jhoolti hain. Teen beetles aur do mendhak intezaar kar rahe hain, aur Neelu ek daal se dekh raha hai.",
+          "next": "Aage nadi uthli hai aur paani mein pathar ki ek line hai. Neelu kehta hai roshni wahan se paar ja sakti hai, agar Surajmukhi bilkul sahi jagah baithe."
+        },
+        "page": ["Nadi ka pehla raahdeep", "Do lehrein saath saath jhooli aur raahdeep jal utha. Neelu kehta hai nadi ki apni roshniyan har shaam chamakti hain aur subah tak gayab ho jaati hain. Purane Rakshak yahi jaanne yahan aaye the."]
+      }
+    }
+  ]
+}
