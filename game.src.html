@@ -137,6 +137,11 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .voice p { margin: 4px 0 0; font-size: 1rem; line-height: 1.55; }
 .voice.owl-voice .speaker { color: var(--fern); }
 .pouch h3, .side h3 { margin: 0 0 8px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+.pouch-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.pouch-head h3 { margin: 0; }
+.board-tools { display: flex; gap: 6px; margin-left: auto; }
+.board-tools .ghost { padding: 3px 10px; font-size: 0.8rem; }
+.board-tools .ghost:disabled { opacity: 0.4; cursor: default; }
 .seeds { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; }
 .seed {
   display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; border-radius: 12px;
@@ -497,6 +502,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   .dock .owl span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .dock .pouch { grid-area: pouch; min-width: 0; }
   .dock .pouch h3, .dock .pouch .small { display: none; }
+  .dock .pouch-head { margin-bottom: 6px; }
+  .dock .board-tools .ghost { min-height: 34px; padding: 2px 14px; }
   .dock .seeds { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; margin-inline: -2px; padding: 2px; }
   .dock .seeds::-webkit-scrollbar { display: none; }
   .dock .seed { flex: 1 0 auto; min-width: 112px; min-height: 52px; scroll-snap-align: start; padding: 5px 12px 5px 6px; }
@@ -599,7 +606,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <p id="voiceText"></p>
       </div>
       <div class="pouch">
-        <h3 data-t="pouch">Seed pouch</h3>
+        <div class="pouch-head"><h3 data-t="pouch">Seed pouch</h3><div class="board-tools"><button class="ghost" id="undoBtn" type="button" disabled>Undo</button><button class="ghost" id="clearBtn" type="button" disabled>Clear</button></div></div>
         <div class="seeds" id="pouch"></div>
         <p class="small" id="pouchTip">Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.</p>
       </div>
@@ -947,6 +954,8 @@ const UI = {
     owlTap: name => `The owl hops onto one patch and taps it twice. A ${name} might like it here.`,
     owlDone: 'The owl blinks slowly. You already have everything it would suggest. Try letting dusk fall.',
     fixedPlant: 'This plant was here long before you. It stays where it is.',
+    cardGrove: (n, h) => `Every visitor settled in ${n} ${n === 1 ? 'dusk' : 'dusks'} · ${h ? `${h} owl ${h === 1 ? 'hint' : 'hints'}` : 'no owl hints'}`, cardDare: 'Can you do it?', cardHelp: 'Can you help?', cardSparks: (n, total) => `${n} of ${total} sparks lit`,
+    undo: 'Undo', undoTip: 'Undo your last change (Ctrl+Z or U)', clear: 'Clear', clearTip: 'Pick up every seed you planted (R). Undo brings them back.',
     resting: label => `The ${label.toLowerCase()} is resting on this spot.`,
     pouchEmpty: 'Your pouch is empty. Tap a planted seed to pick it back up.',
     dayAgainSolved: 'Daylight again. Try a different way if you like.', dayAgain: 'Daylight again. What will you change?',
@@ -989,7 +998,7 @@ const UI = {
     confirmTitle: 'Start the grove over?', confirmLede: 'This clears your solved groves and journal notes on this device.', confirmNo: 'Keep my grove', reset: 'Start over',
     designerShow: 'Show designer view', designerHide: 'Hide designer view',
     unlock: 'Open all chapters (for playtesting)', unlocked: 'All chapters are open',
-    canvasLabel: 'The grove. Use arrow keys to move, Enter to plant or pick up, number keys to choose a seed, D to let dusk fall.',
+    canvasLabel: 'The grove. Use arrow keys to move, Enter to plant or pick up, number keys to choose a seed, D to let dusk fall, U to undo, R to clear.',
   },
   hi: {
     tagline: 'Har paudha ek chhupa hua niyam maanta hai. Dekho, socho, phir try karo.',
@@ -1042,6 +1051,8 @@ const UI = {
     owlTap: name => `Ullu ek dibbe par kood kar use do baar thapthapata hai. Yahan ${name} lagana achha ho sakta hai.`,
     owlDone: 'Ullu dheere se palak jhapkata hai. Uske saare sujhaav aapke paas pehle se hain. Ab raat hone do.',
     fixedPlant: 'Yeh paudha aapse bahut pehle se yahan hai. Yeh apni jagah se nahi hilega.',
+    cardGrove: (n, h) => `${n} raat mein sab mehmaan khush · ${h ? `ullu ke ${h} hint` : 'bina ullu ki madad'}`, cardDare: 'Tum kar sakte ho?', cardHelp: 'Madad karoge?', cardSparks: (n, total) => `${total} mein se ${n} chingaariyan jali`,
+    undo: 'Undo', undoTip: 'Pichhla badlaav wapas lo (Ctrl+Z ya U)', clear: 'Saaf karo', clearTip: 'Lagaye hue saare beej utha lo (R). Undo se wapas aa jaayenge.',
     resting: label => `${label} is jagah par aaram kar raha hai. Yahan beej nahi lag sakta.`,
     pouchEmpty: 'Thaili khaali hai. Laga hua beej wapas uthane ke liye us par tap karo.',
     dayAgainSolved: 'Phir se din ho gaya. Chaho toh doosre tareeke se try karo.', dayAgain: 'Phir se din ho gaya. Ab kya badloge?',
@@ -1084,7 +1095,7 @@ const UI = {
     confirmTitle: 'Bagicha shuru se khelein?', confirmLede: 'Isse is device par aapke jeete hue level aur diary ke notes mit jaayenge.', confirmNo: 'Mera bagicha rakho', reset: 'Shuru se khelo',
     designerShow: 'Designer view dikhao', designerHide: 'Designer view chhupao',
     unlock: 'Saare chapter kholo (testing ke liye)', unlocked: 'Saare chapter khule hain',
-    canvasLabel: 'Bagicha. Arrow keys se chalo, Enter se beej lagao ya uthao, number keys se beej chuno, D se raat hone do.',
+    canvasLabel: 'Bagicha. Arrow keys se chalo, Enter se beej lagao ya uthao, number keys se beej chuno, D se raat hone do, U se undo, R se saaf.',
   },
 };
 const hi = () => P.lang === 'hi';
@@ -1193,6 +1204,7 @@ const S = {
   lv: null, levelIdx: 0, wander: false, challenge: null,   // challenge: { daily: 'YYYY-MM-DD' } or { link: true }
   trail: [],                                     // share of visitors settled after each dusk
   placed: {}, sel: null, mode: 'day',            // day | run | paused | night
+  history: [],                                   // earlier `placed` boards, newest last, for undo
   sim: null, anim: null, frameIdx: 0, goalState: null, solved: false,
   attempts: 0, hints: 0, startedAt: 0, revealTiles: [], cursor: [0, 0], showCursor: false,
   nightF: 0, endAt: 0, burstUntil: 0,
@@ -1754,15 +1766,21 @@ function pageLink(hash) { return /^https?:$/.test(location.protocol) ? location.
 function shareGrove() {
   const lv = S.lv, c = S.challenge, trail = S.trail.map(f => (f >= 1 ? '🌕' : f > 0 ? '🌗' : '🌑')).join('');
   const where = c && c.daily ? `${t('dailyName')} ${c.daily}` : c && c.weekly ? `${t('weeklyName')} ${c.weekly}` : t(c ? 'linkName' : 'wanderName');
-  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink(challengeHash(c, lv) + '&s=' + S.trail.length), $('shareBtn'));
+  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink(challengeHash(c, lv) + '&s=' + S.trail.length), $('shareBtn'),
+    groveCard(where, true, [t('cardGrove', S.trail.length, S.hints), t('cardDare')]));
 }
 function shareProgress() {
   const n = sparkCount();
   const text = n >= SPARKS_TOTAL ? t('shareLit', SPARKS_TOTAL) : t('shareCh', chName(S.win ? LEVELS.find(l => l.id === S.win.id).ch : 0), n, SPARKS_TOTAL);
-  share(text + '\n' + '✨'.repeat(n) + '▫️'.repeat(SPARKS_TOTAL - n), pageLink(''), $('winShare'));
+  share(text + '\n' + '✨'.repeat(n) + '▫️'.repeat(SPARKS_TOTAL - n), pageLink(''), $('winShare'), progressCard);
 }
-// Native share sheet on phones; elsewhere copy to the clipboard and say so on the button
-async function share(text, url, btn) {
+// Native share sheet on phones; elsewhere copy to the clipboard and say so on the button.
+// With a card painter the sheet also gets a picture; apps often drop the url beside a file, so it rides in the text.
+async function share(text, url, btn, card) {
+  const file = card && navigator.canShare ? cardFile(card) : null;
+  if (file && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], text: url ? text + '\n' + url : text }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
   if (navigator.share) {
     try { await navigator.share(url ? { text, url } : { text }); return; } catch (e) { if (e.name === 'AbortError') return; }
   }
@@ -1778,10 +1796,111 @@ async function share(text, url, btn) {
   const was = btn.textContent; btn.textContent = t('copied');
   setTimeout(() => { if (btn.textContent === t('copied')) btn.textContent = was; }, 2200);
 }
+// ---------- Share cards: a square picture for the share sheet ----------
+const CARD = 1080;
+// Drawn and encoded synchronously, so the share still counts as part of the tap (Safari insists on that)
+function cardFile(paint) {
+  try {
+    const cv = document.createElement('canvas'); cv.width = cv.height = CARD;
+    paint(cv.getContext('2d'));
+    const bin = atob(cv.toDataURL('image/png').split(',')[1]), bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new File([bytes], 'lantern-grove.png', { type: 'image/png' });
+  } catch (e) { return null; }
+}
+// Night sky, fireflies in fixed places, the name on top and one line under it
+function cardBase(c, sub) {
+  const bg = c.createLinearGradient(0, 0, 0, CARD);
+  bg.addColorStop(0, '#1b2142'); bg.addColorStop(1, '#0a0d1e');
+  c.fillStyle = bg; c.fillRect(0, 0, CARD, CARD);
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 26; i++) {
+    const x = rnd() * CARD, y = rnd() * CARD, a = 0.25 + rnd() * 0.5;
+    halo(c, x, y, 14, '#fff0a0', a * 0.6); c.fillStyle = rgba('#fff6c8', a); c.beginPath(); c.arc(x, y, 2.6, 0, 7); c.fill();
+  }
+  c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+  halo(c, CARD / 2, 92, 90, '#ffc45e', 0.25);
+  c.fillStyle = '#f1ead9'; c.font = '400 68px "Young Serif", Georgia, serif';
+  c.fillText('Lantern Grove', CARD / 2, 116);
+  c.fillStyle = '#ffc45e'; cardFit(c, sub, 800, 38, 26, '800', CARD / 2, 172);
+}
+// One line of text, shrunk until it fits the width
+function cardFit(c, text, maxW, size, minSize, weight, x, y) {
+  let px = size;
+  do { c.font = `${weight} ${px}px Nunito, system-ui, sans-serif`; } while (c.measureText(text).width > maxW && --px > minSize);
+  c.fillText(text, x, y, maxW);
+}
+// The grove as it was set: soil, rocks, the plants that were already there and the visitors.
+// Never the player's own plants, so a shared daily grove doesn't give the answer away.
+function cardBoard(c, x0, y0, maxW, maxH, happy) {
+  const lv = S.lv, base = baseTypes(lv), pad = 22;
+  const cs = Math.min((maxW - pad * 2) / lv.cols, (maxH - pad * 2) / lv.rows);
+  const W = cs * lv.cols + pad * 2, H = cs * lv.rows + pad * 2, ox = x0 + (maxW - W) / 2, oy = y0 + (maxH - H) / 2;
+  c.fillStyle = happy ? '#0c1023' : '#3a3d6e'; roundRect(c, ox, oy, W, H, 32); c.fill();
+  c.strokeStyle = rgba('#ffc45e', happy ? 0.35 : 0.15); c.lineWidth = 3; c.stroke();
+  for (let r = 0; r < lv.rows; r++) for (let col = 0; col < lv.cols; col++) {
+    const x = ox + pad + col * cs, y = oy + pad + r * cs, p = base[r][col];
+    c.fillStyle = p === 'rock' ? (happy ? '#121630' : '#34365f') : (happy ? '#1b1f3d' : '#4f4a7d');
+    roundRect(c, x + 4, y + 4, cs - 8, cs - 8, cs * 0.16); c.fill();
+    if (p === 'rock') drawRock(c, x + cs / 2, y + cs / 2, cs);
+    else if (p) drawPlant(c, p, x + cs / 2, y + cs / 2, cs, { glow: p === 'sun' ? 1 : 0, night: happy ? 1 : 0, t: 0 });
+  }
+  lv.goals.forEach(([r, col, want, who]) => {
+    const x = ox + pad + col * cs + cs / 2, y = oy + pad + r * cs + cs / 2;
+    const ring = want === 'on' ? (lv.kind === 'life' ? '#a8ef7a' : '#ffc45e') : '#62d4c6';
+    if (happy) halo(c, x, y, cs * 0.55, ring, 0.35);
+    c.save(); c.setLineDash([cs * 0.06, cs * 0.06]); c.lineWidth = Math.max(2, cs * 0.025);
+    c.strokeStyle = rgba(ring, 0.75); c.beginPath(); c.arc(x, y, cs * 0.38, 0, Math.PI * 2); c.stroke(); c.restore();
+    drawVisitor(c, who, x, y, cs, happy ? 1 : 0, 0.15);
+  });
+  return oy + H;
+}
+// A moon for each dusk: full when every visitor settled, half when some did, dark when none
+function cardMoons(c, trail, y) {
+  const r = 22, gap = 18, n = Math.min(trail.length, 14), x0 = CARD / 2 - (n * (r * 2 + gap) - gap) / 2 + r;
+  trail.slice(-n).forEach((f, i) => {
+    const x = x0 + i * (r * 2 + gap);
+    c.fillStyle = '#2a305a'; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+    if (f <= 0) return;
+    if (f >= 1) halo(c, x, y, r * 2, '#ffc45e', 0.35);
+    c.fillStyle = '#ffd77a'; c.beginPath();
+    if (f >= 1) c.arc(x, y, r, 0, 7); else c.arc(x, y, r, -Math.PI / 2, Math.PI / 2);
+    c.fill();
+  });
+}
+// lines: the last one is the call to action, in amber
+function groveCard(title, solved, lines) {
+  return c => {
+    cardBase(c, title);
+    let y = cardBoard(c, 140, 210, 800, solved ? 610 : 680, solved) + 56;
+    if (solved && S.trail.length) { cardMoons(c, S.trail, y); y += 70; }
+    lines.forEach((line, i) => {
+      const last = i === lines.length - 1;
+      c.fillStyle = last ? '#ffc45e' : '#f1ead9'; cardFit(c, line, 900, 36, 22, last ? '800' : '700', CARD / 2, y); y += 52;
+    });
+  };
+}
+function progressCard(c) {
+  const n = sparkCount(), tier = milestoneTier(n), lv = S.win ? LEVELS.find(l => l.id === S.win.id) : S.lv;
+  cardBase(c, n >= SPARKS_TOTAL ? t('mileLbl')[5] : chName(lv ? lv.ch : 0));
+  halo(c, CARD / 2, 470, 260, '#ffc45e', 0.18 + 0.06 * tier);
+  drawHero(c, P.hero || HEROES[0], CARD / 2, 470, 330);
+  if (tier) { c.fillStyle = '#f1ead9'; cardFit(c, t('mileLbl')[tier - 1], 800, 44, 28, '800', CARD / 2, 730); }
+  // Every spark in the Great Lantern, lit or waiting, in rows of up to 16
+  const per = Math.min(16, SPARKS_TOTAL), r = 15, gap = 14, rows = Math.ceil(SPARKS_TOTAL / per);
+  for (let i = 0; i < SPARKS_TOTAL; i++) {
+    const row = Math.floor(i / per), inRow = Math.min(per, SPARKS_TOTAL - row * per), col = i % per;
+    const x = CARD / 2 - (inRow * (r * 2 + gap) - gap) / 2 + r + col * (r * 2 + gap), y = 800 + row * (r * 2 + gap);
+    if (i < n) { halo(c, x, y, r * 2.2, '#ffc45e', 0.4); c.fillStyle = '#ffd77a'; } else c.fillStyle = '#2a305a';
+    c.beginPath(); c.arc(x, y, r, 0, 7); c.fill();
+  }
+  c.fillStyle = '#ffc45e'; cardFit(c, t('cardSparks', n, SPARKS_TOTAL), 900, 38, 24, '800', CARD / 2, 800 + rows * (r * 2 + gap) + 48);
+}
 function shareStuck() {
   const lv = S.lv, name = S.wander ? t('wanderName') : lvT(lv, 'name'), ch = S.wander ? '' : chName(lv.ch);
   const link = S.challenge || lv.generated ? challengeHash(S.challenge, lv) : '';
-  share(t('stuckShare', name, ch).replace(' ()', ''), pageLink(link), $('stuckBtn'));
+  share(t('stuckShare', name, ch).replace(' ()', ''), pageLink(link), $('stuckBtn'), groveCard(name, false, [ch, t('cardHelp')].filter(Boolean)));
 }
 // A grove can be skipped after real effort: nothing is lost, and the story goes on without a star
 function canSkip() { return !S.wander && !S.solved && S.attempts >= 5 && S.hints >= 3; }
@@ -1797,7 +1916,7 @@ function skipLevel() {
   (chapterDone(lv.ch) ? loadChapter(lv.ch + 1) : Promise.resolve()).then(go, loadFailed);
 }
 function beginLevel() {
-  Object.assign(S, { placed: {}, mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
+  Object.assign(S, { placed: {}, history: [], mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
   const types = Object.keys(S.lv.pouch);
   S.sel = types[0] || null;
   $('discover').hidden = true; $('pageNote').hidden = true;
@@ -1951,16 +2070,28 @@ function tapCell(r, c) {
   if (rockAt(r, c)) return;
   if (fixedAt(r, c)) { say(null, () => t('fixedPlant')); return; }
   if (lv.kind !== 'life' && goalAt(r, c) >= 0) { const who = lv.goals[goalAt(r, c)][3]; say(null, () => t('resting', whoT(who, 'label'))); return; }
-  if (S.placed[k]) { const p = S.placed[k]; delete S.placed[k]; S.sel = p; sfx.lift(); buzz(); renderUI(); return; }
+  if (S.placed[k]) { const p = S.placed[k]; remember(); delete S.placed[k]; S.sel = p; sfx.lift(); buzz(); renderUI(); return; }
   if (!S.sel) return;
   if (pouchLeft(S.sel) <= 0) {
     const other = Object.keys(lv.pouch).find(p => pouchLeft(p) > 0);
     if (other) S.sel = other;
     else { say(null, () => t('pouchEmpty')); renderUI(); return; }
   }
-  S.placed[k] = S.sel; sfx.plant(); buzz();
+  remember(); S.placed[k] = S.sel; sfx.plant(); buzz();
   if (pouchLeft(S.sel) <= 0) { const other = Object.keys(lv.pouch).find(p => pouchLeft(p) > 0); if (other) S.sel = other; }
   renderUI();
+}
+// Every change to the board can be taken back, one step at a time; clearing is one step too
+function remember() { S.history.push(Object.assign({}, S.placed)); if (S.history.length > 200) S.history.shift(); }
+function undo() {
+  if (S.mode === 'run' || !S.history.length) return;
+  if (S.mode !== 'day') toDay();
+  S.placed = S.history.pop(); sfx.lift(); buzz(); renderUI();
+}
+function clearBoard() {
+  if (S.mode === 'run' || !Object.keys(S.placed).length) return;
+  if (S.mode !== 'day') toDay();
+  remember(); S.placed = {}; S.sel = Object.keys(S.lv.pouch)[0] || null; sfx.lift(); buzz(); renderUI();
 }
 // A light tick under the thumb on phones that support it; follows the sound setting
 function buzz() { if (soundOn && navigator.vibrate) try { navigator.vibrate(8); } catch (e) {} }
@@ -1972,6 +2103,14 @@ canvas.addEventListener('keydown', e => {
   else if (e.key === 'Enter' || e.key === ' ') { S.showCursor = true; tapCell(r, c); e.preventDefault(); }
   else if (/^[1-9]$/.test(e.key)) { const t = Object.keys(lv.pouch)[+e.key - 1]; if (t) { S.sel = t; renderUI(); } }
   else if (e.key === 'd' || e.key === 'D') letDusk(false);
+  else if ((e.key === 'u' || e.key === 'U') && !e.ctrlKey && !e.metaKey) undo();
+  else if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) clearBoard();
+});
+// Ctrl+Z / Cmd+Z works anywhere on the page, unless a dialog is open or you are typing
+document.addEventListener('keydown', e => {
+  if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== 'z' || !S.lv) return;
+  if (e.target.closest('input, textarea, [contenteditable]') || document.querySelector('.overlay:not([hidden])')) return;
+  e.preventDefault(); undo();
 });
 canvas.addEventListener('focus', () => { S.showCursor = true; });
 
@@ -2161,6 +2300,8 @@ function renderUI() {
   $('duskBtn').disabled = running;
   $('stepBtn').hidden = !life || S.mode === 'night' || lv.nights < 2;
   $('stepBtn').disabled = running;
+  $('undoBtn').textContent = t('undo'); $('undoBtn').title = t('undoTip'); $('undoBtn').disabled = running || !S.history.length;
+  $('clearBtn').textContent = t('clear'); $('clearBtn').title = t('clearTip'); $('clearBtn').disabled = running || !Object.keys(S.placed).length;
   $('dayBtn').hidden = !(S.mode === 'night' || S.mode === 'paused');
   $('dayBtn').textContent = t(S.solved ? 'replant' : 'back');
   $('nextBtn').hidden = !S.solved;
@@ -2526,6 +2667,8 @@ $('tourBack').onclick = () => tourGo(-1);
 $('tourSkip').onclick = endTour;
 $('duskBtn').onclick = () => letDusk(false);
 $('stepBtn').onclick = () => letDusk(true);
+$('undoBtn').onclick = undo;
+$('clearBtn').onclick = clearBoard;
 $('dayBtn').onclick = () => { toDay(); say(null, () => t(S.solved ? 'dayAgainSolved' : 'dayAgain')); };
 document.querySelectorAll('[data-lang]').forEach(b => { b.onclick = () => setLang(b.dataset.lang); });
 $('nextBtn').onclick = nextLevel;
