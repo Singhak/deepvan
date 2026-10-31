@@ -93,10 +93,13 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 .level-head > div:first-child > .eyebrow, .level-head .goal-line { flex-basis: 100%; }
 .level-head .goal-line { order: 1; }
 .level-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; line-height: 1.15; text-wrap: balance; }
-.dots { display: flex; gap: 6px; }
-.dot { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #59609a; background: transparent; padding: 0; }
-.dot.done { background: var(--amber); border-color: var(--amber); }
-.dot[aria-current="true"] { box-shadow: 0 0 0 3px rgba(255, 196, 94, 0.3); border-color: var(--amber); }
+/* Level dots sit right after the level story button; each is a 26px tap target drawn as a 12px dot */
+.dots { display: flex; align-items: center; margin-left: -4px; }
+.dot { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.dot::before { content: ""; box-sizing: border-box; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #59609a; }
+.dot:hover::before { border-color: var(--muted); }
+.dot.done::before { background: var(--amber); border-color: var(--amber); }
+.dot[aria-current="true"]::before { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(255, 196, 94, 0.3); }
 .board-wrap { position: relative; width: fit-content; max-width: 100%; }
 #board { display: block; max-width: 100%; height: auto; border-radius: 20px; touch-action: manipulation; cursor: pointer; }
 .night-count {
@@ -427,9 +430,6 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   /* Play area: title, wishes, then the board */
   .stage { gap: 0; }
   .level-head h2 { font-size: 1.2rem; }
-  .level-head { position: relative; display: block; }
-  .level-head .dots { position: absolute; top: 4px; right: 0; }
-  .level-head > div:first-child { padding-right: 84px; }
   .board-col > .goal-label { display: none; }   /* the "Your goal" line already says it */
   .board-col { gap: 8px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "goal" "wishes" "board"; }
   .board-col > .level-head { grid-area: head; }
@@ -543,8 +543,8 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
           <h2 id="levelName"></h2>
           <p class="goal-line" id="goalLine" hidden></p>
           <button class="story-link ls-btn" id="lsBtn" type="button"></button>
+          <div class="dots" id="dots"></div>
         </div>
-        <div class="dots" id="dots"></div>
       </div>
       <div class="board-wrap" id="boardWrap">
         <canvas id="board" tabindex="0" aria-label="The grove. Use arrow keys to move, Enter to plant or pick up, number keys to choose a seed, D to let dusk fall."></canvas>
