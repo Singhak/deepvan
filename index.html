@@ -76,7 +76,13 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 
 /* Stage */
 .stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); gap: 22px; align-items: start; }
-@media (max-width: 1199px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+/* Small laptops and tablets in landscape: keep the controls beside the board, with a narrower column */
+@media (min-width: 861px) and (max-width: 1199px) {
+  .stage { grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; }
+  .seeds { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .brand h1 .h1-tag { display: none; }
+}
 .board-col { min-width: 0; display: grid; gap: 8px; }
 .level-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 6px 16px; }
 .eyebrow { margin: 0 0 2px; color: var(--muted); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
@@ -373,7 +379,7 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   .actions button { min-height: 48px; }
   .owl { min-height: 44px; }
 }
-@media (min-width: 1200px) {
+@media (min-width: 861px) {
   .board-col {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "head" "goal" "wishes" "board";
@@ -402,10 +408,10 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   }
   /* Bar background runs edge to edge; a pseudo-element so the chapter menu can still drop below it */
   .top::before {
-    content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%);
+    content: ""; position: absolute; z-index: -1; inset: 0 -50vw;
     background: rgba(17, 21, 43, 0.92); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   }
-  body { overflow-x: clip; }
+  .app { overflow-x: clip; }   /* trims that background at the screen edge; clip, unlike hidden, keeps the bar sticky */
   .top .brand { display: none; }
   .ch-pick { flex: 0 1 auto; min-width: 0; }
   .ch-btn { max-width: 100%; min-height: 40px; padding-inline: 12px; white-space: nowrap; }
@@ -428,7 +434,13 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
   .board-col > .goal-label { grid-area: goal; }
   .board-col > .wishes { grid-area: wishes; }
   .board-col > .board-wrap { grid-area: board; margin-inline: auto; }
-  .wish { padding: 4px 10px 4px 7px; font-size: 0.8rem; }
+  .wish { flex: none; padding: 4px 10px 4px 7px; font-size: 0.8rem; white-space: nowrap; }
+  /* Wishes stay on one row and swipe sideways, so many visitors don't push the board down */
+  .board-col > .wishes {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -2px; padding: 0 28px 0 2px;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  }
+  .board-col > .wishes::-webkit-scrollbar { display: none; }
 
   /* Dock */
   .dock {
@@ -468,6 +480,22 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
 }
 @keyframes sheetUp { from { transform: translateY(40%); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (max-width: 380px) { .dock .seed { min-width: 100px; } }
+/* Short phones: tighten the heading and the dock so the board keeps its room */
+@media (max-width: 860px) and (max-height: 760px) {
+  .board-col { gap: 6px; }
+  .level-head h2 { font-size: 1.08rem; }
+  .level-head .goal-line { font-size: 0.85rem; }
+  .ls-btn { padding: 2px 10px; font-size: 0.76rem; }
+  .wish { padding: 3px 9px 3px 6px; font-size: 0.76rem; }
+  .dock { gap: 6px; padding-top: 8px; }
+  .dock .voice { max-height: 4.6em; padding: 5px 10px; }
+  .dock .voice p { font-size: 0.86rem; line-height: 1.35; }
+  .dock .owl { width: 44px; height: 44px; }
+  .dock .owl svg { width: 30px; height: 30px; }
+  .dock .seed { min-height: 44px; padding-block: 3px; }
+  .dock .seed canvas { width: 30px; height: 30px; }
+  .dock .actions > * { min-height: 46px; padding-block: 6px; }
+}
 @media (max-width: 860px) and (prefers-reduced-motion: reduce) { .overlay > .sheet { animation: none; } }
 </style>
 
@@ -1621,13 +1649,14 @@ function resize() {
   if (!S.lv) return;
   const col = $('boardWrap').parentElement;
   const wide = matchMedia('(min-width: 861px)').matches;
-  let availH = 640;
-  if (!wide) {
+  const top = $('boardWrap').getBoundingClientRect().top + window.scrollY;
+  let availH;
+  if (wide) availH = Math.min(640, Math.max(320, window.innerHeight - top - 16));   // whole board on screen without scrolling
+  else {
     if (window.innerWidth !== vp.w || Math.abs(window.innerHeight - vp.h) > 100) vp = { w: window.innerWidth, h: window.innerHeight };
-    const top = $('boardWrap').getBoundingClientRect().top + window.scrollY;
-    availH = Math.max(260, vp.h - $('dock').offsetHeight - top - 12);
+    availH = Math.max(S.lv.rows * 38 + 24, vp.h - $('dock').offsetHeight - top - 12);   // squares stay big enough to tap
   }
-  const availW = (col.clientWidth || 600) - (wide ? 250 : 0);
+  const availW = col.clientWidth || 600;
   const W = Math.min(availW, 640, availH / (0.94 * S.lv.rows / S.lv.cols + 0.06));
   const pad = Math.max(10, W * 0.03);
   const cs = (W - pad * 2) / S.lv.cols;
