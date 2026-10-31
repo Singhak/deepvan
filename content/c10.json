@@ -1,0 +1,549 @@
+{
+  "id": "c10",
+  "name": "Where the sun sits",
+  "plants": [],
+  "reveal": {
+    "title": "You placed the power stations",
+    "lede": "Engineers choose where power stations and phone towers go, so that one source can serve the most people and stay clear of places that need quiet. Choosing where the source sits is part of building a grid."
+  },
+  "open": "\"No Sunbell grows at this ford,\" says the owl. \"So from now on, you carry one in your pouch. Neelu will show us who is waiting.\"",
+  "story": "Neelu the kingfisher leads you to a shallow ford, where Reeds grow between the stepping stones. No Sunbell grows here. You carry one, and you choose where its light begins.",
+  "recap": "On the riverbank, you met Neelu the kingfisher, who has watched the Glass River's lights go out every night. They shine at dusk, but by morning they are gone.",
+  "goal": "Light the waystone at the ford. Help 5 creatures and light 5 sparks.",
+  "end": "The waystone at the ford glows. Downstream, the ferry that should carry the lights across the river has stopped. Why has the ferry stopped?",
+  "hi": {
+    "name": "Suraj kahan baithe",
+    "title": "Aapne power stations rakhe",
+    "lede": "Engineers chunte hain ki power station aur phone tower kahan lagenge, taaki ek source sabse zyaada logon tak pahunche aur shaanti chahne wali jagahon se door rahe. Source kahan baithe, yeh chunna bhi grid banane ka hissa hai.",
+    "open": "\"Is ghaat par Surajmukhi nahi ugta,\" Ullu kehta hai. \"Isliye ab se tum ek apni thaili mein rakhoge. Neelu dikhayega kaun intezaar kar raha hai.\"",
+    "story": "Neelu kilkila aapko ek uthle ghaat par le jaata hai, jahan pattharon ke beech Narkat uge hain. Yahan Surajmukhi nahi ugta. Aap ek saath laaye ho, aur aap chunte ho ki roshni kahan se shuru ho.",
+    "recap": "Nadi kinaare aap Neelu kilkila se mile, jo har raat Kaanch ki nadi ki roshniyan bujhte dekhta hai. Woh shaam ko chamakti hain, par subah tak gayab ho jaati hain.",
+    "goal": "Ghaat ka raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Ghaat ka raahdeep chamak utha. Neeche dhaara mein woh naav ruki padi hai jo roshniyon ko nadi ke paar le jaati hai. Naav kyun ruki hai?"
+  },
+  "levels": [
+    {
+      "id": "10-1",
+      "name": "The gap in the ford",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [
+        [
+          2,
+          0,
+          "reed"
+        ],
+        [
+          2,
+          1,
+          "reed"
+        ],
+        [
+          2,
+          3,
+          "reed"
+        ],
+        [
+          2,
+          4,
+          "reed"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "sun": 1
+      },
+      "goals": [
+        [
+          1,
+          0,
+          "on",
+          "moth"
+        ],
+        [
+          3,
+          4,
+          "on",
+          "moth"
+        ]
+      ],
+      "solution": [
+        [
+          2,
+          2,
+          "sun"
+        ]
+      ],
+      "intro": "Two lines of Reeds reach into the ford, one from each bank. A moth waits on each side. No Sunbell grows here. You have one Sunbell. Where should it sit?",
+      "hints": [
+        "Can one light reach both lines of Reeds at once?",
+        "Look at the water between the two lines. What is missing there?"
+      ],
+      "success": "The Sunbell sat in the gap, and both lines of Reeds lit up at once.",
+      "story": {
+        "goal": "Warm both moths across the ford.",
+        "reward": "Neelu finds where the Reeds bend along the bank.",
+        "intro": "Neelu the kingfisher waits at a shallow ford on the Glass River. Two moths sit on opposite banks, cold after a long night by the water. Neelu hopes one light can warm them both.",
+        "next": "Along the bank, the Reeds bend around a corner. Two moths wait there, and two toads doze close beside them."
+      },
+      "page": [
+        "The gap in the ford",
+        "No Sunbell grows at the ford, so the new Keeper carried one. Set in the right place, one light ran along both lines of Reeds."
+      ],
+      "hi": {
+        "name": "Ghaat ki khaali jagah",
+        "intro": "Dono kinaaron se Narkat ki ek ek line ghaat mein aati hai. Har taraf ek patanga intezaar kar raha hai. Yahan Surajmukhi nahi ugta. Aapke paas ek Surajmukhi hai. Use kahan rakhoge?",
+        "hints": [
+          "Kya ek roshni Narkat ki dono lines tak ek saath pahunch sakti hai?",
+          "Dono lines ke beech ka paani dekho. Wahan kya kam hai?"
+        ],
+        "success": "Surajmukhi beech ki khaali jagah mein baitha aur Narkat ki dono lines ek saath jal uthi.",
+        "story": {
+          "goal": "Ghaat ke dono taraf patangon ko garmahat do.",
+          "reward": "Neelu ko kinaare par mudte hue Narkat milte hain.",
+          "intro": "Neelu kilkila Kaanch ki nadi ke ek uthle ghaat par intezaar kar raha hai. Do patange aamne saamne ke kinaaron par baithe hain, paani ke paas lambi raat ke baad thande. Neelu chahta hai ek roshni dono ko garam kare.",
+          "next": "Kinaare par Narkat ek kone se mudte hain. Wahan do patange intezaar karte hain aur unke bilkul paas do mendhak oongh rahe hain."
+        },
+        "page": [
+          "Ghaat ki khaali jagah",
+          "Ghaat par Surajmukhi nahi ugta, isliye Naya Rakshak ek saath laaya. Sahi jagah rakhne par ek roshni Narkat ki dono lines mein daud gayi."
+        ]
+      }
+    },
+    {
+      "id": "10-2",
+      "name": "Where the reeds bend",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [
+        [
+          0,
+          2,
+          "reed"
+        ],
+        [
+          0,
+          3,
+          "reed"
+        ],
+        [
+          0,
+          4,
+          "reed"
+        ],
+        [
+          1,
+          4,
+          "reed"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "sun": 1
+      },
+      "goals": [
+        [
+          0,
+          1,
+          "on",
+          "moth"
+        ],
+        [
+          2,
+          4,
+          "on",
+          "moth"
+        ],
+        [
+          0,
+          0,
+          "off",
+          "toad"
+        ],
+        [
+          2,
+          3,
+          "off",
+          "toad"
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          2,
+          "sun"
+        ]
+      ],
+      "intro": "Reeds bend along the bank. A moth waits at each end, and each moth has a toad dozing right beside it. You have one Sunbell. Where can the light start quietly?",
+      "hints": [
+        "Which spots beside the Reeds are right next to a toad?",
+        "Look just below the Reeds, away from both ends. Is any spot there quiet?"
+      ],
+      "success": "The light joined the Reeds from a quiet spot, and both toads slept on.",
+      "story": {
+        "goal": "Warm both moths and let the toads sleep.",
+        "reward": "Neelu spots a Twinlily under an arch of Reeds.",
+        "intro": "Where the Reeds bend along the bank, two moths are waiting for warmth. Beside each one, a toad has curled up for a nap. Neelu hopes the light can arrive without a sound.",
+        "next": "Further out in the ford, Reeds grow in an arch over a Twinlily. A moth has settled on its petals."
+      },
+      "page": [
+        "The quiet bend",
+        "Many spots could feed the bending Reeds, but most of them sat next to a sleeping toad. One quiet spot fed them all."
+      ],
+      "hi": {
+        "name": "Jahan Narkat mudte hain",
+        "intro": "Kinaare par Narkat mudte hain. Har sire par ek patanga hai aur har patange ke bilkul paas ek mendhak oongh raha hai. Aapke paas ek Surajmukhi hai. Roshni chupchaap kahan se shuru ho?",
+        "hints": [
+          "Narkat ke paas ki kaunsi jagah bilkul kisi mendhak ke saath hai?",
+          "Narkat ke theek neeche dekho, dono siron se door. Kya wahan koi shaant jagah hai?"
+        ],
+        "success": "Roshni ek shaant jagah se Narkat tak pahunchi aur dono mendhak sote rahe.",
+        "story": {
+          "goal": "Dono patangon ko garmahat do, mendhakon ko sone do.",
+          "reward": "Neelu ko Narkat ke mehraab ke neeche ek Judwa Kamal dikhta hai.",
+          "intro": "Jahan Narkat kinaare par mudte hain, wahan do patange garmahat ka intezaar kar rahe hain. Har ek ke paas ek mendhak gol hokar jhapki le raha hai. Neelu chahta hai roshni bina awaaz ke aaye.",
+          "next": "Ghaat mein aage Narkat ek Judwa Kamal ke upar mehraab bana kar uge hain. Ek patanga uski pankhudiyon par baitha hai."
+        },
+        "page": [
+          "Shaant mod",
+          "Mudte Narkat ko kai jagah se roshni mil sakti thi, par zyaadatar jagah kisi soye mendhak ke paas thi. Ek shaant jagah ne sabko roshni di."
+        ]
+      }
+    },
+    {
+      "id": "10-3",
+      "name": "Under the reed arch",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [
+        [
+          1,
+          0,
+          "reed"
+        ],
+        [
+          1,
+          1,
+          "reed"
+        ],
+        [
+          1,
+          2,
+          "reed"
+        ],
+        [
+          1,
+          3,
+          "reed"
+        ],
+        [
+          1,
+          4,
+          "reed"
+        ],
+        [
+          2,
+          0,
+          "reed"
+        ],
+        [
+          2,
+          4,
+          "reed"
+        ],
+        [
+          2,
+          2,
+          "lily"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "sun": 1
+      },
+      "goals": [
+        [
+          2,
+          2,
+          "on",
+          "moth"
+        ],
+        [
+          3,
+          3,
+          "off",
+          "toad"
+        ]
+      ],
+      "solution": [
+        [
+          2,
+          1,
+          "sun"
+        ]
+      ],
+      "intro": "An arch of Reeds stands over a Twinlily, and a moth rests on its petals. A toad sleeps near the lily, a little below it. You have one Sunbell.",
+      "hints": [
+        "How many lights does a Twinlily need before it glows?",
+        "Look at the spots on either side of the Twinlily. Which one is farther from the toad?"
+      ],
+      "success": "The Sunbell sat beside the Twinlily, and the arch lit it from above. The toad never stirred.",
+      "story": {
+        "goal": "Make the Twinlily glow for the moth.",
+        "reward": "Neelu flies ahead to the deep middle of the ford.",
+        "intro": "A moth has settled on a Twinlily under an arch of Reeds, and it wants the lily to glow. Neelu points out a toad asleep in the shallows nearby, and asks you to be careful.",
+        "next": "In the deep middle of the ford, two moths wait on either side. A toad sleeps in the shallows there."
+      },
+      "page": [
+        "Under the arch",
+        "The Twinlily needed two lights. The Sunbell gave one, and the arch of Reeds carried the other round from above."
+      ],
+      "hi": {
+        "name": "Narkat ke mehraab tale",
+        "intro": "Narkat ka ek mehraab Judwa Kamal ke upar khada hai aur ek patanga uski pankhudiyon par aaraam kar raha hai. Kamal ke thoda neeche ek mendhak so raha hai. Aapke paas ek Surajmukhi hai.",
+        "hints": [
+          "Judwa Kamal ko chamakne ke liye kitni roshniyan chahiye?",
+          "Judwa Kamal ke dono taraf ki jagah dekho. Kaunsi mendhak se zyaada door hai?"
+        ],
+        "success": "Surajmukhi Judwa Kamal ke paas baitha aur mehraab ne upar se roshni di. Mendhak hila bhi nahi.",
+        "story": {
+          "goal": "Patange ke liye Judwa Kamal ko chamkao.",
+          "reward": "Neelu ghaat ke gehre beech ki taraf udta hai.",
+          "intro": "Narkat ke mehraab ke neeche ek patanga Judwa Kamal par baitha hai aur chahta hai ki kamal chamke. Neelu paas ke uthle paani mein soye ek mendhak ko dikhata hai aur dhyaan rakhne ko kehta hai.",
+          "next": "Ghaat ke gehre beech mein do patange dono taraf intezaar karte hain. Wahan uthle paani mein ek mendhak so raha hai."
+        },
+        "page": [
+          "Mehraab ke neeche",
+          "Judwa Kamal ko do roshniyan chahiye thi. Ek Surajmukhi ne di, aur doosri Narkat ka mehraab upar se ghoom kar laaya."
+        ]
+      }
+    },
+    {
+      "id": "10-4",
+      "name": "The deep middle",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [
+        [
+          1,
+          2,
+          "reed"
+        ],
+        [
+          2,
+          1,
+          "reed"
+        ],
+        [
+          2,
+          3,
+          "reed"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "sun": 1,
+        "reed": 2
+      },
+      "goals": [
+        [
+          2,
+          0,
+          "on",
+          "moth"
+        ],
+        [
+          2,
+          4,
+          "on",
+          "moth"
+        ],
+        [
+          3,
+          2,
+          "off",
+          "toad"
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          1,
+          "sun"
+        ],
+        [
+          1,
+          3,
+          "reed"
+        ]
+      ],
+      "intro": "Two moths wait on either side of the deep middle of the ford. One Reed stands above the middle, and a toad sleeps just below it. You have one Sunbell and two Reeds.",
+      "hints": [
+        "If the light sat right in the middle, what would happen to the toad?",
+        "Look at the single Reed above the middle. Could the light pass that way instead?"
+      ],
+      "success": "The light went up and over the single Reed, and the toad below slept on.",
+      "story": {
+        "goal": "Warm both moths without waking the toad.",
+        "reward": "Neelu can see the waystone on the far side.",
+        "intro": "The middle of the ford is the deepest part. Two moths wait on either side of it, and a toad sleeps in the shallows below. Neelu asks you to bring them warmth without a splash.",
+        "next": "On the far side of the ford stands a dark waystone. Three moths wait around it, and two toads sleep near the top."
+      },
+      "page": [
+        "The deep middle",
+        "The middle looked like the best place for the light, but it would have woken the toad. The way over the top kept everyone happy."
+      ],
+      "hi": {
+        "name": "Gehra beech",
+        "intro": "Ghaat ke gehre beech ke dono taraf do patange intezaar kar rahe hain. Beech ke upar ek Narkat hai aur theek neeche ek mendhak so raha hai. Aapke paas ek Surajmukhi aur do Narkat hain.",
+        "hints": [
+          "Agar roshni bilkul beech mein baithe, to mendhak ka kya hoga?",
+          "Beech ke upar wale akele Narkat ko dekho. Kya roshni us raaste ja sakti hai?"
+        ],
+        "success": "Roshni akele Narkat ke upar se ghoom kar gayi aur neeche mendhak sota raha.",
+        "story": {
+          "goal": "Mendhak ko jagaye bina dono patangon ko garmahat do.",
+          "reward": "Neelu ko us paar raahdeep dikhta hai.",
+          "intro": "Ghaat ka beech sabse gehra hai. Uske dono taraf do patange intezaar karte hain aur neeche uthle paani mein ek mendhak so raha hai. Neelu kehta hai bina chhapaak ke unhe garmahat do.",
+          "next": "Ghaat ke us paar ek andhera raahdeep khada hai. Uske aas paas teen patange intezaar karte hain aur upar ki taraf do mendhak so rahe hain."
+        },
+        "page": [
+          "Gehra beech",
+          "Beech roshni ke liye sabse achhi jagah lagti thi, par wahan mendhak jaag jaata. Upar ke raaste ne sabko khush rakha."
+        ]
+      }
+    },
+    {
+      "id": "10-5",
+      "name": "The ford waystone",
+      "kind": "light",
+      "rows": 6,
+      "cols": 6,
+      "fixed": [
+        [
+          1,
+          2,
+          "reed"
+        ],
+        [
+          1,
+          3,
+          "reed"
+        ],
+        [
+          2,
+          1,
+          "reed"
+        ],
+        [
+          2,
+          4,
+          "reed"
+        ],
+        [
+          4,
+          1,
+          "reed"
+        ],
+        [
+          4,
+          4,
+          "reed"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "sun": 1,
+        "reed": 3
+      },
+      "goals": [
+        [
+          2,
+          0,
+          "on",
+          "moth"
+        ],
+        [
+          2,
+          5,
+          "on",
+          "moth"
+        ],
+        [
+          5,
+          1,
+          "on",
+          "moth"
+        ],
+        [
+          0,
+          1,
+          "off",
+          "toad"
+        ],
+        [
+          0,
+          4,
+          "off",
+          "toad"
+        ]
+      ],
+      "solution": [
+        [
+          2,
+          2,
+          "sun"
+        ],
+        [
+          2,
+          3,
+          "reed"
+        ],
+        [
+          3,
+          1,
+          "reed"
+        ]
+      ],
+      "intro": "Three moths wait around the waystone: one on each bank and one downstream. Two toads sleep near the top of the ford. You have one Sunbell and three Reeds.",
+      "hints": [
+        "Which ways across the ford pass close to the sleeping toads?",
+        "The moth downstream needs light too. Which Reed near it could join the rest?"
+      ],
+      "success": "One Sunbell lit both banks and the moth downstream, and the waystone woke. The toads slept on.",
+      "story": {
+        "goal": "Light the waystone at the ford.",
+        "reward": "The ford's waystone shines, and Neelu spots the ferry.",
+        "intro": "A dark waystone stands at the far side of the ford. Three moths need warmth before they cross, and two toads sleep near the top. Neelu wants the light to find every moth and wake nobody.",
+        "next": "The waystone glows. Downstream, Neelu spots the ferry that should carry the lights across the river. It is not moving."
+      },
+      "page": [
+        "The ford waystone",
+        "The new Keeper chose where the light should begin, and one Sunbell served the whole ford. Downstream, the ferry waits, very still."
+      ],
+      "hi": {
+        "name": "Ghaat ka raahdeep",
+        "intro": "Raahdeep ke aas paas teen patange hain: har kinaare par ek aur ek neeche dhaara ki taraf. Ghaat ke upar ki taraf do mendhak so rahe hain. Aapke paas ek Surajmukhi aur teen Narkat hain.",
+        "hints": [
+          "Ghaat ke paar ke kaunse raaste soye mendhakon ke paas se guzarte hain?",
+          "Dhaara ki taraf wale patange ko bhi roshni chahiye. Uske paas ka kaunsa Narkat baaki se jud sakta hai?"
+        ],
+        "success": "Ek Surajmukhi ne dono kinaare aur neeche wala patanga roshan kiya, aur raahdeep jaag utha. Mendhak sote rahe.",
+        "story": {
+          "goal": "Ghaat ka raahdeep jalao.",
+          "reward": "Ghaat ka raahdeep chamakta hai aur Neelu ko naav dikhti hai.",
+          "intro": "Ghaat ke us paar ek andhera raahdeep khada hai. Teen patangon ko paar jaane se pehle garmahat chahiye aur upar ki taraf do mendhak so rahe hain. Neelu chahta hai roshni har patange tak pahunche aur koi na jaage.",
+          "next": "Raahdeep chamak utha. Neeche dhaara mein Neelu ko woh naav dikhti hai jo roshniyon ko nadi ke paar le jaati hai. Woh hil nahi rahi."
+        },
+        "page": [
+          "Ghaat ka raahdeep",
+          "Naye Rakshak ne chuna ki roshni kahan se shuru ho, aur ek Surajmukhi ne poore ghaat ki madad ki. Neeche dhaara mein naav chupchaap khadi hai."
+        ]
+      }
+    }
+  ]
+}

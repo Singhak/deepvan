@@ -1,0 +1,232 @@
+{
+  "id": "c7",
+  "name": "Two-armed bridge",
+  "plants": [],
+  "reveal": {
+    "title": "You copied a signal",
+    "lede": "Your one Sunbell sent its light down two paths that met again at the same Twinlily. Computers do this everywhere: one signal is copied along wires and fed into many gates at once, so a single clock can keep a whole chip ticking together."
+  },
+  "open": "\"Hear the water?\" says the owl. \"A stream crosses the road. Chanda has found the bridge the bees spoke of, but both its arms are raised and its lanterns are dark.\"",
+  "story": "The road meets a deep stream. A bridge with two arms stands raised over it, with a Twinlily lantern on each side. Travellers wait on the bank. Help them, and wake the lanterns so the bridge comes down.",
+  "recap": "The bees kept their Glowmoss shapes through winter. They remember the Old Keeper crossing a bridge that opens with light on both sides.",
+  "goal": "Lower the bridge and light the fourth waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The bridge comes down, and the fourth waystone glows. Past the bridge, the fifth waystone is silent. Chanda says it lights only when something is not there. What could that be?",
+  "hi": {
+    "name": "Do haathon wala pul",
+    "title": "Aapne signal copy kiya",
+    "lede": "Aapke ek Surajmukhi ki roshni do raaston mein bati aur phir usi Judwa Kamal par mil gayi. Computer har jagah yahi karte hain: ek signal taaron se copy hokar ek saath kai gates tak jaata hai, taaki ek hi clock poori chip ko saath-saath chala sake.",
+    "open": "\"Paani ki awaaz suni?\" Ullu kehta hai. \"Ek nala sadak ko kaatta hai. Chanda ko woh pul mil gaya hai jiski baat madhumakkhiyon ne ki thi, par uske dono haath upar uthe hain aur lantern bujhe hain.\"",
+    "story": "Sadak ek gehre naale tak pahunchti hai. Uske upar do haathon wala pul utha hua hai, aur dono taraf ek Judwa Kamal ka lantern hai. Kinaare par raahi intezaar kar rahe hain. Unki madad karo aur lantern jagao, taaki pul neeche aaye.",
+    "recap": "Madhumakkhiyon ke Jaadui Kaai ke shapes sardi bhar tike rahe. Unhe yaad hai ki Purane Rakshak ek aise pul se guzre the jo dono taraf ki roshni se khulta hai.",
+    "goal": "Pul neeche lao aur chautha raahdeep jalao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Pul neeche aa gaya aur chautha raahdeep chamak utha. Pul ke us paar paanchva raahdeep chup hai. Chanda kehti hai ki woh tabhi jalta hai jab koi cheez wahan na ho. Woh kya ho sakti hai?"
+  },
+  "levels": [
+    {
+      "id": "7-1",
+      "name": "The foot of the bridge",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "fixed": [[0, 1, "sun"], [2, 1, "lily"]],
+      "rocks": [],
+      "pouch": { "reed": 3 },
+      "goals": [[2, 1, "on", "moth"]],
+      "solution": [[1, 1, "reed"], [1, 2, "reed"], [2, 2, "reed"]],
+      "intro": "A tired moth rests on a dark Twinlily at the foot of the bridge. The Sunbell glows two steps above it. You have three Reeds.",
+      "hints": [
+        "Look at the four sides of the Twinlily. Which of them can your light reach?",
+        "Look at the patch between the Sunbell and the Twinlily. Where could the light go on from there?"
+      ],
+      "success": "Light reached the Twinlily from two sides, and it glowed under the moth.",
+      "story": {
+        "goal": "Wake the Twinlily for the tired moth.",
+        "reward": "The lantern post at the foot of the bridge flickers.",
+        "intro": "At the stream, Chanda finds a tired moth sitting on a dark Twinlily at the foot of the bridge. The moth crossed here long ago, and it would love to see the lily shine again.",
+        "next": "Under the bridge, a stone pier stands between the Sunbell and the next Twinlily. A moth waits there in the cold."
+      },
+      "page": ["The foot of the bridge", "The Twinlily at the foot of the bridge woke when the light came to it from two sides. The moth says it has not glowed like this since last winter."],
+      "hi": {
+        "name": "Pul ke paas",
+        "intro": "Pul ke paas ek thaka hua patanga ek bujhe Judwa Kamal par baitha hai. Surajmukhi uske do kadam upar chamak raha hai. Aapke paas teen Narkat hain.",
+        "hints": [
+          "Judwa Kamal ke chaaron taraf dekho. Aapki roshni kis-kis taraf pahunch sakti hai?",
+          "Surajmukhi aur Judwa Kamal ke beech wali jagah dekho. Wahan se roshni aage kahan ja sakti hai?"
+        ],
+        "success": "Roshni do taraf se Judwa Kamal tak pahunchi, aur woh patange ke neeche chamak utha.",
+        "story": {
+          "goal": "Thake patange ke liye Judwa Kamal jagao.",
+          "reward": "Pul ke paas wala lantern ka khamba timtimane lagta hai.",
+          "intro": "Naale par Chanda ko ek thaka patanga milta hai, jo pul ke paas ek bujhe Judwa Kamal par baitha hai. Woh bahut pehle yahan se guzra tha, aur kamal ko phir se chamakte dekhna chahta hai.",
+          "next": "Pul ke neeche ek patthar ka khamba Surajmukhi aur agle Judwa Kamal ke beech khada hai. Wahan ek patanga thand mein intezaar kar raha hai."
+        },
+        "page": ["Pul ke paas", "Pul ke paas wala Judwa Kamal tab jaaga jab roshni do taraf se aayi. Patanga kehta hai ki pichhli sardi ke baad woh pehli baar aise chamka hai."]
+      }
+    },
+    {
+      "id": "7-2",
+      "name": "The stone pier",
+      "kind": "light",
+      "rows": 4,
+      "cols": 5,
+      "fixed": [[0, 2, "sun"], [2, 2, "lily"]],
+      "rocks": [[1, 2], [3, 2]],
+      "pouch": { "reed": 6 },
+      "goals": [[2, 2, "on", "moth"]],
+      "solution": [[0, 1, "reed"], [1, 1, "reed"], [2, 1, "reed"], [0, 3, "reed"], [1, 3, "reed"], [2, 3, "reed"]],
+      "intro": "A moth waits on a Twinlily between two stones of the old pier. The Sunbell glows on the far side of the top stone. You have six Reeds.",
+      "hints": [
+        "The stones cover two sides of the Twinlily. Which sides are left?",
+        "Look at both sides of the pier. Can the Sunbell's light travel down each of them?"
+      ],
+      "success": "The light went down both sides of the pier and met again at the Twinlily.",
+      "story": {
+        "goal": "Bring the light around the pier to the moth.",
+        "reward": "The first arm of the bridge creaks and tilts down.",
+        "intro": "Under the first arm of the bridge, an old stone pier holds up the planks. A moth who carries news along the road rests on its Twinlily, too cold to fly on.",
+        "next": "Near the second arm, a snail sleeps under its Shadefern, right beside the shortest way to the next Twinlily."
+      },
+      "page": ["Around the pier", "The pier blocked the straight way down, so the light went around it on both sides. The two paths met at the Twinlily, and the first arm of the bridge began to lower."],
+      "hi": {
+        "name": "Patthar ka khamba",
+        "intro": "Purane khambe ke do pattharon ke beech ek Judwa Kamal par patanga intezaar kar raha hai. Surajmukhi upar wale patthar ke us paar chamak raha hai. Aapke paas chhe Narkat hain.",
+        "hints": [
+          "Patthar Judwa Kamal ki do taraf dhak dete hain. Kaun si taraf bachi hain?",
+          "Khambe ke dono taraf dekho. Kya Surajmukhi ki roshni dono taraf se neeche ja sakti hai?"
+        ],
+        "success": "Roshni khambe ke dono taraf se neeche gayi aur Judwa Kamal par phir mil gayi.",
+        "story": {
+          "goal": "Roshni ko khambe ke aas-paas se patange tak lao.",
+          "reward": "Pul ka pehla haath charmara kar neeche jhukta hai.",
+          "intro": "Pul ke pehle haath ke neeche ek purana patthar ka khamba takhton ko thaame hai. Sadak par khabar le jaane wala ek patanga uske Judwa Kamal par baitha hai, aage udne ke liye bahut thanda.",
+          "next": "Doosre haath ke paas ek ghonga apni Raat Rani ke neeche so raha hai, agle Judwa Kamal tak ke sabse chhote raaste ke bilkul paas."
+        },
+        "page": ["Khambe ke aas-paas", "Khambe ne seedha raasta rok diya, isliye roshni dono taraf se ghoom kar gayi. Dono raaste Judwa Kamal par mile, aur pul ka pehla haath neeche aane laga."]
+      }
+    },
+    {
+      "id": "7-3",
+      "name": "Shade by the railing",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 4, "sun"], [2, 2, "lily"], [3, 3, "fern"]],
+      "rocks": [],
+      "pouch": { "reed": 5 },
+      "goals": [[2, 2, "on", "moth"], [3, 3, "on", "snail"]],
+      "solution": [[1, 4, "reed"], [1, 3, "reed"], [1, 2, "reed"], [1, 1, "reed"], [2, 1, "reed"]],
+      "who": "snail",
+      "intro": "A moth waits on a Twinlily two steps from the Sunbell. A snail sleeps under a Shadefern just below the gap between them, and loves it in bloom. You have five Reeds.",
+      "hints": [
+        "Which patch between the Sunbell and the Twinlily sits right beside the snail's Shadefern?",
+        "Look above the Twinlily. Could one path bring light to more than one of its sides?"
+      ],
+      "success": "The light curled over the Twinlily and came in from two sides, and the Shadefern stayed in bloom.",
+      "story": {
+        "goal": "Light the moth's Twinlily and let the snail sleep.",
+        "reward": "The second arm of the bridge starts to lower.",
+        "intro": "By the bridge railing, a snail sleeps under its Shadefern, happiest when the flowers are open. Close by, a moth on a Twinlily is shivering, and hopes the light can come without disturbing its neighbour.",
+        "next": "In the middle of the bridge, a Sunbell grows right beside a Twinlily. A toad sleeps just above them."
+      },
+      "page": ["The snail's shade", "The shortest way passed right beside the snail's Shadefern. Instead, the light went up and over the Twinlily and came down its far side. The snail never stirred."],
+      "hi": {
+        "name": "Railing ke paas chhaaya",
+        "intro": "Surajmukhi se do kadam door ek Judwa Kamal par patanga intezaar kar raha hai. Dono ke beech ki jagah ke theek neeche ek ghonga apni khili Raat Rani ke neeche so raha hai. Aapke paas paanch Narkat hain.",
+        "hints": [
+          "Surajmukhi aur Judwa Kamal ke beech kaunsi jagah ghonge ki Raat Rani ke bilkul paas hai?",
+          "Judwa Kamal ke upar dekho. Kya ek raasta uski ek se zyada taraf roshni la sakta hai?"
+        ],
+        "success": "Roshni Judwa Kamal ke upar se ghoom kar do taraf se aayi, aur Raat Rani khili rahi.",
+        "story": {
+          "goal": "Patange ka Judwa Kamal jalao aur ghonge ko sone do.",
+          "reward": "Pul ka doosra haath neeche aane lagta hai.",
+          "intro": "Pul ki railing ke paas ek ghonga apni Raat Rani ke neeche so raha hai. Phool khile hon to woh sabse khush rehta hai. Paas hi ek Judwa Kamal par patanga kaanp raha hai, aur chahta hai ki padosi ki neend na toote.",
+          "next": "Pul ke beech mein ek Surajmukhi ek Judwa Kamal ke bilkul paas uga hai. Unke theek upar ek mendhak so raha hai."
+        },
+        "page": ["Ghonge ki chhaaya", "Sabse chhota raasta ghonge ki Raat Rani ke bilkul paas se jaata tha. Uski jagah roshni Judwa Kamal ke upar se ghoom kar doosri taraf se neeche aayi. Ghonga hila bhi nahi."]
+      }
+    },
+    {
+      "id": "7-4",
+      "name": "Right beside the Sunbell",
+      "kind": "light",
+      "rows": 5,
+      "cols": 5,
+      "fixed": [[2, 1, "sun"], [2, 2, "lily"]],
+      "rocks": [[3, 2]],
+      "pouch": { "reed": 6 },
+      "goals": [[2, 2, "on", "moth"], [0, 2, "off", "toad"]],
+      "solution": [[3, 1, "reed"], [4, 1, "reed"], [4, 2, "reed"], [4, 3, "reed"], [3, 3, "reed"], [2, 3, "reed"]],
+      "intro": "A moth waits on a Twinlily right beside the Sunbell. A toad sleeps two steps above the Twinlily, and a stone sits just below it. You have six Reeds.",
+      "hints": [
+        "The Sunbell already touches one side of the Twinlily. Which other sides could you light without waking the toad?",
+        "Look below the stone. Is there a quiet way round to the Twinlily's far side?"
+      ],
+      "success": "The Sunbell lit one side, the long way round lit the other, and the toad slept on.",
+      "story": {
+        "goal": "Light the Twinlily and let the toad sleep.",
+        "reward": "The middle of the bridge settles into place.",
+        "intro": "In the middle of the bridge, a Sunbell grows right beside a Twinlily. The moth waiting there thinks this one will be easy. The toad asleep nearby only hopes nobody wakes him.",
+        "next": "Now both arms must glow at once. Travellers crowd the bank, and Chanda counts two dark Twinlilies and only one Sunbell."
+      },
+      "page": ["The long way round", "The Sunbell sat right beside the Twinlily, and still that was not enough. The second light travelled all the way around the stone, and the toad dreamed on."],
+      "hi": {
+        "name": "Surajmukhi ke bilkul paas",
+        "intro": "Surajmukhi ke bilkul paas ek Judwa Kamal par patanga intezaar kar raha hai. Judwa Kamal se do kadam upar ek mendhak so raha hai, aur theek neeche ek patthar hai. Aapke paas chhe Narkat hain.",
+        "hints": [
+          "Surajmukhi pehle se Judwa Kamal ki ek taraf chhoo raha hai. Mendhak ko jagaye bina aur kaun si taraf roshan ho sakti hai?",
+          "Patthar ke neeche dekho. Kya Judwa Kamal ki doosri taraf tak koi shaant raasta hai?"
+        ],
+        "success": "Surajmukhi ne ek taraf roshan ki, lambe raaste ne doosri, aur mendhak sota raha.",
+        "story": {
+          "goal": "Judwa Kamal jalao aur mendhak ko sone do.",
+          "reward": "Pul ka beech ka hissa apni jagah par baith jaata hai.",
+          "intro": "Pul ke beech mein ek Surajmukhi ek Judwa Kamal ke bilkul paas uga hai. Wahan baitha patanga sochta hai ki yeh to aasaan hoga. Paas soya mendhak bas itna chahta hai ki koi use na jagaye.",
+          "next": "Ab dono haath ek saath chamakne chahiye. Kinaare par raahiyon ki bheed hai, aur Chanda do bujhe Judwa Kamal aur sirf ek Surajmukhi ginti hai."
+        },
+        "page": ["Lamba raasta", "Surajmukhi Judwa Kamal ke bilkul paas tha, phir bhi woh kaafi nahi tha. Doosri roshni patthar ke poore chakkar se aayi, aur mendhak sapne dekhta raha."]
+      }
+    },
+    {
+      "id": "7-5",
+      "name": "The bridge comes down",
+      "kind": "light",
+      "rows": 6,
+      "cols": 6,
+      "fixed": [[5, 2, "sun"], [2, 1, "lily"], [2, 3, "lily"], [3, 4, "fern"]],
+      "rocks": [],
+      "pouch": { "reed": 6 },
+      "goals": [[2, 1, "on", "moth"], [2, 3, "on", "moth"], [3, 0, "off", "toad"], [3, 4, "on", "snail"]],
+      "solution": [[4, 2, "reed"], [3, 2, "reed"], [2, 2, "reed"], [1, 2, "reed"], [1, 1, "reed"], [1, 3, "reed"]],
+      "intro": "Two moths wait on the Twinlilies, one on each arm of the bridge. A toad sleeps on the left bank, and a snail rests under its Shadefern on the right. You have six Reeds.",
+      "hints": [
+        "Which sides of each Twinlily can you reach without waking the toad or the snail?",
+        "Look at the patch between the two Twinlilies, and the row above them. Could one path serve both?"
+      ],
+      "success": "One Sunbell's light split, then split again, and both lanterns glowed. The bridge came down.",
+      "story": {
+        "goal": "Light both lanterns and let the toad and snail rest.",
+        "reward": "The bridge comes down, and the fourth waystone wakes.",
+        "intro": "The last travellers crowd the bank. Two moths wait on the bridge's two Twinlily lanterns, a toad dozes by the water, and a snail sleeps under its Shadefern. One Sunbell must reach both arms.",
+        "next": "The bridge is down. Past it, the fifth waystone stands silent, and Chanda says it lights only when something is not there."
+      },
+      "page": ["Both arms", "One Sunbell's light climbed the middle of the bridge and touched both lanterns from inside, then split above them to reach each one again. The bridge came down, just as the bees remembered."],
+      "hi": {
+        "name": "Pul neeche aata hai",
+        "intro": "Do patange Judwa Kamal par intezaar kar rahe hain, pul ke har haath par ek. Baayein kinaare ek mendhak so raha hai, aur daayein taraf ek ghonga apni Raat Rani ke neeche aaram kar raha hai. Aapke paas chhe Narkat hain.",
+        "hints": [
+          "Mendhak ya ghonge ko jagaye bina har Judwa Kamal ki kaun si taraf tak pahunch sakte ho?",
+          "Dono Judwa Kamal ke beech ki jagah aur unke upar wali row dekho. Kya ek raasta dono ke kaam aa sakta hai?"
+        ],
+        "success": "Ek Surajmukhi ki roshni bati, phir dobara bati, aur dono lantern chamak uthe. Pul neeche aa gaya.",
+        "story": {
+          "goal": "Dono lantern jalao, mendhak aur ghonge ko aaram karne do.",
+          "reward": "Pul neeche aata hai aur chautha raahdeep jaag jaata hai.",
+          "intro": "Aakhri raahi kinaare par jama hain. Do patange pul ke dono Judwa Kamal lanternon par intezaar kar rahe hain, ek mendhak paani ke paas oongh raha hai, aur ek ghonga Raat Rani ke neeche so raha hai. Ek Surajmukhi ko dono haathon tak pahunchna hai.",
+          "next": "Pul neeche aa gaya. Uske aage paanchva raahdeep chup khada hai, aur Chanda kehti hai ki woh tabhi jalta hai jab koi cheez wahan na ho."
+        },
+        "page": ["Dono haath", "Ek Surajmukhi ki roshni pul ke beech se upar chadhi, dono lanternon ko andar se chhua, phir unke upar bat kar har ek tak dobara pahunchi. Pul neeche aa gaya, jaisa madhumakkhiyon ko yaad tha."]
+      }
+    }
+  ]
+}

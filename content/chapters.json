@@ -41,6 +41,34 @@
       "hi": { "name": "Chhatte wali khoh" },
       "levels": 5,
       "file": "c6.json"
+    },
+    {
+      "id": "c7",
+      "name": "Two-armed bridge",
+      "hi": { "name": "Do haathon wala pul" },
+      "levels": 5,
+      "file": "c7.json"
+    },
+    {
+      "id": "c8",
+      "name": "The quiet waystone",
+      "hi": { "name": "Chup raahdeep" },
+      "levels": 5,
+      "file": "c8.json"
+    },
+    {
+      "id": "c9",
+      "name": "Ripples",
+      "hi": { "name": "Lehrein" },
+      "levels": 5,
+      "file": "c9.json"
+    },
+    {
+      "id": "c10",
+      "name": "Where the sun sits",
+      "hi": { "name": "Suraj kahan baithe" },
+      "levels": 5,
+      "file": "c10.json"
     }
   ]
 }

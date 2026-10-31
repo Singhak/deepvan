@@ -1,0 +1,562 @@
+{
+  "id": "c8",
+  "name": "The quiet waystone",
+  "plants": [],
+  "reveal": {
+    "title": "You built a NAND gate",
+    "lede": "A Shadefern beside a Twinlily blooms unless both of the Twinlily's lights are on. That is a NAND gate: NOT AND. Every calculation a computer does can be built from NAND gates alone, and the memory chips in phones are named after it."
+  },
+  "open": "Past the bridge, the fifth waystone stands dark and silent. Shadeferns grow around it, and snails sleep on them. Chanda lands on the stone and waits.",
+  "story": "The fifth waystone stands where the road leaves Deepvan's land behind. It is the quietest one yet. Chanda says it wakes only when its Shadeferns open, so the snails and travellers around it need your help.",
+  "recap": "One Sunbell's light reached both arms, and the two-armed bridge came down. Past it, the fifth waystone is silent: it lights only when something is not there.",
+  "goal": "Wake the fifth waystone. Help 5 creatures and light 5 sparks.",
+  "end": "The fifth waystone glows. Inside is a letter with the lantern mark: \"I've gone to the Glass River. Its lights go out every night, and I want to know why.\"",
+  "hi": {
+    "name": "Chup raahdeep",
+    "title": "Aapne NAND gate banaya",
+    "lede": "Judwa Kamal ke paas wali Raat Rani tab tak khilti hai jab tak Judwa Kamal ki dono roshniyan ek saath na jalein. Yahi NAND gate hai: NOT AND. Computer ka har hisaab sirf NAND gates se ban sakta hai, aur phone ki memory chips ka naam bhi isi par hai.",
+    "open": "Pul ke us paar paanchva raahdeep andhera aur chup khada hai. Uske aas-paas Raat Rani ugi hai aur un par ghonge so rahe hain. Chanda patthar par baith kar intezaar karti hai.",
+    "story": "Paanchva raahdeep wahan khada hai jahan sadak Deepvan ki zameen peeche chhod deti hai. Yeh ab tak ka sabse chup raahdeep hai. Chanda kehti hai ki yeh tabhi jaagta hai jab iski Raat Rani khilti hai, isliye aas-paas ke ghongon aur raahiyon ko aapki madad chahiye.",
+    "recap": "Ek Surajmukhi ki roshni dono haathon tak pahunchi aur do haathon wala pul neeche aa gaya. Uske aage paanchva raahdeep chup hai: woh tabhi jalta hai jab kuch wahan nahi hota.",
+    "goal": "Paanchva raahdeep jagao. 5 jaanwaron ki madad karo aur 5 chingaariyan jalao.",
+    "end": "Paanchva raahdeep chamak utha. Andar Lantern ke nishaan wali ek chitthi hai: \"Main Kaanch ki nadi gaya hoon. Uski roshniyan har raat bujh jaati hain, aur main jaanna chahta hoon kyun.\""
+  },
+  "levels": [
+    {
+      "id": "8-1",
+      "name": "The Sleeping Fern",
+      "kind": "light",
+      "rows": 4,
+      "cols": 4,
+      "fixed": [
+        [
+          1,
+          0,
+          "sun"
+        ],
+        [
+          1,
+          1,
+          "lily"
+        ],
+        [
+          1,
+          2,
+          "fern"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "reed": 3
+      },
+      "goals": [
+        [
+          1,
+          2,
+          "on",
+          "snail"
+        ],
+        [
+          3,
+          2,
+          "on",
+          "moth"
+        ]
+      ],
+      "solution": [
+        [
+          2,
+          0,
+          "reed"
+        ],
+        [
+          3,
+          0,
+          "reed"
+        ],
+        [
+          3,
+          1,
+          "reed"
+        ]
+      ],
+      "intro": "A snail sleeps on a Shadefern beside a Twinlily, and a moth waits below them in the cold. You have three Reeds. Can the moth get warm while the snail's flower stays open?",
+      "hints": [
+        "Watch the snail's flower as you plant. Which Reed makes it close?",
+        "Look at the soil just under the Twinlily. Does the light have to pass there?"
+      ],
+      "success": "The Twinlily held only one light and stayed dark, so the flower stayed open beside it.",
+      "story": {
+        "goal": "Warm the moth and keep the snail's flower open.",
+        "reward": "The first Shadefern opens on the waystone.",
+        "intro": "Past the bridge, the fifth waystone is dark and silent. A snail sleeps on a Shadefern at its foot, beside a Twinlily that already holds one light. A moth below is cold, and Chanda asks you to help them both.",
+        "next": "On the other side of the stone, two moths wait in a line with another Twinlily, one high and one low."
+      },
+      "page": [
+        "The open flower",
+        "The Twinlily beside the snail held one light and stayed dark. The Shadefern next to it opened, and a faint glow stirred inside the waystone."
+      ],
+      "hi": {
+        "name": "Soyi hui Raat Rani",
+        "intro": "Ek ghonga Judwa Kamal ke paas Raat Rani par so raha hai, aur unke neeche ek patanga thand mein intezaar kar raha hai. Aapke paas teen Narkat hain. Kya patanga garam hoga aur ghonge ka phool khula rahega?",
+        "hints": [
+          "Lagaate waqt ghonge ke phool ko dekho. Kaunsa Narkat use band kar deta hai?",
+          "Judwa Kamal ke theek neeche wali mitti dekho. Kya roshni ko wahan se guzarna zaroori hai?"
+        ],
+        "success": "Judwa Kamal ke paas sirf ek roshni thi, woh andhera raha, aur uske paas phool khula raha.",
+        "story": {
+          "goal": "Patange ko garmi do, ghonge ka phool khula rakho.",
+          "reward": "Raahdeep par pehli Raat Rani khulti hai.",
+          "intro": "Pul ke aage paanchva raahdeep andhera aur chup hai. Uske paas ek ghonga Raat Rani par so raha hai, ek Judwa Kamal ke bagal mein jiske paas pehle se ek roshni hai. Neeche ek patanga thithur raha hai, aur Chanda dono ki madad maangti hai.",
+          "next": "Patthar ki doosri taraf do patange ek aur Judwa Kamal ki seedh mein intezaar karte hain, ek upar aur ek neeche."
+        },
+        "page": [
+          "Khula phool",
+          "Ghonge ke paas wale Judwa Kamal ne ek hi roshni pakdi aur andhera raha. Uske bagal ki Raat Rani khul gayi, aur raahdeep ke andar halki si chamak jaagi."
+        ]
+      }
+    },
+    {
+      "id": "8-2",
+      "name": "Above and Below",
+      "kind": "light",
+      "rows": 5,
+      "cols": 4,
+      "fixed": [
+        [
+          2,
+          0,
+          "sun"
+        ],
+        [
+          2,
+          2,
+          "lily"
+        ],
+        [
+          2,
+          3,
+          "fern"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "reed": 5
+      },
+      "goals": [
+        [
+          2,
+          3,
+          "on",
+          "snail"
+        ],
+        [
+          0,
+          2,
+          "on",
+          "moth"
+        ],
+        [
+          4,
+          2,
+          "on",
+          "moth"
+        ]
+      ],
+      "solution": [
+        [
+          2,
+          1,
+          "reed"
+        ],
+        [
+          1,
+          1,
+          "reed"
+        ],
+        [
+          0,
+          1,
+          "reed"
+        ],
+        [
+          3,
+          1,
+          "reed"
+        ],
+        [
+          4,
+          1,
+          "reed"
+        ]
+      ],
+      "intro": "Two moths wait in a line with the Twinlily, one at the top and one at the bottom. A snail sleeps on the Shadefern at its side. You have five Reeds.",
+      "hints": [
+        "Could the Twinlily carry light from one moth to the other? What would the snail think of that?",
+        "Look at the column between the Sunbell and the Twinlily. Can one path reach both ends?"
+      ],
+      "success": "The light went up and down beside the Twinlily, never through it, and the flower stayed open.",
+      "story": {
+        "goal": "Warm both moths and let the snail sleep.",
+        "reward": "A second Shadefern opens, and the waystone hums.",
+        "intro": "Two moths have come to the waystone from opposite ends of the road. One rests at the top of the stone and one at the bottom. Between them, a snail sleeps on a Shadefern and hopes its flower stays open.",
+        "next": "Below the waystone, old Glowmoss grows in a shape Chanda knows from the beehive hollow. Two pieces are missing."
+      },
+      "page": [
+        "Up and down",
+        "One path climbed past the Twinlily and another went down past it. The Twinlily held only one light, so the snail's flower stayed open."
+      ],
+      "hi": {
+        "name": "Upar aur neeche",
+        "intro": "Do patange Judwa Kamal ki seedh mein intezaar karte hain, ek sabse upar aur ek sabse neeche. Uske bagal ki Raat Rani par ek ghonga so raha hai. Aapke paas paanch Narkat hain.",
+        "hints": [
+          "Kya Judwa Kamal ek patange se doosre tak roshni le ja sakta hai? Ghonge ko woh kaisa lagega?",
+          "Surajmukhi aur Judwa Kamal ke beech wala column dekho. Kya ek raasta dono siron tak pahunch sakta hai?"
+        ],
+        "success": "Roshni Judwa Kamal ke bagal se upar aur neeche gayi, uske andar se nahi, aur phool khula raha.",
+        "story": {
+          "goal": "Dono patangon ko garmi do aur ghonge ko sone do.",
+          "reward": "Doosri Raat Rani khulti hai aur raahdeep gungunata hai.",
+          "intro": "Do patange sadak ke alag siron se raahdeep tak aaye hain. Ek patthar ke upar aaram kar raha hai aur ek neeche. Unke beech ek ghonga Raat Rani par so raha hai aur chahta hai ki uska phool khula rahe.",
+          "next": "Raahdeep ke neeche purani Jaadui Kaai ek aise shape mein ugi hai jo Chanda ne chhatte wali khoh mein dekha tha. Do hisse gayab hain."
+        },
+        "page": [
+          "Upar aur neeche",
+          "Ek raasta Judwa Kamal ke paas se upar gaya aur doosra neeche. Judwa Kamal ke paas ek hi roshni thi, isliye ghonge ka phool khula raha."
+        ]
+      }
+    },
+    {
+      "id": "8-3",
+      "name": "Honeycomb on the Stone",
+      "kind": "life",
+      "rows": 5,
+      "cols": 5,
+      "nights": 2,
+      "fixed": [
+        [
+          1,
+          3,
+          "moss"
+        ],
+        [
+          2,
+          1,
+          "moss"
+        ],
+        [
+          2,
+          3,
+          "moss"
+        ],
+        [
+          3,
+          2,
+          "moss"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "moss": 2
+      },
+      "goals": [
+        [
+          0,
+          2,
+          "on",
+          "beetle"
+        ],
+        [
+          0,
+          3,
+          "off",
+          "toad"
+        ],
+        [
+          2,
+          1,
+          "on",
+          "beetle"
+        ]
+      ],
+      "solution": [
+        [
+          0,
+          2,
+          "moss"
+        ],
+        [
+          1,
+          1,
+          "moss"
+        ]
+      ],
+      "intro": "Four Glowmoss patches by the waystone make most of a honeycomb. Two beetles want it whole after two nights, and a toad sleeps at the top. You have two patches.",
+      "hints": [
+        "Which shape from the beehive hollow had six patches around a hollow middle?",
+        "Look at the top of the shape, near the toad. Which two spots would close the honeycomb?"
+      ],
+      "success": "The honeycomb closed around its hollow and stayed still, night after night.",
+      "story": {
+        "goal": "Mend the honeycomb and let the toad sleep.",
+        "reward": "A lantern mark shows in the moss.",
+        "intro": "At the foot of the waystone, Chanda finds Glowmoss in the bees' honeycomb shape. Two beetles rest by it and hope it stays all winter. A toad has curled up at the top and would like to keep sleeping.",
+        "next": "The mended honeycomb shows a lantern mark. Higher on the stone, a little group of moss looks ready to walk."
+      },
+      "page": [
+        "The bees' shape",
+        "Six patches held their places around a hollow middle. The bees' honeycomb grows here too, far from the hollow tree, and in it is a small lantern mark."
+      ],
+      "hi": {
+        "name": "Patthar par chhatta",
+        "intro": "Raahdeep ke paas Jaadui Kaai ke chaar patches lagbhag ek chhatta banate hain. Do beetles do raat baad use poora chahte hain, aur upar ek mendhak so raha hai. Aapke paas do patches hain.",
+        "hints": [
+          "Chhatte wali khoh mein kaunsa shape tha jismein chhe patches khaali beech ke chaaron taraf the?",
+          "Shape ke upar, mendhak ke paas dekho. Kaun si do jagah chhatta poora karengi?"
+        ],
+        "success": "Chhatta apne khaali beech ke chaaron taraf band hua aur har raat waisa hi raha.",
+        "story": {
+          "goal": "Chhatta poora karo aur mendhak ko sone do.",
+          "reward": "Kaai mein Lantern ka nishaan dikhta hai.",
+          "intro": "Raahdeep ke paas Chanda ko madhumakkhiyon ke chhatte jaisi Jaadui Kaai milti hai. Do beetles uske paas aaram kar rahe hain aur chahte hain ki woh sardi bhar tike. Upar ek mendhak gol hokar so gaya hai aur sota rehna chahta hai.",
+          "next": "Poore chhatte mein Lantern ka nishaan dikhta hai. Patthar par thoda upar kaai ka ek chhota jhund chalne ko taiyaar lagta hai."
+        },
+        "page": [
+          "Madhumakkhiyon ka shape",
+          "Chhe patches khaali beech ke chaaron taraf tike rahe. Madhumakkhiyon ka chhatta yahan bhi ugta hai, khokhle ped se door, aur usmein Lantern ka chhota nishaan hai."
+        ]
+      }
+    },
+    {
+      "id": "8-4",
+      "name": "The Wandering Moss",
+      "kind": "life",
+      "rows": 6,
+      "cols": 6,
+      "nights": 4,
+      "fixed": [
+        [
+          0,
+          2,
+          "moss"
+        ],
+        [
+          2,
+          1,
+          "moss"
+        ],
+        [
+          2,
+          2,
+          "moss"
+        ],
+        [
+          2,
+          3,
+          "moss"
+        ]
+      ],
+      "rocks": [],
+      "pouch": {
+        "moss": 1
+      },
+      "goals": [
+        [
+          3,
+          3,
+          "on",
+          "beetle"
+        ],
+        [
+          2,
+          4,
+          "on",
+          "beetle"
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          3,
+          "moss"
+        ]
+      ],
+      "intro": "Four Glowmoss patches sit near the top of the stone. Two beetles wait lower down, to the right, and want moss under them after four nights. You have one patch.",
+      "hints": [
+        "One patch under a beetle won't bring moss to both. Which shape from the oldest corner could travel?",
+        "Look at the gap between the top patch and the row of three. Which side of it points toward the beetles?"
+      ],
+      "success": "The moss walked down the stone by itself and arrived under both beetles on the fourth night.",
+      "story": {
+        "goal": "Send the moss walking to the beetles.",
+        "reward": "The waystone's door shows its lantern mark.",
+        "intro": "Two beetles have climbed the waystone to find a warm place, but the moss near them is too far away. Chanda remembers the walking moss in Deepvan's oldest corner. Could this moss come to them?",
+        "next": "The moss reaches the beetles, and a little door in the waystone shows. Ferns, moths and a snail wait around it."
+      },
+      "page": [
+        "Moss that travels",
+        "One more patch turned the group into a walker. Four nights later it reached the beetles, and the waystone's little door showed the lantern mark."
+      ],
+      "hi": {
+        "name": "Bhatakti kaai",
+        "intro": "Patthar ke upar ki taraf Jaadui Kaai ke chaar patches hain. Do beetles neeche, daayi taraf, intezaar karte hain aur chaar raat baad apne neeche kaai chahte hain. Aapke paas ek patch hai.",
+        "hints": [
+          "Ek beetle ke neeche lagaya patch dono tak kaai nahi laayega. Sabse purane kone ka kaunsa shape safar karta tha?",
+          "Upar wale patch aur teen ki line ke beech ki khaali jagah dekho. Uski kaunsi taraf beetles ki or ishaara karti hai?"
+        ],
+        "success": "Kaai khud patthar par neeche chali aur chauthi raat dono beetles ke neeche pahunch gayi.",
+        "story": {
+          "goal": "Kaai ko chala kar beetles tak bhejo.",
+          "reward": "Raahdeep ka darwaaza apna Lantern ka nishaan dikhata hai.",
+          "intro": "Do beetles garam jagah dhoondhte hue raahdeep par chadh gaye hain, par paas wali kaai bahut door hai. Chanda ko Deepvan ke sabse purane kone ki chalti kaai yaad aati hai. Kya yeh kaai unke paas aa sakti hai?",
+          "next": "Kaai beetles tak pahunchti hai aur raahdeep mein ek chhota darwaaza dikhta hai. Uske aas-paas Raat Rani, patange aur ek ghonga intezaar karte hain."
+        },
+        "page": [
+          "Safar karti kaai",
+          "Ek aur patch se woh jhund chalne laga. Chaar raat baad woh beetles tak pahuncha, aur raahdeep ke chhote darwaaze par Lantern ka nishaan dikha."
+        ]
+      }
+    },
+    {
+      "id": "8-5",
+      "name": "The Fifth Waystone",
+      "kind": "light",
+      "rows": 6,
+      "cols": 6,
+      "fixed": [
+        [
+          1,
+          3,
+          "sun"
+        ],
+        [
+          5,
+          3,
+          "sun"
+        ],
+        [
+          4,
+          2,
+          "lily"
+        ],
+        [
+          3,
+          2,
+          "fern"
+        ]
+      ],
+      "rocks": [
+        [
+          3,
+          0
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "pouch": {
+        "reed": 6
+      },
+      "goals": [
+        [
+          3,
+          2,
+          "on",
+          "snail"
+        ],
+        [
+          4,
+          0,
+          "on",
+          "moth"
+        ],
+        [
+          3,
+          5,
+          "on",
+          "moth"
+        ],
+        [
+          0,
+          4,
+          "on",
+          "moth"
+        ],
+        [
+          3,
+          3,
+          "on",
+          "moth"
+        ]
+      ],
+      "solution": [
+        [
+          1,
+          4,
+          "reed"
+        ],
+        [
+          2,
+          4,
+          "reed"
+        ],
+        [
+          3,
+          4,
+          "reed"
+        ],
+        [
+          5,
+          0,
+          "reed"
+        ],
+        [
+          5,
+          1,
+          "reed"
+        ],
+        [
+          5,
+          2,
+          "reed"
+        ]
+      ],
+      "intro": "Four moths wait around the waystone's door, and a snail sleeps on the Shadefern above the Twinlily. Two Sunbells glow, one high and one low. You have six Reeds.",
+      "hints": [
+        "The lower Sunbell is close to the Twinlily. How many of its sides can the light touch before the flower closes?",
+        "Look at the moth on the far left. Which way along the bottom reaches it and passes the Twinlily only once?"
+      ],
+      "success": "Every moth is warm, the Twinlily held one light, the snail's flower opened, and the waystone woke.",
+      "story": {
+        "goal": "Warm all four moths and open the sleeping flower.",
+        "reward": "The waystone opens, and inside is a letter.",
+        "intro": "This is the waystone's little door. Four moths have gathered around it for warmth, and a snail sleeps on the one Shadefern still closed. Chanda says the stone will wake when that flower opens.",
+        "next": "Chanda reads the letter twice, then looks down the road. Far ahead, a wide river shines like glass in the dusk. The Glass River is waiting."
+      },
+      "page": [
+        "The Old Keeper's letter",
+        "\"I've gone to the Glass River. Its lights go out every night, and I want to know why. If you have lit this stone, you can light theirs.\" The letter ends with the lantern mark."
+      ],
+      "hi": {
+        "name": "Paanchva raahdeep",
+        "intro": "Raahdeep ke darwaaze ke paas chaar patange intezaar karte hain, aur Judwa Kamal ke upar wali Raat Rani par ek ghonga so raha hai. Do Surajmukhi chamakte hain, ek upar, ek neeche. Aapke paas chhe Narkat hain.",
+        "hints": [
+          "Neeche wala Surajmukhi Judwa Kamal ke paas hai. Phool band hone se pehle roshni uski kitni taraf chhoo sakti hai?",
+          "Sabse baayi taraf wale patange ko dekho. Neeche ka kaunsa raasta wahan pahunchta hai aur Judwa Kamal ko ek hi baar chhoota hai?"
+        ],
+        "success": "Har patanga garam hai, Judwa Kamal ne ek roshni pakdi, ghonge ka phool khula, aur raahdeep jaag gaya.",
+        "story": {
+          "goal": "Chaaron patangon ko garmi do aur soya phool kholo.",
+          "reward": "Raahdeep khulta hai, aur andar ek chitthi hai.",
+          "intro": "Yeh raahdeep ka chhota darwaaza hai. Chaar patange garmi ke liye iske paas jama hain, aur ek ghonga abhi tak band Raat Rani par so raha hai. Chanda kehti hai ki woh phool khulte hi patthar jaag jaayega.",
+          "next": "Chanda chitthi do baar padhti hai, phir sadak ki taraf dekhti hai. Door aage ek chaudi nadi shaam mein kaanch ki tarah chamakti hai. Kaanch ki nadi intezaar kar rahi hai."
+        },
+        "page": [
+          "Purane Rakshak ki chitthi",
+          "\"Main Kaanch ki nadi gaya hoon. Uski roshniyan har raat bujh jaati hain, aur main jaanna chahta hoon kyun. Agar aapne yeh patthar jalaya hai, toh aap unki roshni bhi jala sakte ho.\" Chitthi Lantern ke nishaan par khatm hoti hai."
+        ]
+      }
+    }
+  ]
+}
