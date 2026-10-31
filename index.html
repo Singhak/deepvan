@@ -3,6 +3,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#11152b">
+<meta name="description" content="A calm puzzle game about plants that behave like circuits and cellular automata. Free, offline, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lantern Grove: a calm puzzle game about plants and circuits">
+<meta property="og:description" content="Light the lanterns, settle the visitors, and learn how computers think. A new grove every day.">
+<meta name="twitter:card" content="summary">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1077,6 +1082,7 @@ const UI = {
     wanderName: 'Wandering visitors', eyebrowWander: n => `Endless grove · visitor ${n}`,
     storySkip: 'Skip the story', dailyName: "Today's grove", linkName: "A friend's grove",
     eyebrowDaily: d => `Daily grove · ${d} · the same puzzle for everyone today`, eyebrowLink: 'Shared grove · the same puzzle your friend played',
+    streakLbl: n => `${n}-day streak`, nextDaily: (h, m) => `Next grove in ${h}h ${m}m.`, beatFriend: n => `Your friend settled it in ${n} ${n === 1 ? 'dusk' : 'dusks'}. Can you beat that?`, chStars: n => `${n}★`,
     dailyIntro: "Today's grove is the same for everyone who plays it. Settle every visitor in as few dusks as you can, then share how you did.",
     linkIntro: 'A friend sent you this grove. Plant seeds from your pouch, then let dusk fall and see who settles.',
     shareBtn: 'Share this grove', shareWin: 'Share my progress', copied: 'Copied! Paste it to a friend.',
@@ -1167,6 +1173,7 @@ const UI = {
     wanderName: 'Bhatakte mehmaan', eyebrowWander: n => `Kabhi na khatam hone wala bagicha · mehmaan ${n}`,
     storySkip: 'Kahani chhodo', dailyName: 'Aaj ka bagicha', linkName: 'Dost ka bagicha',
     eyebrowDaily: d => `Roz ka bagicha · ${d} · aaj sabke liye yahi puzzle`, eyebrowLink: 'Share kiya hua bagicha · wahi puzzle jo aapke dost ne khela',
+    streakLbl: n => `${n} din ka streak`, nextDaily: (h, m) => `Agla bagicha ${h} ghante ${m} minute mein.`, beatFriend: n => `Aapke dost ne ${n} raat mein kar diya. Isse kam mein kar sakte ho?`, chStars: n => `${n}★`,
     dailyIntro: 'Aaj ka bagicha har khilaadi ke liye ek jaisa hai. Kam se kam raaton mein sab mehmaanon ko khush karo, phir dosto ko batao.',
     linkIntro: 'Aapke dost ne yeh bagicha bheja hai. Thaili se beej lagao, phir raat hone do aur dekho kaun khush hota hai.',
     shareBtn: 'Yeh bagicha share karo', shareWin: 'Apni progress share karo', copied: 'Copy ho gaya! Dost ko bhejo.',
@@ -1844,13 +1851,26 @@ function startWander() {
 function startGrove(lv, challenge) {
   lv.successIdx = P.wanderCount % WANDER_SUCCESS.length;
   S.wander = true; S.challenge = challenge; S.lv = lv; beginLevel();
-  if (challenge) { say(null, () => t(challenge.daily ? 'dailyIntro' : 'linkIntro')); return; }
+  if (challenge) { say(null, () => t(challenge.daily ? 'dailyIntro' : 'linkIntro') + (challenge.beat ? ' ' + t('beatFriend', challenge.beat) : '')); return; }
   const wi = Math.floor(Math.random() * WANDER_INTROS.length);
   say(null, () => (hi() ? HI.wanderIntros : WANDER_INTROS)[wi]);
 }
 
 // ---------- Shareable groves: the same difficulty and seed make the same puzzle on every device ----------
 const DAILY_D = 3;
+// Streak: consecutive days with a solved daily, counting back from today (or from yesterday while today is still open)
+function dailyStreak() {
+  const done = P.daily || {}, d = new Date();
+  const key = x => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
+  if (!done[key(d)]) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (done[key(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function untilTomorrow() { const n = new Date(), m = Math.ceil((new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1) - n) / 60000); return [Math.floor(m / 60), m % 60]; }
+// 3 stars: at most 2 tries and no owl hints; 2: at most 1 hint or 4 tries; otherwise 1
+function starsFor(attempts, hints) { return attempts <= 2 && hints === 0 ? 3 : hints <= 1 || attempts <= 4 ? 2 : 1; }
+function starTotal(ch) { return LEVELS.filter(l => l.ch === ch).reduce((n, l) => n + ((P.stars || {})[l.id] || 0), 0); }
 function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
 function seedOf(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619); return h >>> 0; }
 function makeGrove(d, seed) {
@@ -1860,11 +1880,11 @@ function makeGrove(d, seed) {
 function startDaily(day) { startGrove(makeGrove(DAILY_D, seedOf('daily-' + day)), { daily: day }); }
 // #daily=2026-10-30 or #grove=3-123456
 function groveFromHash() {
-  const h = new URLSearchParams(location.hash.slice(1)), day = h.get('daily') || '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(day)) { startDaily(day); return true; }
+  const h = new URLSearchParams(location.hash.slice(1)), day = h.get('daily') || '', beat = clamp(+h.get('s') || 0, 0, 99);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(day)) { startDaily(day); if (beat) S.challenge.beat = beat; return true; }
   const m = /^(\d{1,2})-(\d{1,10})$/.exec(h.get('grove') || '');
   if (!m) return false;
-  startGrove(makeGrove(clamp(+m[1], 1, 10), +m[2] >>> 0), { link: true });
+  startGrove(makeGrove(clamp(+m[1], 1, 10), +m[2] >>> 0), { link: true, beat });
   return true;
 }
 // Links only travel from a hosted page; a local file or sandboxed preview has no address a friend can open
@@ -1872,7 +1892,7 @@ function pageLink(hash) { return /^https?:$/.test(location.protocol) ? location.
 function shareGrove() {
   const lv = S.lv, c = S.challenge, trail = S.trail.map(f => (f >= 1 ? '🌕' : f > 0 ? '🌗' : '🌑')).join('');
   const where = c && c.daily ? `${t('dailyName')} ${c.daily}` : t(c ? 'linkName' : 'wanderName');
-  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink(c && c.daily ? 'daily=' + c.daily : `grove=${lv.d}-${lv.seed}`), $('shareBtn'));
+  share(t('shareGrove', where, trail, S.trail.length, S.hints), pageLink((c && c.daily ? 'daily=' + c.daily : `grove=${lv.d}-${lv.seed}`) + '&s=' + S.trail.length), $('shareBtn'));
 }
 function shareProgress() {
   const n = sparkCount();
@@ -1949,10 +1969,15 @@ function evaluate() {
     const firstTry = lv.id === '1-1' && S.attempts === 1;
     say(null, () => lvT(lv, 'success') + (newSpark ? t('newSpark') : '') + (firstTry ? t('pressNext') : ''));
     logEvent(`solved ${lv.id || 'wander d' + P.d} in ${S.attempts} ${S.attempts === 1 ? 'try' : 'tries'}, ${S.hints} hints, ${Math.round((Date.now() - S.startedAt) / 1000)}s`);
+    S.stars = starsFor(S.attempts, S.hints);
+    if (lv.id) { P.stars = P.stars || {}; P.stars[lv.id] = Math.max(P.stars[lv.id] || 0, S.stars); }
     if (S.challenge) {
       // Shared puzzles don't move the hidden difficulty; remember the best daily score
       const day = S.challenge.daily, best = (P.daily || {})[day];
-      if (day) P.daily = Object.assign(P.daily || {}, { [day]: best ? Math.min(best, S.attempts) : S.attempts });
+      if (day) {
+        P.daily = Object.assign(P.daily || {}, { [day]: best ? Math.min(best, S.attempts) : S.attempts });
+        if (day === todayStr()) { const [h, m] = untilTomorrow(); setTimeout(() => say(null, () => `🔥 ${t('streakLbl', dailyStreak())} · ${t('nextDaily', h, m)}`), 1800); }
+      }
     } else if (S.wander) {
       P.wanderCount++;
       const before = P.d;
@@ -2155,13 +2180,13 @@ function renderUI() {
       break;
     }
     const done = LEVELS.filter(l => l.ch === i && P.solved[l.id]).length, total = LEVELS.filter(l => l.ch === i).length;
-    b.innerHTML = `<span class="nm">${chName(i)}</span> <span class="n">${done}/${total}</span>`;
+    b.innerHTML = `<span class="nm">${chName(i)}</span> <span class="n">${done}/${total}${starTotal(i) ? ' · ' + t('chStars', starTotal(i)) : ''}</span>`;
     b.setAttribute('aria-current', String(!S.wander && lv.ch === i));
     b.onclick = () => { const first = LEVELS.findIndex(l => l.ch === i && !P.solved[l.id]); startLevel(first >= 0 ? first : LEVELS.findIndex(l => l.ch === i)); };
     nav.appendChild(b);
   }
   const day = todayStr(), dy = document.createElement('button'); dy.type = 'button'; dy.className = 'chip';
-  dy.innerHTML = `${t('dailyName')} <span class="n">${(P.daily || {})[day] ? '✓' : '★'}</span>`;
+  dy.innerHTML = `${t('dailyName')} <span class="n">${(P.daily || {})[day] ? '✓' : '★'}${dailyStreak() ? ' 🔥' + dailyStreak() : ''}</span>`;
   dy.disabled = !wanderOpen(); if (dy.disabled) dy.title = t('wanderLocked');
   dy.setAttribute('aria-current', String(!!S.challenge && S.challenge.daily === day));
   dy.onclick = () => startDaily(day); nav.appendChild(dy);
@@ -2449,6 +2474,7 @@ function openWin(fresh) {
   heroCanvas($('winHero'), P.hero || HEROES[0], 96);
   $('winKicker').textContent = chEnd && chapterDone(lv.ch) ? t('chDone', chName(lv.ch)) : t('winKicker', idx + 1);
   $('winTitle').textContent = t('cheers')[w.cheer] + (name ? ' ' + name : '');
+  $('winKicker').textContent += ' · ' + '⭐'.repeat((P.stars || {})[lv.id] || 1);
   $('winMeterText').innerHTML = (n >= SPARKS_TOTAL ? t('lanternLit') : t('winMeter', n, SPARKS_TOTAL)) + (w.spark ? `<span class="plus">${t('plusSpark')}</span>` : '');
   const bar = $('winBar'), pct = k => Math.round(100 * k / SPARKS_TOTAL) + '%';
   if (fresh) { bar.style.width = pct(w.spark ? n - 1 : n); requestAnimationFrame(() => requestAnimationFrame(() => (bar.style.width = pct(n)))); }
