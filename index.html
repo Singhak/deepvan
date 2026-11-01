@@ -607,12 +607,13 @@ button:focus-visible, canvas:focus-visible, textarea:focus-visible { outline: 2p
         <p id="voiceText"></p>
       </div>
       <div class="pouch">
-        <div class="pouch-head"><h3 data-t="pouch">Seed pouch</h3><div class="board-tools"><button class="ghost" id="undoBtn" type="button" disabled>Undo</button><button class="ghost" id="clearBtn" type="button" disabled>Clear</button></div></div>
+        <div class="pouch-head"><h3 data-t="pouch">Seed pouch</h3><div class="board-tools"><button class="ghost" id="undoBtn" type="button" disabled>Undo</button><button class="ghost" id="redoBtn" type="button" disabled>Redo</button><button class="ghost" id="clearBtn" type="button" disabled>Clear</button></div></div>
         <div class="seeds" id="pouch"></div>
         <p class="small" id="pouchTip">Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.</p>
       </div>
       <div class="actions" id="actions">
         <button class="primary" id="duskBtn" type="button">Let dusk fall</button>
+        <button class="secondary" id="backBtn" type="button" hidden>One night back</button>
         <button class="secondary" id="stepBtn" type="button" hidden>Watch one night</button>
         <button class="secondary wide" id="dayBtn" type="button" hidden>Back to daylight</button>
         <button class="primary next wide" id="nextBtn" type="button" hidden>Next grove</button>
@@ -1122,7 +1123,7 @@ const UI = {
     goal: 'Goal: make every visitor happy', pouch: 'Seed pouch',
     tipLight: "Tap soil to plant. Tap a planted seed to pick it back up. You don't have to use every seed.",
     tipLife: 'Tap soil to plant moss, even on a beetle. Tap moss to pick it back up.',
-    dusk: 'Let dusk fall', duskLife: n => `Let ${n} ${n === 1 ? 'night' : 'nights'} pass`, watchRest: 'Watch the rest', step: 'Watch one night',
+    dusk: 'Let dusk fall', duskLife: n => `Let ${n} ${n === 1 ? 'night' : 'nights'} pass`, watchRest: 'Watch the rest', step: 'Watch one night', stepBack: 'One night back',
     back: 'Back to daylight', replant: 'Replant this grove', nextGrove: 'Next grove', nextVisitor: 'Next visitor',
     owlAsk: 'Ask the owl a question', owlShow: 'Ask the owl to show you a spot', owl: 'Owl', grove: 'The grove',
     wanderName: 'Wandering visitors', eyebrowWander: n => `Endless grove · visitor ${n}`,
@@ -1153,6 +1154,7 @@ const UI = {
     coach1: '<span class="step-now">Step 1</span>A moth wants a warm place to rest. Your Sunbell seed is already picked. <b>Tap any empty square</b> on the board to plant it.',
     coach2: '<span class="step-now">Step 2</span>Now press <b>Let dusk fall</b> and watch what happens in the dark.',
     nightPassed: n => `Night ${n} has passed. Watch another, or go back to daylight to change your moss.`,
+    nightRewound: n => (n ? `Back to night ${n}.` : 'Back to the evening you planted.') + ' Look closely, then step forward again. Rewinding is free.',
     nightCount: (f, n) => `Night ${f} of ${n}`,
     newSpark: ' A new spark flies up to the Great Lantern.', pressNext: ' Press Next grove when you are ready.',
     failMoth: 'The moth is still waiting in the dark.', failSnail: "The snail's fern didn't flower tonight. Something near it was glowing.",
@@ -1164,7 +1166,7 @@ const UI = {
     owlDone: 'The owl blinks slowly. You already have everything it would suggest. Try letting dusk fall.',
     fixedPlant: 'This plant was here long before you. It stays where it is.',
     cardGrove: (n, h) => `Every visitor settled in ${n} ${n === 1 ? 'dusk' : 'dusks'} · ${h ? `${h} owl ${h === 1 ? 'hint' : 'hints'}` : 'no owl hints'}`, cardDare: 'Can you do it?', cardHelp: 'Can you help?', cardSparks: (n, total) => `${n} of ${total} sparks lit`,
-    undo: 'Undo', undoTip: 'Undo your last change (Ctrl+Z or U)', clear: 'Clear', clearTip: 'Pick up every seed you planted (R). Undo brings them back.',
+    undo: 'Undo', undoTip: 'Undo your last change (Ctrl+Z or U)', redo: 'Redo', redoTip: 'Bring back what you undid (Ctrl+Y)', clear: 'Clear', clearTip: 'Pick up every seed you planted (R). Undo brings them back.',
     resting: label => `The ${label.toLowerCase()} is resting on this spot.`,
     pouchEmpty: 'Your pouch is empty. Tap a planted seed to pick it back up.',
     dayAgainSolved: 'Daylight again. Try a different way if you like.', dayAgain: 'Daylight again. What will you change?',
@@ -1233,7 +1235,7 @@ const UI = {
     goal: 'Lakshya: har jaanwar ko khush karo', pouch: 'Beej ki thaili',
     tipLight: 'Khaali dibbe par tap karo, beej lag jaayega. Lage hue beej par tap karo, wapas uth jaayega. Saare beej lagana zaroori nahi.',
     tipLife: 'Khaali dibbe par tap karke kaai lagao, beetle ke upar bhi. Kaai par tap karo toh wapas uth jaayegi.',
-    dusk: 'Raat hone do', duskLife: n => `${n} raat guzarne do`, watchRest: 'Baaki raatein dekho', step: 'Ek raat dekho',
+    dusk: 'Raat hone do', duskLife: n => `${n} raat guzarne do`, watchRest: 'Baaki raatein dekho', step: 'Ek raat dekho', stepBack: 'Ek raat peeche',
     back: 'Wapas din mein jao', replant: 'Is level ko dobara lagao', nextGrove: 'Agla level', nextVisitor: 'Agla mehmaan',
     owlAsk: 'Ullu se hint lo', owlShow: 'Ullu se sahi jagah dikhwao', owl: 'Ullu', grove: 'Bagicha',
     wanderName: 'Bhatakte mehmaan', eyebrowWander: n => `Kabhi na khatam hone wala bagicha · mehmaan ${n}`,
@@ -1264,6 +1266,7 @@ const UI = {
     coach1: '<span class="step-now">Step 1</span>Patange ko garmi (roshni) chahiye. Aapka Surajmukhi beej pehle se chuna hua hai. Board par <b>kisi bhi khaali dibbe par tap karo</b>, beej lag jaayega.',
     coach2: '<span class="step-now">Step 2</span>Ab <b>Raat hone do</b> button dabao aur dekho andhere mein kya hota hai.',
     nightPassed: n => `Raat ${n} guzar gayi. Ek aur raat dekho, ya kaai badalne ke liye wapas din mein jao.`,
+    nightRewound: n => (n ? `Wapas raat ${n} par.` : 'Wapas us shaam par jab beej lagaye.') + ' Dhyaan se dekho, phir aage badho. Peeche jaane ki koi keemat nahi.',
     nightCount: (f, n) => `Raat ${f} / ${n}`,
     newSpark: ' Ek nayi chingaari ud kar Bade Lantern tak pahunchi.', pressNext: ' Taiyaar ho toh "Agla level" dabao.',
     failMoth: 'Patanga abhi bhi andhere mein intezaar kar raha hai. Use roshni nahi mili.', failSnail: 'Ghonge ki Raat Rani aaj nahi khili. Uske paas kuch chamak raha tha.',
@@ -1275,7 +1278,7 @@ const UI = {
     owlDone: 'Ullu dheere se palak jhapkata hai. Uske saare sujhaav aapke paas pehle se hain. Ab raat hone do.',
     fixedPlant: 'Yeh paudha aapse bahut pehle se yahan hai. Yeh apni jagah se nahi hilega.',
     cardGrove: (n, h) => `${n} raat mein sab mehmaan khush · ${h ? `ullu ke ${h} hint` : 'bina ullu ki madad'}`, cardDare: 'Tum kar sakte ho?', cardHelp: 'Madad karoge?', cardSparks: (n, total) => `${total} mein se ${n} chingaariyan jali`,
-    undo: 'Undo', undoTip: 'Pichhla badlaav wapas lo (Ctrl+Z ya U)', clear: 'Saaf karo', clearTip: 'Lagaye hue saare beej utha lo (R). Undo se wapas aa jaayenge.',
+    undo: 'Undo', undoTip: 'Pichhla badlaav wapas lo (Ctrl+Z ya U)', redo: 'Redo', redoTip: 'Jo undo kiya use wapas lao (Ctrl+Y)', clear: 'Saaf karo', clearTip: 'Lagaye hue saare beej utha lo (R). Undo se wapas aa jaayenge.',
     resting: label => `${label} is jagah par aaram kar raha hai. Yahan beej nahi lag sakta.`,
     pouchEmpty: 'Thaili khaali hai. Laga hua beej wapas uthane ke liye us par tap karo.',
     dayAgainSolved: 'Phir se din ho gaya. Chaho toh doosre tareeke se try karo.', dayAgain: 'Phir se din ho gaya. Ab kya badloge?',
@@ -1441,7 +1444,8 @@ const S = {
   lv: null, levelIdx: 0, wander: false, challenge: null,   // challenge: { daily: 'YYYY-MM-DD' } or { link: true }
   trail: [],                                     // share of visitors settled after each dusk
   placed: {}, sel: null, mode: 'day',            // day | run | paused | night
-  history: [],                                   // earlier `placed` boards, newest last, for undo
+  history: [], future: [],                       // earlier `placed` boards, newest last, for undo; undone ones for redo
+  judged: false,                                 // this board's night was already counted (rewinding moss doesn't count again)
   sim: null, anim: null, frameIdx: 0, goalState: null, solved: false,
   attempts: 0, hints: 0, startedAt: 0, revealTiles: [], cursor: [0, 0], showCursor: false,
   nightF: 0, endAt: 0, burstUntil: 0,
@@ -1967,8 +1971,9 @@ function dailyStreak() {
   return n;
 }
 function untilTomorrow() { const n = new Date(), m = Math.ceil((new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1) - n) / 60000); return [Math.floor(m / 60), m % 60]; }
-// 3 stars: at most 2 tries and no owl hints; 2: at most 1 hint or 4 tries; otherwise 1
-function starsFor(attempts, hints) { return attempts <= 2 && hints === 0 ? 3 : hints <= 1 || attempts <= 4 ? 2 : 1; }
+// Stars count only owl hints, never dusks, so trying things out is always free:
+// 3 stars with no hints, 2 with one, otherwise 1
+function starsFor(hints) { return hints === 0 ? 3 : hints === 1 ? 2 : 1; }
 function chapterMastered(ch) { const ls = LEVELS.filter(l => l.ch === ch); return ls.length > 0 && ls.every(l => (P.stars || {})[l.id] === 3); }
 function starTotal(ch) { return LEVELS.filter(l => l.ch === ch).reduce((n, l) => n + ((P.stars || {})[l.id] || 0), 0); }
 function todayStr() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
@@ -2153,7 +2158,7 @@ function skipLevel() {
   (chapterDone(lv.ch) ? loadChapter(lv.ch + 1) : Promise.resolve()).then(go, loadFailed);
 }
 function beginLevel() {
-  Object.assign(S, { placed: {}, history: [], mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
+  Object.assign(S, { placed: {}, history: [], future: [], judged: false, mode: 'day', sim: null, anim: null, frameIdx: 0, goalState: null, solved: false, attempts: 0, hints: 0, startedAt: Date.now(), revealTiles: [], cursor: [0, 0], trail: [] });
   const types = Object.keys(S.lv.pouch);
   S.sel = types[0] || null;
   $('discover').hidden = true; $('pageNote').hidden = true;
@@ -2161,7 +2166,7 @@ function beginLevel() {
 }
 function toDay() {
   if (S.mode === 'day') return;
-  S.mode = 'day'; S.sim = null; S.anim = null; S.goalState = null;
+  S.mode = 'day'; S.sim = null; S.anim = null; S.goalState = null; S.judged = false;
   renderUI();
 }
 function letDusk(oneNight) {
@@ -2188,12 +2193,19 @@ function watchAnim(a) {
 function finishAnim(now) {
   const a = S.anim; S.anim = null; S.frameIdx = a.to; S.endAt = now;
   if (a.to < S.sim.frames.length - 1) { S.mode = 'paused'; renderUI(); say(null, () => t('nightPassed', a.to)); return; }
+  if (S.judged) { S.goalState = checkGoals(S.lv, S.sim); S.mode = 'night'; renderUI(); return; }   // replaying after a rewind
   evaluate();
+}
+// Moss can be rewound one night at a time to see where it went wrong; this never costs a dusk
+function stepBack() {
+  if (S.lv.kind !== 'life' || !S.sim || S.mode === 'run' || S.mode === 'day' || S.frameIdx <= 0) return;
+  S.frameIdx--; S.mode = 'paused'; S.goalState = null; sfx.lift();
+  renderUI(); say(null, () => t('nightRewound', S.frameIdx));
 }
 function evaluate() {
   const lv = S.lv;
   S.goalState = checkGoals(lv, S.sim);
-  S.mode = 'night'; S.attempts++;
+  S.mode = 'night'; S.attempts++; S.judged = true;
   noteDiscoveries();
   const all = S.goalState.every(Boolean);
   if (!S.solved) S.trail.push(S.goalState.filter(Boolean).length / S.goalState.length);
@@ -2205,7 +2217,7 @@ function evaluate() {
     const firstTry = lv.id === '1-1' && S.attempts === 1;
     say(null, () => lvT(lv, 'success') + (newSpark ? t('newSpark') : '') + (firstTry ? t('pressNext') : ''));
     logEvent(`solved ${lv.id || 'wander d' + P.d} in ${S.attempts} ${S.attempts === 1 ? 'try' : 'tries'}, ${S.hints} hints, ${Math.round((Date.now() - S.startedAt) / 1000)}s`);
-    S.stars = starsFor(S.attempts, S.hints);
+    S.stars = starsFor(S.hints);
     const wasMastered = !S.wander && chapterMastered(lv.ch);
     if (lv.id) { P.stars = P.stars || {}; P.stars[lv.id] = Math.max(P.stars[lv.id] || 0, S.stars); }
     const masteredNow = !S.wander && !wasMastered && chapterMastered(lv.ch);
@@ -2319,11 +2331,16 @@ function tapCell(r, c) {
   renderUI();
 }
 // Every change to the board can be taken back, one step at a time; clearing is one step too
-function remember() { S.history.push(Object.assign({}, S.placed)); if (S.history.length > 200) S.history.shift(); }
+function remember() { S.history.push(Object.assign({}, S.placed)); if (S.history.length > 200) S.history.shift(); S.future = []; }
 function undo() {
   if (S.mode === 'run' || !S.history.length) return;
   if (S.mode !== 'day') toDay();
-  S.placed = S.history.pop(); sfx.lift(); buzz(); renderUI();
+  S.future.push(S.placed); S.placed = S.history.pop(); sfx.lift(); buzz(); renderUI();
+}
+function redo() {
+  if (S.mode === 'run' || !S.future.length) return;
+  if (S.mode !== 'day') toDay();
+  S.history.push(S.placed); S.placed = S.future.pop(); sfx.plant(); buzz(); renderUI();
 }
 function clearBoard() {
   if (S.mode === 'run' || !Object.keys(S.placed).length) return;
@@ -2343,11 +2360,12 @@ canvas.addEventListener('keydown', e => {
   else if ((e.key === 'u' || e.key === 'U') && !e.ctrlKey && !e.metaKey) undo();
   else if ((e.key === 'r' || e.key === 'R') && !e.ctrlKey && !e.metaKey) clearBoard();
 });
-// Ctrl+Z / Cmd+Z works anywhere on the page, unless a dialog is open or you are typing
+// Ctrl+Z undoes and Ctrl+Y or Ctrl+Shift+Z redoes (Cmd on a Mac) anywhere on the page, unless a dialog is open or you are typing
 document.addEventListener('keydown', e => {
-  if (!(e.ctrlKey || e.metaKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== 'z' || !S.lv) return;
+  const k = e.key.toLowerCase(), isUndo = k === 'z' && !e.shiftKey, isRedo = k === 'y' || (k === 'z' && e.shiftKey);
+  if (!(e.ctrlKey || e.metaKey) || e.altKey || !(isUndo || isRedo) || !S.lv) return;
   if (e.target.closest('input, textarea, [contenteditable]') || document.querySelector('.overlay:not([hidden])')) return;
-  e.preventDefault(); undo();
+  e.preventDefault(); isUndo ? undo() : redo();
 });
 canvas.addEventListener('focus', () => { S.showCursor = true; });
 
@@ -2537,7 +2555,12 @@ function renderUI() {
   $('duskBtn').disabled = running;
   $('stepBtn').hidden = !life || S.mode === 'night' || lv.nights < 2;
   $('stepBtn').disabled = running;
+  $('duskBtn').classList.toggle('wide', S.mode === 'paused');   // so back and forward sit side by side below it
+  $('backBtn').classList.toggle('wide', S.mode === 'night');
+  $('backBtn').textContent = t('stepBack');
+  $('backBtn').hidden = !life || !(S.mode === 'paused' || S.mode === 'night') || S.frameIdx <= 0 || lv.nights < 2;
   $('undoBtn').textContent = t('undo'); $('undoBtn').title = t('undoTip'); $('undoBtn').disabled = running || !S.history.length;
+  $('redoBtn').textContent = t('redo'); $('redoBtn').title = t('redoTip'); $('redoBtn').disabled = running || !S.future.length;
   $('clearBtn').textContent = t('clear'); $('clearBtn').title = t('clearTip'); $('clearBtn').disabled = running || !Object.keys(S.placed).length;
   $('dayBtn').hidden = !(S.mode === 'night' || S.mode === 'paused');
   $('dayBtn').textContent = t(S.solved ? 'replant' : 'back');
@@ -2906,7 +2929,9 @@ $('tourBack').onclick = () => tourGo(-1);
 $('tourSkip').onclick = endTour;
 $('duskBtn').onclick = () => letDusk(false);
 $('stepBtn').onclick = () => letDusk(true);
+$('backBtn').onclick = stepBack;
 $('undoBtn').onclick = undo;
+$('redoBtn').onclick = redo;
 $('clearBtn').onclick = clearBoard;
 $('dayBtn').onclick = () => { toDay(); say(null, () => t(S.solved ? 'dayAgainSolved' : 'dayAgain')); };
 document.querySelectorAll('[data-lang]').forEach(b => { b.onclick = () => setLang(b.dataset.lang); });
